@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:layout_gravity="center"
+    android:background="@drawable/bg_default_fillet_view"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:layout_marginBottom="@dimen/default_x_padding_and_margin">
+
+    <TextView
+        android:id="@+id/list_item_text"
+        style="@style/ok_button"
+        android:background="@color/transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="菜单"
+        android:textSize="@dimen/default_x_text_size"
+        android:padding="@dimen/default_x_padding_and_margin"/>
+</LinearLayout>

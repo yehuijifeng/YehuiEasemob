@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_x_padding_and_margin"
+        android:gravity="center_horizontal"
+        android:text="请输入好友名称"
+        android:textSize="@dimen/default_text_size" />
+
+    <EditText
+        android:id="@+id/friend_name_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_x_padding_and_margin"
+        android:background="@drawable/bg_default_edit"
+        android:hint="好友名称" />
+
+    <EditText
+        android:id="@+id/friend_cause_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_x_padding_and_margin"
+        android:background="@drawable/bg_default_edit"
+        android:hint="请求原因" />
+
+</LinearLayout>

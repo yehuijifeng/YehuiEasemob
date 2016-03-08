@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="together"
+
+    ><!--ordering together表示子动画同时播放-->
+    <!--android:valueFrom="0"
+           android:valueTo="1"
+           android:startOffset="500"
+           android:repeatCount="infinite"-->
+    <!--旋转-->
+    <objectAnimator
+        android:propertyName="rotation"
+        android:valueFrom="0"
+        android:valueTo="360"
+        android:duration="1000"
+        android:valueType="floatType"
+        android:repeatCount="0"
+        android:pivotY="50%"
+        android:pivotX="50%"
+        />
+
+    <!--缩放-->
+    <objectAnimator
+        android:propertyName="scale"
+        android:valueFrom="0"
+        android:valueTo="1"
+        android:duration="1000"
+        android:valueType="floatType"
+        android:repeatCount="0"
+        android:pivotY="50%"
+        android:pivotX="50%"
+        />
+
+    <!--透明度-->
+    <objectAnimator
+        android:propertyName="alpha"
+        android:valueFrom="0"
+        android:valueTo="1"
+        android:duration="1000"
+        android:valueType="floatType"
+        android:repeatCount="0"
+        />
+</set>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_my_title" />
+
+    <EditText
+        android:id="@+id/user_register_name_edit"
+        style="@style/default_editview_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding_and_margin"
+        android:digits="1234567890"
+        android:drawableLeft="@drawable/ic_user_login_username"
+        android:hint="账号：十位数字"
+        android:inputType="number"
+        android:maxLength="10" />
+
+    <EditText
+        android:id="@+id/user_register_pwd_edit"
+        style="@style/default_editview_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding_and_margin"
+        android:drawableLeft="@drawable/ic_user_login_pwd"
+        android:hint="密码：请输入密码"
+        android:inputType="textPassword"
+        android:maxLength="16" />
+
+    <EditText
+        android:id="@+id/user_register_pwd_determine_edit"
+        style="@style/default_editview_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding_and_margin"
+        android:hint="密码：请确认密码"
+        android:inputType="textPassword"
+        android:maxLength="16" />
+
+    <EditText
+        android:id="@+id/user_register_email_edit"
+        style="@style/default_editview_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding_and_margin"
+        android:hint="请输入密保邮箱"
+        android:maxLength="16" />
+
+    <Spinner
+        android:id="@+id/pwd_issue_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/default_editview_style"
+        android:layout_margin="@dimen/default_padding_and_margin" />
+
+    <EditText
+        android:id="@+id/pwd_issue_answer_edit"
+        style="@style/default_editview_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding_and_margin"
+        android:hint="请输入密保问题答案"
+        android:maxLength="16" />
+
+    <Button
+        android:id="@+id/user_register_btn"
+        style="@style/default_button_style"
+        android:layout_width="match_parent"
+        android:text="注册" />
+</LinearLayout>

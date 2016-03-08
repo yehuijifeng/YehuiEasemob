@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">base-frame-work</string>
+    <string name="header_hint_normal">下拉刷新</string>
+    <string name="header_hint_ready">松开刷新数据</string>
+    <string name="header_hint_loading">正在加载……</string>
+    <string name="header_last_time">上次更新时间：</string>
+    <string name="footer_hint_normal">点击或者下拉查看更多</string>
+    <string name="footer_hint_ready">松开载入更多</string>
+    <string name="loading_refresh">刷新</string>
+    <string name="click_refresh">点击刷新</string>
+    <string name="lading_fail">连接服务器失败,请重试……</string>
+    <string name="lading_empty">暂无数据</string>
+    <string name="loading_click_refresh">点击刷新</string>
+    <string name="past_time">刚刚</string>
+    <string name="on_open">打开</string>
+    <string name="on_close">关闭</string>
+    <string name="on_ok">确定</string>
+    <string name="on_exit">退出</string>
+    <string name="on_cancel">取消</string>
+    <string name="on_prompt">提示</string>
+    <string name="on_content">内容</string>
+    <string name="service_remind">您有新的消息，请点击查看</string>
+    <string name="service_click_look">点击查看</string>
+    <string name="service_news">您有新的消息</string>
+    <string name="service_down_start">开始下载</string>
+    <string name="service_down_ing">正在下载……</string>
+    <string name="service_down_end">下载完成</string>
+    <string name="server_error">服务器繁忙，请稍后再试</string>
+    <string name="network_error">网络连接异常，请检查您的网络设置</string>
+    <string name="network_null">服务器未返回数据</string>
+    <string name="json_error">json数据解析错误</string>
+    <string name="call_error">无法停止请求，因为有线程正在读or写它</string>
+    <string name="file_error">文件下载失败</string>
+
+    <string name="share">分享</string>
+    <string name="about">关于</string>
+    <string name="setting">设置</string>
+    <string name="exit">退出</string>
+
+    <string name="exit_app">再按一次退出程序</string>
+    <string name="error_exit_app">很抱歉,程序出现异常,即将退出... ...</string>
+
+</resources>

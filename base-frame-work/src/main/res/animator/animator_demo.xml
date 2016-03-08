@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="together"><!--ordering together表示子动画同时播放-->
+    <!--android:valueFrom="0"
+           android:valueTo="1"
+           android:startOffset="500"
+           android:repeatCount="infinite"-->
+    <objectAnimator
+        android:propertyName="x"
+        android:duration="1000"
+        android:valueTo="200"
+        android:valueType="floatType"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        />
+
+    <objectAnimator
+        android:propertyName="y"
+        android:duration="1000"
+        android:valueTo="300"
+        android:valueType="floatType"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        />
+
+
+</set>

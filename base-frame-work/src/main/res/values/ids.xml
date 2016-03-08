@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="my_title_view" type="id" />
+    <item name="my_viewpager_view" type="id" />
+    <item name="my_viewpager_view_tab" type="id" />
+    <item name="my_recycler_view" type="id" />
+    <item name="my_loading_layout" type="id" />
+    <item name="my_expandable_view" type="id" />
+    <item name="default_recycler_view" type="id" />
+    <item name="default_expandable_list" type="id" />
+    <item name="default_refresh_view" type="id" />
+    <item name="default_header_view" type="id" />
+    <item name="viewpager_tab_text" type="id" />
+    <item name="dialog_default_cancel_btn" type="id" />
+    <item name="dialog_default_ok_btn" type="id" />
+    <item name="dialog_custom_layout" type="id" />
+
+
+
+
+</resources>

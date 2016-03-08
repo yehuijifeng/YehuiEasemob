@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="red">#FF0000</color>
+    <color name="green">#00FF00</color>
+    <color name="blue">#0000FF</color>
+    <color name="lightRed">#DD2E2D</color>
+    <color name="yellow">#FFF7D23E</color>
+    <color name="gray">#C4C4C4</color>
+    <color name="transparent">#00000000</color>
+    <color name="dark_gray">#999999</color>
+    <color name="default_gray">#C2C5CD</color>
+
+    <!--viewpager的tab页颜色-->
+    <color name="default_viewpager_tab_color">#FFFFFF</color>
+
+    <!--默认的下拉刷新循环颜色-->
+    <color name="default_load_more_color_one">#ff0f9d58</color>
+    <color name="default_load_more_color_tow">#ffdb4437</color>
+    <color name="default_load_more_color_three">#ff4285f4</color>
+    <color name="default_load_more_color_four">#fff4b400</color>
+
+    <!--默认loading提示框的父布局颜色-->
+    <color name="default_loading_color">#70000000</color>
+
+    <!--二维码扫描需要的颜色-->
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="possible_result_points">#c0ffff00</color>
+    <color name="viewfinder_frame">#ff000000</color>
+    <color name="capture_text_cover_bg">#99535353</color>
+
+</resources>

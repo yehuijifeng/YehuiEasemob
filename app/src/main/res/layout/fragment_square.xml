@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/layout_my_title" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.25"
+                android:background="@drawable/bg_user_login"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.yehui.utils.view.CircularImageView
+                    android:id="@+id/user_image_square"
+                    android:layout_width="@dimen/default_user_login"
+                    android:layout_height="@dimen/default_user_login"
+                    android:layout_marginTop="@dimen/default_x_padding_and_margin"
+                    android:src="@drawable/ic_icon" />
+
+                <TextView
+                    android:id="@+id/user_name_square"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_padding_and_margin"
+                    android:text="用户名"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/default_text_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.7"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/user_exit_rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_xxx_padding_and_margin"
+                    android:background="@drawable/bg_default_view"
+                    android:padding="@dimen/default_padding_and_margin">
+
+                    <ImageView
+                        android:id="@+id/ic_user_exit"
+                        android:layout_width="@dimen/default_image_height"
+                        android:layout_height="@dimen/default_image_height"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:src="@drawable/ic_user_exit" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:layout_toEndOf="@+id/ic_user_exit"
+                        android:layout_toRightOf="@+id/ic_user_exit"
+                        android:text="退出登录" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:src="@drawable/ic_go" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/add_friend_rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_hour_height"
+                    android:background="@drawable/bg_default_view"
+                    android:padding="@dimen/default_padding_and_margin">
+
+                    <ImageView
+                        android:id="@+id/ic_add_friend_img"
+                        android:layout_width="@dimen/default_image_height"
+                        android:layout_height="@dimen/default_image_height"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:src="@drawable/ic_add_firend" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:layout_toEndOf="@+id/ic_add_friend_img"
+                        android:layout_toRightOf="@+id/ic_add_friend_img"
+                        android:text="添加好友" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:src="@drawable/ic_go" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/user_close_cache_rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_hour_height"
+                    android:background="@drawable/bg_default_view"
+                    android:padding="@dimen/default_padding_and_margin">
+
+                    <ImageView
+                        android:id="@+id/ic_close_cache_img"
+                        android:layout_width="@dimen/default_image_height"
+                        android:layout_height="@dimen/default_image_height"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:src="@drawable/ic_close_cache" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:layout_toEndOf="@+id/ic_close_cache_img"
+                        android:layout_toRightOf="@+id/ic_close_cache_img"
+                        android:text="清除缓存" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:src="@drawable/ic_go" />
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/ic_register_user_rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_hour_height"
+                    android:background="@drawable/bg_default_view"
+                    android:padding="@dimen/default_padding_and_margin">
+
+                    <ImageView
+                        android:id="@+id/ic_register_user_img"
+                        android:layout_width="@dimen/default_image_height"
+                        android:layout_height="@dimen/default_image_height"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:src="@drawable/ic_close_cache" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:layout_toEndOf="@+id/ic_register_user_img"
+                        android:layout_toRightOf="@+id/ic_register_user_img"
+                        android:text="注册新账号" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:src="@drawable/ic_go" />
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/user_settings_rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/default_hour_height"
+                    android:background="@drawable/bg_default_view"
+                    android:padding="@dimen/default_padding_and_margin">
+
+                    <ImageView
+                        android:id="@+id/ic_settings_img"
+                        android:layout_width="@dimen/default_image_height"
+                        android:layout_height="@dimen/default_image_height"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:src="@drawable/ic_settings" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:layout_toEndOf="@+id/ic_settings_img"
+                        android:layout_toRightOf="@+id/ic_settings_img"
+                        android:text="设置" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="@dimen/default_padding_and_margin"
+                        android:src="@drawable/ic_go" />
+
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

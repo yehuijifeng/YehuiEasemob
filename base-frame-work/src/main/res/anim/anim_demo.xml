@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true"
+    android:shareInterpolator="true"
+    android:duration="3000">
+
+    <!--透明度动画，透明度从0到1-->
+    <alpha
+        android:fromAlpha="0"
+        android:toAlpha="1"
+        />
+
+    <!--缩放动画-->
+    <scale
+        android:fromXScale="0.5"
+        android:fromYScale="0.5"
+        android:toXScale="1.2"
+        android:toYScale="1.2"
+        android:pivotX="0"
+        android:pivotY="0"/>
+    <!--平移动画-->
+    <translate
+        android:fromXDelta="0"
+        android:fromYDelta="0"
+        android:toXDelta="200"
+        android:toYDelta="200" />
+   <!-- 旋转动画-->
+    <rotate
+        android:fromDegrees="0"
+        android:toDegrees="1800"
+        android:pivotY="50%"
+        android:pivotX="50%"/>
+</set>

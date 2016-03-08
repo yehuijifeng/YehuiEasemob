@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.yehui.utils.view.viewpager.MyViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/my_viewpager_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+</com.yehui.utils.view.viewpager.MyViewPager>

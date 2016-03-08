@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--若viewpager的头在上面，则用注释掉的代码即可-->
+
+    <com.yehui.utils.view.viewpager.MyViewPager
+        android:id="@id/my_viewpager_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/my_viewpager_view_tab" />
+
+
+    <LinearLayout
+        android:id="@id/my_viewpager_view_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/viewpager_btn_layout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/viewpager_image_bar"
+            android:layout_width="100dp"
+            android:layout_height="5dp"
+            android:background="@drawable/ic_viewpager_bar" />
+    </LinearLayout>
+
+</RelativeLayout>

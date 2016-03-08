@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="default_icon">48dp</dimen>
+    <dimen name="default_user_login">73dp</dimen>
+    <dimen name="default_image_height">30dp</dimen>
+</resources>

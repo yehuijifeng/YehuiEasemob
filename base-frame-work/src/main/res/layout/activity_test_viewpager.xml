@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!--如果需要将viewpager的tab页拿到下面来，位于视图的底部，则要用一下代码实现
+        原因：included的视图不能设置布局属性 -->
+
+    <!--若viewpager的头在上面，则用注释掉的代码即可-->
+    <include layout="@layout/layout_my_title" />
+
+    <include
+        layout="@layout/layout_default_viewpager_tab" />
+    <!--数据加载的提示遮罩层-->
+    <include layout="@layout/layout_my_loading" />
+    <include layout="@layout/layout_my_viewpager" />
+
+    <!-- <com.yehui.utils.view.viewpager.MyViewPager
+         android:id="@id/my_viewpager_view"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_below="@id/my_title_view" />
+ -->
+
+
+    <!--<LinearLayout-->
+    <!--android:id="@id/my_viewpager_view_tab"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:layout_alignParentStart="true"-->
+    <!--android:orientation="vertical">-->
+
+    <!--<LinearLayout-->
+    <!--android:id="@+id/viewpager_btn_layout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--</LinearLayout>-->
+
+    <!--<ImageView-->
+    <!--android:id="@+id/viewpager_image_bar"-->
+    <!--android:layout_width="100dp"-->
+    <!--android:layout_height="5dp"-->
+    <!--android:background="@drawable/ic_viewpager_bar" />-->
+    <!--</LinearLayout>-->
+</LinearLayout>

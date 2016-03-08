@@ -1,0 +1,167 @@
+<resources>
+
+    <!--colorPrimary 对应ActionBar的颜色。
+        colorPrimaryDark对应状态栏的颜色
+        colorAccent 对应EditText编辑时、RadioButton选中、CheckBox等选中时的颜色。-->
+    <!-- toolsbar-->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--标题栏高度-->
+        <item name="actionBarSize">@dimen/default_title_height</item>
+        <!-- toolbar（actionbar）颜色 -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!--主要风格颜色-->
+        <item name="android:windowBackground">@color/default_gray</item>
+        <!-- 状态栏颜色 -->
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <!-- 底部导航栏颜色 -->
+        <!--<item name="navigationBarColor">#4876FF</item>-->
+
+    </style>
+
+    <!--默认横线-->
+    <style name="default_hour_view">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/default_hour_height</item>
+        <item name="android:background">@color/default_gray</item>
+    </style>
+
+    <!--默认button设置-->
+    <style name="default_button_style">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:layout_margin">@dimen/default_padding_and_margin</item>
+        <item name="android:padding">@dimen/default_padding_and_margin</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_width">@dimen/default_button_width</item>
+        <item name="android:layout_height">@dimen/default_button_height</item>
+        <item name="android:background">@drawable/bg_default_btn</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!--默认textview设置-->
+    <style name="default_textview_style">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:layout_margin">@dimen/default_padding_and_margin</item>
+        <item name="android:padding">@dimen/default_padding_and_margin</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_default_text</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/default_x_text_size</item>
+    </style>
+
+    <!--默认editview设置-->
+    <style name="default_editview_style">
+        <item name="android:layout_marginTop">@dimen/default_padding_and_margin</item>
+        <item name="android:background">@drawable/bg_default_edit</item>
+        <item name="android:paddingRight">@dimen/default_x_padding_and_margin</item>
+        <item name="android:paddingTop">@dimen/default_x_padding_and_margin</item>
+        <item name="android:paddingBottom">@dimen/default_x_padding_and_margin</item>
+        <item name="android:paddingLeft">@dimen/default_xx_padding_and_margin</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:drawablePadding">@dimen/default_x_padding_and_margin</item>
+        <item name="android:textSize">@dimen/default_x_text_size</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <!--流布局-->
+    <declare-styleable name="FlowLayout">
+        <attr name="horizontal_spacing" format="dimension" />
+        <attr name="vertical_spacing" format="dimension" />
+    </declare-styleable>
+
+    <!--圆形文本框，显示数字-->
+    <style name="text_count_one">
+        <item name="android:layout_width">18dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:textSize">@dimen/small_x_text_size</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/bg_shape_count_one</item>
+        <item name="android:layout_gravity">right</item>
+        <item name="android:layout_marginRight">@dimen/default_padding_and_margin</item>
+    </style>
+
+    <!--圆形文本框，显示数字-->
+    <style name="text_count_tow">
+        <item name="android:layout_width">18dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:textSize">@dimen/small_x_text_size</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/bg_shape_count_tow</item>
+        <item name="android:layout_gravity">right</item>
+        <item name="android:layout_marginRight">@dimen/default_x_padding_and_margin</item>
+    </style>
+
+    <!--圆形图片-->
+    <declare-styleable name="CircularImageViewStyle">
+        <attr name="circularImageViewDefault" format="reference" />
+    </declare-styleable>
+
+    <!-- CircularImageView Custom Styling
+     圆形图片视图定制的样式-->
+    <declare-styleable name="CircularImageView">
+
+        <!-- Whether or not to draw a circular border around the image. -->
+        <attr name="civ_border" format="boolean" />
+        <!-- The color of the border draw around the image. (if enabled) -->
+        <attr name="civ_borderColor" format="color" />
+        <!-- Makes the border this pixels wide. (if enabled) -->
+        <attr name="civ_borderWidth" format="dimension" />
+        <!-- Whether or not to draw a selector on this view upon touch events. -->
+        <attr name="civ_selector" format="boolean" />
+        <!-- The color of the selector draw on top of the image upon touch events. (if enabled) -->
+        <attr name="civ_selectorColor" format="color" />
+        <!-- The color of the selector stroke drawn around the image upon touch events. Be sure to provide some opacity. (if enabled) -->
+        <attr name="civ_selectorStrokeColor" format="color" />
+        <!-- The selector stroke drawn around the image upon touch events this pixels wide. (if enabled) -->
+        <attr name="civ_selectorStrokeWidth" format="dimension" />
+        <!-- Whether or not to draw a shadow around your circular image. -->
+        <attr name="civ_shadow" format="boolean" />
+        <!-- The radius for the shadow to extend to. (if enabled) -->
+        <attr name="civ_shadowRadius" format="float" />
+        <!-- Horizontal shadow offset. (if enabled) -->
+        <attr name="civ_shadowDx" format="float" />
+        <!-- Vertical shadow offset. (if enabled) -->
+        <attr name="civ_shadowDy" format="float" />
+        <!-- The color of the shadow drawn around your circular image. (if enabled) -->
+        <attr name="civ_shadowColor" format="color" />
+    </declare-styleable>
+
+
+    <!--提示框确定按钮样式-->
+    <style name="ok_button">
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:textSize">@dimen/default_x_text_size</item>
+        <item name="android:background">@drawable/bg_ok_btn</item>
+    </style>
+
+    <!--提示框取消按钮样式-->
+    <style name="cancel_button">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/default_x_text_size</item>
+        <item name="android:background">@drawable/bg_cancel_btn</item>
+    </style>
+
+    <!--适配-->
+    <style name="CustomDialog" parent="android:style/Theme.Dialog">
+        <!--背景颜色及透明程度-->
+        <item name="android:windowBackground">@color/transparent</item>
+        <!-- 是否有标题  -->
+        <item name="android:windowNoTitle">true</item>-->
+        <!-- <!-是否浮现在activity之上-->
+        <item name="android:windowIsFloating">true</item>
+        <!--是否模糊-->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!--&lt;!&ndash;去边框&ndash;&gt;
+        <item name="android:windowFrame">@color/transparent</item>
+        &lt;!&ndash;窗口是否是半透明的&ndash;&gt;
+        <item name="android:windowIsTranslucent">true</item>-->
+        <!--外边框的背景-->
+        <item name="android:background">@color/transparent</item>
+    </style>
+
+</resources>

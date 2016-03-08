@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/loading_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_loading_empty" />
+
+    <ProgressBar
+        android:id="@+id/loading_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/small_padding_and_margin"
+        android:layout_toLeftOf="@+id/loading_text"
+        android:layout_toStartOf="@+id/loading_text" />
+
+    <TextView
+        android:id="@+id/loading_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/small_padding_and_margin"
+        android:text="@string/header_hint_loading"
+        android:textColor="@color/black" />
+
+    <Button
+        android:id="@+id/loading_btn"
+        style="@style/default_button_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loading_text"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/small_padding_and_margin"
+        android:text="@string/loading_refresh" />
+
+    <TextView
+        android:id="@+id/loading_empty_click_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loading_empty_text"
+        android:layout_centerHorizontal="true"
+        android:text="@string/loading_click_refresh"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/loading_empty_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loading_img"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/small_padding_and_margin"
+        android:text="@string/lading_empty"
+        android:textColor="@color/black" />
+
+
+</RelativeLayout>
