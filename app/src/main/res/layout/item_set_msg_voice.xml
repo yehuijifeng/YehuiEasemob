@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/get_msg_image"
+        android:layout_width="@dimen/default_msg_height_and_width"
+        android:layout_height="@dimen/default_msg_height_and_width"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="@dimen/small_padding_and_margin"
+        android:src="@drawable/ease_default_avatar" />
+
+    <ImageView
+        android:id="@+id/get_msg_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/get_msg_image"
+        android:layout_toStartOf="@+id/get_msg_image"
+        android:background="@drawable/bg_get_msg_text"
+        android:src="@drawable/bg_set_msg_voice"/>
+    <ImageView
+        android:id="@+id/msg_voice_is_open"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ease_unread_count_bg"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/msg_voice_length"
+        android:layout_toStartOf="@+id/msg_voice_length" />
+
+    <TextView
+        android:id="@+id/msg_voice_length"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/small_padding_and_margin"
+        android:text="0"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/get_msg_text"
+        android:layout_toStartOf="@+id/get_msg_text" />
+
+    <ImageView
+        android:id="@+id/msg_status_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ease_msg_state_fail_resend_pressed"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/msg_voice_is_open"
+        android:layout_toStartOf="@+id/msg_voice_is_open" />
+
+</RelativeLayout>

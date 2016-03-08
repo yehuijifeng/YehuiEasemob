@@ -20,7 +20,7 @@
     <!-- 边框的颜色 -->
     <stroke android:width="2px" android:color="#ffffff" />
     <!-- 文本框里面的颜色 -->
-    <solid android:color="#CCCCCC" />
+    <solid android:color="@color/default_gray" />
     <!-- This is the line  下边边框颜色-->
     <item android:bottom="1dp">
         <shape>

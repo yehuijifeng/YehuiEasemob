@@ -24,7 +24,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/function_ly"
+        android:layout_above="@+id/msg_function_ly"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:orientation="vertical">
@@ -36,10 +36,8 @@
 
 
         <RelativeLayout
-
             android:layout_width="match_parent"
             android:layout_height="50dp"
-
             android:background="@color/white">
 
             <ImageView
@@ -60,6 +58,19 @@
                 android:layout_toRightOf="@+id/often_msg_img"
                 android:background="@drawable/bg_default_view"
                 android:src="@drawable/bg_voice_img" />
+
+            <ImageView
+                android:id="@+id/text_msg_img"
+                android:layout_width="@dimen/default_msg_height_and_width"
+                android:layout_height="@dimen/default_msg_height_and_width"
+                android:layout_alignParentTop="true"
+                android:layout_margin="@dimen/small_padding_and_margin"
+                android:layout_toEndOf="@+id/often_msg_img"
+                android:layout_toRightOf="@+id/often_msg_img"
+                android:background="@drawable/bg_default_view"
+                android:src="@drawable/bg_voice_img"
+                android:visibility="gone" />
+
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -98,6 +109,20 @@
                 android:layout_margin="@dimen/small_padding_and_margin"
                 android:src="@drawable/bg_gengduo_img" />
 
+            <TextView
+                android:id="@+id/fasong_msg_text"
+                android:layout_width="@dimen/default_msg_height_and_width"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/small_padding_and_margin"
+                android:background="@drawable/bg_fasong_btn"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/default_x_padding_and_margin"
+                android:text="发送"
+                android:visibility="gone" />
+
         </RelativeLayout>
 
         <View
@@ -108,109 +133,18 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/function_ly"
+        android:id="@+id/msg_function_ly"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="0dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:background="@color/white"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/function_one"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:visibility="gone">
+        <include layout="@layout/layout_function" />
 
-            <ImageView
-                android:id="@+id/function_image_img"
-                android:layout_width="@dimen/default_msg_height_and_width"
-                android:layout_height="@dimen/default_msg_height_and_width"
-                android:layout_margin="@dimen/default_padding_and_margin"
-                android:src="@drawable/bg_image_function" />
+        <include layout="@layout/layout_biaoqing" />
 
-            <ImageView
-                android:id="@+id/function_camera_img"
-                android:layout_width="@dimen/default_msg_height_and_width"
-                android:layout_height="@dimen/default_msg_height_and_width"
-                android:layout_margin="@dimen/default_padding_and_margin"
-                android:src="@drawable/bg_camera_function" />
-
-            <ImageView
-                android:id="@+id/function_laction_img"
-                android:layout_width="@dimen/default_msg_height_and_width"
-                android:layout_height="@dimen/default_msg_height_and_width"
-                android:layout_margin="@dimen/default_padding_and_margin"
-                android:src="@drawable/bg_laction_function" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/function_tow"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/biaoqing_one"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_padding_and_margin"
-                android:background="@drawable/bg_default_view"
-                android:src="@drawable/ee_1" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_padding_and_margin"
-                android:background="@drawable/bg_default_view"
-                android:src="@drawable/ee_2" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_padding_and_margin"
-                android:background="@drawable/bg_default_view"
-                android:src="@drawable/ee_3" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/biaoqing_tow"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/biaoqing_three"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/biaoqing_four"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
