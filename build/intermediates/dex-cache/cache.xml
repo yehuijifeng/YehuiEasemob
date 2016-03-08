@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\com.edmodo\cropper\1.0.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="6ad63cdde0c0e73fc2b946b3412c551e9cac290a">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\classes-056c02b68e862af2ae65fc4f94cb8c3481fadfdd.jar" />
+    </item>
+
+</items>
