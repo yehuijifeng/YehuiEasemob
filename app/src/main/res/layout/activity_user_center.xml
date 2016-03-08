@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <include layout="@layout/layout_my_title" />
-
+    <include layout="@layout/layout_my_loading"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
