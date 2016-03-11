@@ -5,7 +5,7 @@ import com.easemob.EMNotifierEvent;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMConversation;
 import com.easemob.chat.EMMessage;
-import com.yehui.easemob.bean.SetMessageBean;
+import com.yehui.easemob.bean.GetMessageBean;
 import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.interfaces.SetMessageInterfaces;
 
@@ -24,13 +24,13 @@ public class SetMessageHelper implements SetMessageInterfaces {
      * 环信推荐用监听事件接收消息
      */
     private SetMessageHelper() {
-        setMessageBean = new SetMessageBean();
+        getMessageBean = new GetMessageBean();
         eventBus = new EventBus();
     }
 
     private static volatile SetMessageHelper instance = null;
 
-    public synchronized static void getInstance() {
+    public synchronized static SetMessageHelper getInstance() {
         if (instance == null) {
             synchronized (SetMessageHelper.class) {
                 if (instance == null) {
@@ -38,14 +38,15 @@ public class SetMessageHelper implements SetMessageInterfaces {
                 }
             }
         }
+        return instance;
     }
 
     private EMMessage message;
-    private SetMessageBean setMessageBean;
+    private GetMessageBean getMessageBean;
     private EventBus eventBus;
 
     private void initSerMsg() {
-        setMessageBean = new SetMessageBean();
+        getMessageBean = new GetMessageBean();
     }
 
     /**
@@ -59,8 +60,8 @@ public class SetMessageHelper implements SetMessageInterfaces {
             @Override
             public void onEvent(EMNotifierEvent event) {
                 message = (EMMessage) event.getData();
-                setMessageBean.setSetMsgCode(MessageContant.setMsgByAll);
-                setMessageBean.setEmMessage(message);
+                getMessageBean.setGetMsgCode(MessageContant.setMsgByAll);
+                getMessageBean.setEmMessage(message);
             }
         });
     }
@@ -83,9 +84,29 @@ public class SetMessageHelper implements SetMessageInterfaces {
             public void onEvent(EMNotifierEvent event) {
                 // TODO Auto-generated method stub
                 message = (EMMessage) event.getData();
-                setMessageBean.setSetMsgCode(MessageContant.setMsgByNew);
-                setMessageBean.setEmMessage(message);
-                eventBus.post(setMessageBean);
+//                TextMessageBody textMessageBody= (TextMessageBody) message.getBody();
+//                textMessageBody.getMessage();
+//                FileMessageBody fileMessageBody= (FileMessageBody) message.getBody();
+//                fileMessageBody.getLocalUrl();
+//                fileMessageBody.setDownloadCallback(new EMCallBack() {
+//                    @Override
+//                    public void onSuccess() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(int i, String s) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onProgress(int i, String s) {
+//
+//                    }
+//                });
+                getMessageBean.setGetMsgCode(MessageContant.setMsgByNew);
+                getMessageBean.setEmMessage(message);
+                eventBus.post(getMessageBean);
             }
         }, new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewMessage});//接收新消息
     }
@@ -101,9 +122,9 @@ public class SetMessageHelper implements SetMessageInterfaces {
             public void onEvent(EMNotifierEvent event) {
                 // TODO Auto-generated method stub
                 message = (EMMessage) event.getData();
-                setMessageBean.setSetMsgCode(MessageContant.setMsgByDeliveryAck);
-                setMessageBean.setEmMessage(message);
-                eventBus.post(setMessageBean);
+                getMessageBean.setGetMsgCode(MessageContant.setMsgByDeliveryAck);
+                getMessageBean.setEmMessage(message);
+                eventBus.post(getMessageBean);
             }
         }, new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventDeliveryAck});//已发送回执
     }
@@ -119,9 +140,9 @@ public class SetMessageHelper implements SetMessageInterfaces {
             public void onEvent(EMNotifierEvent event) {
                 // TODO Auto-generated method stub
                 message = (EMMessage) event.getData();
-                setMessageBean.setSetMsgCode(MessageContant.setMsgByNewCMDM);
-                setMessageBean.setEmMessage(message);
-                eventBus.post(setMessageBean);
+                getMessageBean.setGetMsgCode(MessageContant.setMsgByNewCMDM);
+                getMessageBean.setEmMessage(message);
+                eventBus.post(getMessageBean);
             }
         }, new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewCMDMessage});//已发送回执
     }
@@ -137,9 +158,9 @@ public class SetMessageHelper implements SetMessageInterfaces {
             public void onEvent(EMNotifierEvent event) {
                 // TODO Auto-generated method stub
                 message = (EMMessage) event.getData();
-                setMessageBean.setSetMsgCode(MessageContant.setMsgByOffline);
-                setMessageBean.setEmMessage(message);
-                eventBus.post(setMessageBean);
+                getMessageBean.setGetMsgCode(MessageContant.setMsgByOffline);
+                getMessageBean.setEmMessage(message);
+                eventBus.post(getMessageBean);
             }
         }, new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventOfflineMessage});//已发送回执
     }
@@ -155,9 +176,9 @@ public class SetMessageHelper implements SetMessageInterfaces {
             public void onEvent(EMNotifierEvent event) {
                 // TODO Auto-generated method stub
                 message = (EMMessage) event.getData();
-                setMessageBean.setSetMsgCode(MessageContant.setMsgByReadAck);
-                setMessageBean.setEmMessage(message);
-                eventBus.post(setMessageBean);
+                getMessageBean.setGetMsgCode(MessageContant.setMsgByReadAck);
+                getMessageBean.setEmMessage(message);
+                eventBus.post(getMessageBean);
             }
         }, new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventReadAck});//已发送回执
     }
@@ -173,9 +194,9 @@ public class SetMessageHelper implements SetMessageInterfaces {
             public void onEvent(EMNotifierEvent event) {
                 // TODO Auto-generated method stub
                 message = (EMMessage) event.getData();
-                setMessageBean.setSetMsgCode(MessageContant.setMsgByListChanged);
-                setMessageBean.setEmMessage(message);
-                eventBus.post(setMessageBean);
+                getMessageBean.setGetMsgCode(MessageContant.setMsgByListChanged);
+                getMessageBean.setEmMessage(message);
+                eventBus.post(getMessageBean);
             }
         }, new EMNotifierEvent.Event[]{EMNotifierEvent.Event. EventConversationListChanged});//已发送回执
     }

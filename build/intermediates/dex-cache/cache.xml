@@ -5,8 +5,113 @@
         jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\com.edmodo\cropper\1.0.1\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="6ad63cdde0c0e73fc2b946b3412c551e9cac290a">
+        sha1="5e172d582d405e8b54dab2fa40169129f62726a4">
         <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\classes-056c02b68e862af2ae65fc4f94cb8c3481fadfdd.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\YehuiEasemob\base-frame-work\unspecified\jars\libs\ormlite-android-4.48.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="afa06f539a4026c10b247386312aa67404b80a16">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\ormlite-android-4.48-b43c2a4d635c315fe1d853070984d5fcdf911f8b.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="f8efd0096475e0daf054267b61544e10dc776503">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\classes-dc96ae523cec9de6bcf726771efe5303c2ab0bde.jar" />
+    </item>
+    <item
+        jar="C:\Users\Luhao\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.3\5fc52c41ef0239d1093a1eb7c3697036183677ce\gson-2.3.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="5fc52c41ef0239d1093a1eb7c3697036183677ce">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\gson-2.3-63aa0245a59af08d2e1666a89c0b154e5c8a536e.jar" />
+    </item>
+    <item
+        jar="C:\Users\Luhao\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.4.0\5b72bf48563ea8410e650de14aa33ff69a3e8c35\okio-1.4.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="5b72bf48563ea8410e650de14aa33ff69a3e8c35">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\okio-1.4.0-889086bde074baf11ee494b2a5c2448617f22740.jar" />
+    </item>
+    <item
+        jar="C:\Users\Luhao\.gradle\caches\modules-2\files-2.1\de.greenrobot\eventbus\2.4.0\ddd166d01b3158d1c00576d29f7ed15c030df719\eventbus-2.4.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="ddd166d01b3158d1c00576d29f7ed15c030df719">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\eventbus-2.4.0-0a22a4c2a6211cd8fd665510ce41977ba4b4aef1.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\libs\internal_impl-22.2.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\internal_impl-22.2.1-32ae7b77b2e7f5efe485f27b1ff240b68a1590e5.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\classes-3e5ec4dc98431f36211de48234a2ecbf8b638ff6.jar" />
+    </item>
+    <item
+        jar="E:\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.1\support-annotations-22.2.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\support-annotations-22.2.1-abdea0359f0e05be7d478ed15f4e04968fbe785d.jar" />
+    </item>
+    <item
+        jar="C:\Users\Luhao\.gradle\caches\modules-2\files-2.1\com.nostra13.universalimageloader\universal-image-loader\1.9.4\dd9eeb557650c4ad7394df23f0f5cf27a7cfc697\universal-image-loader-1.9.4.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="dd9eeb557650c4ad7394df23f0f5cf27a7cfc697">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\universal-image-loader-1.9.4-2e0146caad74c7058eeea8ba7459f40f5197410c.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\YehuiEasemob\base-frame-work\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="04cc5a9af8b5355300867e8aa37054ec3969134d">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\classes-a5876916907861f26bc4e55c900031eaa1859932.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\YehuiEasemob\base-frame-work\unspecified\jars\libs\ormlite-core-4.48.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="e579bd2905d0399af5029aaaf9817d5fa0ca88a5">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\ormlite-core-4.48-557327d9697fb292886264c0fc4cace595f46f9a.jar" />
+    </item>
+    <item
+        jar="C:\Users\Luhao\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp\okhttp\2.4.0\40340c0748190fe897baf7bffbc1b282734294e5\okhttp-2.4.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="40340c0748190fe897baf7bffbc1b282734294e5">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\okhttp-2.4.0-3e4291dc29b48b88431060c4e2312a08c5bf84aa.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\YehuiEasemob\app\libs\easemobchat_2.2.6.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="6cec5fd2dd2e1804a9c54ddedbb848d855b0ea61">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\easemobchat_2.2.6-978e1f6ef4b17ea6ab27ec50f554d9c684687b9c.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\22.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="3abb4b88f5a8a0584a9b01d3170d7165f12f8588">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\classes-c03285a4e7ae9f1dd0a61bd364935cca0d7131cc.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\in.srain.cube\ultra-ptr\1.0.7\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="e693fc7ab1f9383eec91f1b75604b4e263946652">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\classes-119d3f0e3acef5dd45dc87343bf74cde293cdf54.jar" />
     </item>
 
 </items>

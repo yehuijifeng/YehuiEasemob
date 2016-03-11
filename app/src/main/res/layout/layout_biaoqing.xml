@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/biaoqing_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:id="@+id/biaoqing_layout"
     android:orientation="vertical"
     android:visibility="gone">
 
@@ -14,26 +14,105 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="wrap_content"
+            android:id="@+id/ee_1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
             android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
             android:src="@drawable/ee_1" />
 
         <ImageView
-            android:layout_width="wrap_content"
+            android:id="@+id/ee_2"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
             android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
             android:src="@drawable/ee_2" />
 
         <ImageView
-            android:layout_width="wrap_content"
+            android:id="@+id/ee_3"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
             android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
             android:src="@drawable/ee_3" />
 
+        <ImageView
+            android:id="@+id/ee_4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_4" />
+
+        <ImageView
+            android:id="@+id/ee_5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_5" />
+
+        <ImageView
+            android:id="@+id/ee_6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_6" />
+
+        <ImageView
+            android:id="@+id/ee_7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_7" />
+
+        <ImageView
+            android:id="@+id/ee_8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_8" />
+
+        <ImageView
+            android:id="@+id/ee_9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_9" />
+
+
     </LinearLayout>
 
     <LinearLayout
@@ -42,6 +121,96 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_1" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_2" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_3" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_4" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_5" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_6" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_7" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_8" />
+
+        <ImageView
+            android:id="@+id/ee_del"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/bg_biaoqing_delete" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -50,6 +219,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal">
+
 
     </LinearLayout>
 

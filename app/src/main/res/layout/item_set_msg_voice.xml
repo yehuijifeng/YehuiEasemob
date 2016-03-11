@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/get_msg_image"
+    <com.yehui.utils.view.CircularImageView
+        android:id="@+id/set_msg_image"
         android:layout_width="@dimen/default_msg_height_and_width"
         android:layout_height="@dimen/default_msg_height_and_width"
         android:layout_alignParentEnd="true"
@@ -14,40 +14,50 @@
         android:src="@drawable/ease_default_avatar" />
 
     <ImageView
-        android:id="@+id/get_msg_text"
+        android:id="@+id/set_msg_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/get_msg_image"
-        android:layout_toStartOf="@+id/get_msg_image"
+        android:layout_toLeftOf="@+id/set_msg_image"
+        android:layout_toStartOf="@+id/set_msg_image"
         android:background="@drawable/bg_get_msg_text"
-        android:src="@drawable/bg_set_msg_voice"/>
+        android:src="@drawable/bg_set_msg_voice" />
+
     <ImageView
         android:id="@+id/msg_voice_is_open"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ease_unread_count_bg"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/msg_voice_length"
-        android:layout_toStartOf="@+id/msg_voice_length" />
+        android:layout_toStartOf="@+id/msg_voice_length"
+        android:src="@drawable/ease_unread_count_bg" />
 
     <TextView
         android:id="@+id/msg_voice_length"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/small_padding_and_margin"
-        android:text="0"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/get_msg_text"
-        android:layout_toStartOf="@+id/get_msg_text" />
+        android:layout_toLeftOf="@+id/set_msg_text"
+        android:layout_toStartOf="@+id/set_msg_text"
+        android:padding="@dimen/small_padding_and_margin"
+        android:text="0" />
 
     <ImageView
         android:id="@+id/msg_status_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ease_msg_state_fail_resend_pressed"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/msg_voice_is_open"
-        android:layout_toStartOf="@+id/msg_voice_is_open" />
+        android:layout_toStartOf="@+id/msg_voice_is_open"
+        android:src="@drawable/ease_msg_state_fail_resend_pressed" />
+
+    <ProgressBar
+        android:id="@+id/msg_progress_bar"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/msg_status_img"
+        android:layout_toStartOf="@+id/msg_status_img" />
 
 </RelativeLayout>

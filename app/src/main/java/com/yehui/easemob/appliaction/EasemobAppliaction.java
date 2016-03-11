@@ -1,6 +1,7 @@
 package com.yehui.easemob.appliaction;
 
 import com.yehui.easemob.bean.UserInfoBean;
+import com.yehui.easemob.contants.BiaoqingMap;
 import com.yehui.easemob.helper.ServerStatusHelper;
 import com.yehui.utils.application.YehuiApplication;
 
@@ -22,7 +23,10 @@ public class EasemobAppliaction extends YehuiApplication {
         ServerStatusHelper.getInstance().initEasemob(this);
         //打印日志，调试模式开启，正式打包关闭
         ServerStatusHelper.getInstance().setDebugMode(true);
-        ServerStatusHelper.getInstance().getConnectionStatus();//监听环信服务器状态
+        //监听环信服务器状态
+        ServerStatusHelper.getInstance().getConnectionStatus();
+        //初始化表情包
+        BiaoqingMap.getInstance().initMap();
     }
 
 

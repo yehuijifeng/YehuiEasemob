@@ -1,13 +1,16 @@
 package com.yehui.easemob.fragment;
 
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import com.yehui.easemob.R;
+import com.yehui.easemob.activity.MessageActivity;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.FriendBean;
 import com.yehui.easemob.contants.EasemobContant;
+import com.yehui.easemob.contants.MapContant;
 import com.yehui.easemob.fragment.base.EasemobListFragment;
 import com.yehui.easemob.helper.FriendStatushelper;
 import com.yehui.utils.adapter.base.BaseViewHolder;
@@ -119,7 +122,9 @@ public class FriendFragment extends EasemobListFragment {
     @Override
     protected void onItemClick(RecyclerView parent, View itemView, int position) {
         //跳转聊天页面
-        showShortToast("第" + position + "行");
+        Bundle bundle = new Bundle();
+        bundle.putString(MapContant.MESSAGE_USER_NAME, data.get(position).toString());
+        startActivity(MessageActivity.class,bundle);
     }
 
     @Override

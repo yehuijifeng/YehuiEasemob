@@ -14,4 +14,27 @@
         android:padding="@dimen/small_padding_and_margin"
         android:text="00:00"
         android:textColor="@color/white" />
+
+    <RelativeLayout
+        android:id="@+id/load_more_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/msg_progress_bar"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/load_more_text"
+            android:layout_toStartOf="@+id/load_more_text" />
+
+        <TextView
+            android:id="@+id/load_more_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:text="点击加载更多" />
+    </RelativeLayout>
 </LinearLayout>

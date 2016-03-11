@@ -81,6 +81,8 @@ public class ServerStatusHelper implements ServerStatusInterfaces {
         EMChatOptions options = EMChatManager.getInstance().getChatOptions();
         // 默认添加好友时，是不需要验证的，改成需要验证
         options.setAcceptInvitationAlways(false);
+        //建议初始化sdk的时候设置成每个会话默认load一条消息，节省加载会话的时间
+        options.setNumberOfMessagesLoaded(1);
 
     }
 

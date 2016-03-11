@@ -28,7 +28,6 @@ public abstract class BaseAdapter<T> extends UltimateViewAdapter<BaseViewHolder>
 
     /**
      * 绑定viewholder
-     *
      * @param holder   ，viewholder
      * @param position 标识
      */

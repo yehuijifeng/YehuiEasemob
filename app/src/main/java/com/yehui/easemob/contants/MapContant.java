@@ -14,7 +14,7 @@ public class MapContant {
     public static final String USER_AUTOMSTIC_LOGIN_PWD = "user_automstic_login_pwd";//用户自动登录的密码
     public static final String USER_LOGIN_REGISTER_BUNDLE = "user_login_register_bundle";//携带用户注册后信息的bundle
     public static final String IS_OUT_LOGIN = "is_out_login";//是否是退出登录操作
-
+    public static final String MESSAGE_USER_NAME= "message_user_name";//需要聊天的用户name
 
 
 }

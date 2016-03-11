@@ -1,5 +1,7 @@
 package com.yehui.easemob.bean;
 
+import com.easemob.chat.EMMessage;
+
 /**
  * Created by Luhao on 2016/3/8.
  */
@@ -10,6 +12,24 @@ public class GetMessageBean {
     private boolean isSend;
     private String userName;
     private String content;
+    private int backStatus;//0,正在发送，-1，发送失败，1成功
+    private EMMessage emMessage;
+
+    public EMMessage getEmMessage() {
+        return emMessage;
+    }
+
+    public void setEmMessage(EMMessage emMessage) {
+        this.emMessage = emMessage;
+    }
+
+    public int getBackStatus() {
+        return backStatus;
+    }
+
+    public void setBackStatus(int backStatus) {
+        this.backStatus = backStatus;
+    }
 
     public String getContent() {
         return content;

@@ -52,7 +52,7 @@ public abstract class EasemobActivity extends BaseActivity {
 
     }
 
-    protected void getMessageStatus(GetMessageBean getMessageBean){
+    protected void getMessageStatus(GetMessageBean getMessageBean) {
         switch (getMessageBean.getGetMsgCode()) {
             case MessageContant.getMsgByText:
 
@@ -67,6 +67,7 @@ public abstract class EasemobActivity extends BaseActivity {
                 break;
         }
     }
+
     /**
      * 服务器状态回调
      *
@@ -110,7 +111,7 @@ public abstract class EasemobActivity extends BaseActivity {
                         FriendStatushelper.getInstance().refuseFriendRequests(friendBean.getFriendName());
                     }
                 });
-            break;
+                break;
         }
     }
 

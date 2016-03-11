@@ -88,24 +88,28 @@ public class GetMessageHelper implements GetMessageInterfaces {
         getMessageBean.setGetMsgCode(MessageContant.getMsgByText);
         getMessageBean.setUserName(username);
         getMessageBean.setContent(content);
+        getMessageBean.setEmMessage(message);
         //发送消息
         EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
             @Override
             public void onSuccess() {
-                getMessageBean.setSend(true);
+                getMessageBean.setBackStatus(1);
                 eventBus.post(getMessageBean);
             }
 
             @Override
             public void onError(int i, String s) {
-
+                getMessageBean.setGetMsgErrorInt(i);
+                getMessageBean.setGetMsgErrorStr(s);
+                getMessageBean.setBackStatus(-1);
+                eventBus.post(getMessageBean);
             }
 
             @Override
             public void onProgress(int i, String s) {
                 getMessageBean.setGetMsgErrorInt(i);
                 getMessageBean.setGetMsgErrorStr(s);
-                getMessageBean.setSend(false);
+                getMessageBean.setBackStatus(0);
                 eventBus.post(getMessageBean);
             }
         });
@@ -134,23 +138,27 @@ public class GetMessageHelper implements GetMessageInterfaces {
         getMessageBean.setGetMsgCode(MessageContant.getMsgByVoice);
         getMessageBean.setUserName(username);
         getMessageBean.setContent(filePath);
+        getMessageBean.setEmMessage(message);
         EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
             @Override
             public void onSuccess() {
-                getMessageBean.setSend(true);
+                getMessageBean.setBackStatus(1);
                 eventBus.post(getMessageBean);
             }
 
             @Override
             public void onError(int i, String s) {
-
+                getMessageBean.setGetMsgErrorInt(i);
+                getMessageBean.setGetMsgErrorStr(s);
+                getMessageBean.setBackStatus(-1);
+                eventBus.post(getMessageBean);
             }
 
             @Override
             public void onProgress(int i, String s) {
                 getMessageBean.setGetMsgErrorInt(i);
                 getMessageBean.setGetMsgErrorStr(s);
-                getMessageBean.setSend(false);
+                getMessageBean.setBackStatus(0);
                 eventBus.post(getMessageBean);
             }
         });
@@ -180,23 +188,27 @@ public class GetMessageHelper implements GetMessageInterfaces {
         getMessageBean.setGetMsgCode(MessageContant.getMsgByImage);
         getMessageBean.setUserName(username);
         getMessageBean.setContent(filePath);
+        getMessageBean.setEmMessage(message);
         EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
             @Override
             public void onSuccess() {
-                getMessageBean.setSend(true);
+                getMessageBean.setBackStatus(1);
                 eventBus.post(getMessageBean);
             }
 
             @Override
             public void onError(int i, String s) {
-
+                getMessageBean.setGetMsgErrorInt(i);
+                getMessageBean.setGetMsgErrorStr(s);
+                getMessageBean.setBackStatus(-1);
+                eventBus.post(getMessageBean);
             }
 
             @Override
             public void onProgress(int i, String s) {
                 getMessageBean.setGetMsgErrorInt(i);
                 getMessageBean.setGetMsgErrorStr(s);
-                getMessageBean.setSend(false);
+                getMessageBean.setBackStatus(0);
                 eventBus.post(getMessageBean);
             }
         });
@@ -225,23 +237,27 @@ public class GetMessageHelper implements GetMessageInterfaces {
         getMessageBean.setGetMsgCode(MessageContant.getMsgByLocation);
         getMessageBean.setUserName(username);
         getMessageBean.setContent(locationAddress);
+        getMessageBean.setEmMessage(message);
         EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
             @Override
             public void onSuccess() {
-                getMessageBean.setSend(true);
+                getMessageBean.setBackStatus(1);
                 eventBus.post(getMessageBean);
             }
 
             @Override
             public void onError(int i, String s) {
-
+                getMessageBean.setGetMsgErrorInt(i);
+                getMessageBean.setGetMsgErrorStr(s);
+                getMessageBean.setBackStatus(-1);
+                eventBus.post(getMessageBean);
             }
 
             @Override
             public void onProgress(int i, String s) {
                 getMessageBean.setGetMsgErrorInt(i);
                 getMessageBean.setGetMsgErrorStr(s);
-                getMessageBean.setSend(false);
+                getMessageBean.setBackStatus(0);
                 eventBus.post(getMessageBean);
             }
         });
@@ -259,8 +275,8 @@ public class GetMessageHelper implements GetMessageInterfaces {
         // 创建一个文件消息
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.FILE);
         // 如果是群聊，设置chattype,默认是单聊
-        //if (chatType == TTYPE_GROUP)
-        //  message.setChatType(EMMessage.ChatType.GroupChat);
+//        if (chatType == TTYPE_GROUP)
+//          message.setChatType(EMMessage.ChatType.GroupChat);
 
         //设置接收人的username
         message.setReceipt(username);
@@ -273,23 +289,27 @@ public class GetMessageHelper implements GetMessageInterfaces {
         getMessageBean.setGetMsgCode(MessageContant.getMsgByFile);
         getMessageBean.setUserName(username);
         getMessageBean.setContent(filePath);
+        getMessageBean.setEmMessage(message);
         EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
             @Override
             public void onSuccess() {
-                getMessageBean.setSend(true);
+                getMessageBean.setBackStatus(1);
                 eventBus.post(getMessageBean);
             }
 
             @Override
             public void onError(int i, String s) {
-
+                getMessageBean.setGetMsgErrorInt(i);
+                getMessageBean.setGetMsgErrorStr(s);
+                getMessageBean.setBackStatus(-1);
+                eventBus.post(getMessageBean);
             }
 
             @Override
             public void onProgress(int i, String s) {
                 getMessageBean.setGetMsgErrorInt(i);
                 getMessageBean.setGetMsgErrorStr(s);
-                getMessageBean.setSend(false);
+                getMessageBean.setBackStatus(0);
                 eventBus.post(getMessageBean);
             }
         });
@@ -357,15 +377,14 @@ public class GetMessageHelper implements GetMessageInterfaces {
      */
     @Override
     public List<EMMessage> getEMMessageList(String usernameOrGroupid) {
-        EMConversation conversation = EMChatManager.getInstance().getConversation(usernameOrGroupid);
-        //获取此会话的所有消息
-        List<EMMessage> messages = conversation.getAllMessages();
-        //sdk初始化加载的聊天记录为20条，到顶时需要去db里获取更多
-        //获取startMsgId之前的pagesize条消息，此方法获取的messages sdk会自动存入到此会话中，app中无需再次把获取到的messages添加到会话中
-        //List<EMMessage> messages = conversation.loadMoreMsgFromDB(startMsgId, pagesize);
-        //如果是群聊，调用下面此方法
-        //List<EMMessage> messages = conversation.loadMoreGroupMsgFromDB(startMsgId, pagesize);
-        return messages;
+        try {
+            EMConversation conversation = EMChatManager.getInstance().getConversation(usernameOrGroupid);
+            //获取此会话的所有消息
+            List<EMMessage> messages = conversation.getAllMessages();
+            return messages;
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     /**
@@ -374,8 +393,6 @@ public class GetMessageHelper implements GetMessageInterfaces {
     @Override
     public List<EMMessage> getEMMessageList(String usernameOrGroupid, String startMsgId, int pagesize) {
         EMConversation conversation = EMChatManager.getInstance().getConversation(usernameOrGroupid);
-        //获取此会话的所有消息
-        //List<EMMessage> messages = conversation.getAllMessages();
         //sdk初始化加载的聊天记录为20条，到顶时需要去db里获取更多
         //获取startMsgId之前的pagesize条消息，此方法获取的messages sdk会自动存入到此会话中，app中无需再次把获取到的messages添加到会话中
         List<EMMessage> messages = conversation.loadMoreMsgFromDB(startMsgId, pagesize);
@@ -386,7 +403,6 @@ public class GetMessageHelper implements GetMessageInterfaces {
 
     /**
      * 获取未读消息数量
-     *
      * @param usernameOrGroupid 用户名名和群id
      */
     @Override
@@ -397,7 +413,6 @@ public class GetMessageHelper implements GetMessageInterfaces {
 
     /**
      * 获取消息总数
-     *
      * @param usernameOrGroupid 用户名名和群id
      */
     @Override

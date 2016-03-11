@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/get_msg_image"
+    <com.yehui.utils.view.CircularImageView
+        android:id="@+id/set_msg_image"
         android:layout_width="@dimen/default_msg_height_and_width"
         android:layout_height="@dimen/default_msg_height_and_width"
         android:layout_alignParentEnd="true"
@@ -14,22 +14,31 @@
         android:src="@drawable/ease_default_avatar" />
 
     <TextView
-        android:id="@+id/get_msg_text"
+        android:id="@+id/set_msg_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/get_msg_image"
-        android:layout_toStartOf="@+id/get_msg_image"
-        android:background="@drawable/bg_get_msg_text"
-        android:text="" />
+        android:layout_toLeftOf="@+id/set_msg_image"
+        android:layout_toStartOf="@+id/set_msg_image"
+        android:background="@drawable/bg_get_msg_text" />
+
+    <ProgressBar
+        android:id="@+id/msg_progress_bar"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/set_msg_text"
+        android:layout_toStartOf="@+id/set_msg_text"
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/msg_status_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ease_msg_state_fail_resend_pressed"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/get_msg_text"
-        android:layout_toStartOf="@+id/get_msg_text" />
+        android:layout_toLeftOf="@+id/msg_progress_bar"
+        android:layout_toStartOf="@+id/msg_progress_bar"
+        android:src="@drawable/ease_msg_state_fail_resend_pressed" />
 
 </RelativeLayout>
