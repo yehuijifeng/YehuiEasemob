@@ -83,7 +83,6 @@ public class ServerStatusHelper implements ServerStatusInterfaces {
         options.setAcceptInvitationAlways(false);
         //建议初始化sdk的时候设置成每个会话默认load一条消息，节省加载会话的时间
         options.setNumberOfMessagesLoaded(1);
-
     }
 
     /**
@@ -123,6 +122,15 @@ public class ServerStatusHelper implements ServerStatusInterfaces {
      */
     public void setDebugMode(boolean bl) {
         EMChat.getInstance().setDebugMode(bl);//在做打包混淆时，要关闭debug模式，避免消耗不必要的资源
+    }
+
+    /**
+     * 是否登录成功过
+     *
+     * @return
+     */
+    public boolean isLoggedIn() {
+        return EMChat.getInstance().isLoggedIn();
     }
 
     /**
@@ -297,6 +305,10 @@ public class ServerStatusHelper implements ServerStatusInterfaces {
 
     /**
      * 登出
+     * false unbindDeviceToken
+     * 是否解绑设备token(使用GCM才有)
+     * callback
+     * callback回调状态
      */
     @Override
     public void outlogin(final Activity activity) {
@@ -307,7 +319,7 @@ public class ServerStatusHelper implements ServerStatusInterfaces {
             @Override
             public void run() {
                 /**此方法为异步方法*/
-                EMChatManager.getInstance().logout(new EMCallBack() {
+                EMChatManager.getInstance().logout(false, new EMCallBack() {
                     @Override
                     public void onSuccess() {
                         serverBean.setOperation(true);

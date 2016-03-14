@@ -25,6 +25,8 @@ public class EasemobAppliaction extends YehuiApplication {
         ServerStatusHelper.getInstance().setDebugMode(true);
         //监听环信服务器状态
         ServerStatusHelper.getInstance().getConnectionStatus();
+        //新消息回执
+        //ReceiveMessageHelper.getInstance().allEvent();
         //初始化表情包
         BiaoqingMap.getInstance().initMap();
     }

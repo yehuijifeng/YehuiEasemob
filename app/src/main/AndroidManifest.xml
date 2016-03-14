@@ -46,6 +46,7 @@
         <meta-data
             android:name="EASEMOB_APPKEY"
             android:value="alsfoxs#jionggou" />
+
         <!-- 声明sdk所需的service SDK核心功能-->
         <service android:name="com.easemob.chat.EMChatService" />
 
@@ -90,7 +91,7 @@
         <activity
             android:name=".activity.MessageActivity"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
 
         </activity>
     </application>

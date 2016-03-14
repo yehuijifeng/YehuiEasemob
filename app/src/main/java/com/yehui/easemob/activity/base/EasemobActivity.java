@@ -7,11 +7,10 @@ import com.yehui.easemob.activity.HomeActivity;
 import com.yehui.easemob.activity.LoginActivity;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.FriendBean;
-import com.yehui.easemob.bean.GetMessageBean;
+import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.bean.ServerBean;
 import com.yehui.easemob.contants.EasemobContant;
 import com.yehui.easemob.contants.MapContant;
-import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.helper.FriendStatushelper;
 import com.yehui.easemob.helper.ServerStatusHelper;
 import com.yehui.utils.activity.base.BaseActivity;
@@ -27,10 +26,20 @@ public abstract class EasemobActivity extends BaseActivity {
     private LoadingDialog loadingDialog;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+
+    @Override
     protected void initData() {
         promptDialog = new PromptDialog(this);
         loadingDialog = new LoadingDialog(this);
-
     }
 
     /**
@@ -45,27 +54,14 @@ public abstract class EasemobActivity extends BaseActivity {
     /**
      * 判断消息是否发送成功
      *
-     * @param getMessageBean
+     * @param messageBean
      */
-    public void onEventMainThread(GetMessageBean getMessageBean) {
-        getMessageStatus(getMessageBean);
+    public void onEventMainThread(MessageBean messageBean) {
+        getMessageStatus(messageBean);
 
     }
 
-    protected void getMessageStatus(GetMessageBean getMessageBean) {
-        switch (getMessageBean.getGetMsgCode()) {
-            case MessageContant.getMsgByText:
-
-                break;
-            case MessageContant.getMsgByVoice://语音
-                break;
-            case MessageContant.getMsgByImage://图片
-                break;
-            case MessageContant.getMsgByLocation://地理位置
-                break;
-            case MessageContant.getMsgByFile://文件
-                break;
-        }
+    protected void getMessageStatus(MessageBean messageBean) {
     }
 
     /**

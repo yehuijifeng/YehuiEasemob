@@ -18,6 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:gravity="center_vertical"
         android:layout_toLeftOf="@+id/set_msg_image"
         android:layout_toStartOf="@+id/set_msg_image"
         android:background="@drawable/bg_get_msg_text" />
