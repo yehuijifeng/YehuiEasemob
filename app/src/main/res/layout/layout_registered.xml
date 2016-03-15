@@ -13,10 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_padding_and_margin"
-        android:digits="1234567890"
+        android:digits="0123456789zxcvbnmasdfghjklqwertyuiop"
         android:drawableLeft="@drawable/ic_user_login_username"
-        android:hint="账号：六个汉字内"
-        android:maxLength="10" />
+        android:hint="账号：允许输入英文和数字"
+        android:maxLength="16" />
 
     <EditText
         android:id="@+id/user_register_pwd_edit"
@@ -50,9 +50,9 @@
 
     <Spinner
         android:id="@+id/pwd_issue_spinner"
+        style="@style/default_editview_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/default_editview_style"
         android:layout_margin="@dimen/default_padding_and_margin" />
 
     <EditText

@@ -15,9 +15,12 @@ import com.yehui.easemob.bean.UserInfoBean;
 import com.yehui.easemob.contants.MapContant;
 import com.yehui.easemob.db.UserInfoDao;
 import com.yehui.easemob.fragment.base.EasemobListFragment;
+import com.yehui.easemob.helper.ReceiveMessageHelper;
 import com.yehui.easemob.helper.SendMessageHelper;
+import com.yehui.easemob.utils.DateUtil;
 import com.yehui.utils.adapter.base.BaseViewHolder;
 import com.yehui.utils.view.CircularImageView;
+import com.yehui.utils.view.dialog.PromptDialog;
 import com.yehui.utils.view.titleview.MyTitleView;
 
 /**
@@ -30,6 +33,7 @@ public class MessageFragment extends EasemobListFragment {
     private MyTitleView titleView;
     private UserInfoBean userInfoBean;
     private UserInfoDao userInfoDao;
+    private PromptDialog promptDialog;//提示框
 
     @Override
     protected void initView(View parentView) {
@@ -37,44 +41,64 @@ public class MessageFragment extends EasemobListFragment {
         titleView = (MyTitleView) parentView.findViewById(R.id.my_title_view);
         titleView.setTitleText("消息");
         titleView.setTitleMode(MyTitleView.TitleMode.NO_BACK_IMAGE);
+        titleView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //清楚所有未读消息
+                promptDialog.showPromptDialog("确定清除所有未读消息？", new PromptDialog.PromptOnClickListener() {
+                    @Override
+                    public void onDetermine() {
+                        ReceiveMessageHelper.getInstance().markAllConversationsAsRead();
+                        reLoad();
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+            }
+        });
+        promptDialog = new PromptDialog(parentActivity);
     }
 
     @Override
     protected void initData() {
         super.initData();
-        clearAll();
         loadingView();
-        addAll(SendMessageHelper.getInstance().loadConversationList());
-        loadingSuccess();
-        notifyDataChange();
-        if (data == null || data.size() == 0)
-            loadingEmpty("暂无消息");
+        loadData();
         userInfoDao = new UserInfoDao(parentActivity);
         userInfoBean = (UserInfoBean) userInfoDao.queryByWhere(MapContant.USER_NAME, EasemobAppliaction.user.getUserName()).get(0);
 
     }
 
-    @Override
-    protected void refresh() {
-        super.refresh();
-        //loadingView();
+    private void loadData() {
         clearAll();
         addAll(SendMessageHelper.getInstance().loadConversationList());
-        refreshSuccess();
         notifyDataChange();
+        loadingSuccess();
         if (data == null || data.size() == 0)
             loadingEmpty("暂无消息");
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        loadingView();
+        loadData();
+    }
+
+    @Override
+    protected void refresh() {
+        super.refresh();
+        loadData();
+        refreshSuccess();
+    }
+
+    @Override
     protected void reLoad() {
         super.reLoad();
-        loadingView();
-        clearAll();
-        addAll(SendMessageHelper.getInstance().loadConversationList());
-        refreshSuccess();
-        if (data == null || data.size() == 0)
-            loadingEmpty("暂无消息");
+        loadData();
     }
 
     @Override
@@ -89,8 +113,13 @@ public class MessageFragment extends EasemobListFragment {
         MessageViewHolder messageViewHolder = (MessageViewHolder) holder;
         imageLoader.displayImage("", messageViewHolder.user_icon_img, EasemobAppliaction.roundOptions);
         messageViewHolder.user_name_text.setText(emMessage.getUserName());
-        messageViewHolder.message_number_text.setText(emConversation.getMsgCount() + "");
-        messageViewHolder.message_time_text.setText(emMessage.getMsgTime() + "");
+        messageViewHolder.message_time_text.setText(DateUtil.stampToTime(emMessage.getMsgTime()));
+        if (emConversation.getUnreadMsgCount() == 0)
+            messageViewHolder.message_number_text.setVisibility(View.GONE);
+        else if (emConversation.getUnreadMsgCount() >= 100)
+            messageViewHolder.message_number_text.setText("99+");
+        else
+            messageViewHolder.message_number_text.setText(emConversation.getUnreadMsgCount() + "");
         getMsgType(emMessage, messageViewHolder.user_message_text);
     }
 
@@ -123,6 +152,7 @@ public class MessageFragment extends EasemobListFragment {
         //指定的QQ号只需要修改uin后的值即可。
         //String url = "mqqwpa://im/chat?chat_type=wpa&uin=928186846";
         //startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+
         EMConversation emConversation = (EMConversation) data.get(position);
         EMMessage emMessage = emConversation.getLastMessage();
         Bundle bundle = new Bundle();

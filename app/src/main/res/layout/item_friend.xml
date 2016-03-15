@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_default_view"
     android:orientation="horizontal"
+    android:descendantFocusability="blocksDescendants"
     >
 
     <LinearLayout

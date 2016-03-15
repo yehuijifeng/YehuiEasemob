@@ -126,7 +126,8 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 biaoqing_layout.setVisibility(View.GONE);
             }
         });
-        setIsLoadMore(false);
+        setIsLoadMore(false);//禁止加载更多
+        setIsRefresh(false);//禁止下拉刷新
         loadingView();
         friendName = getString(MapContant.MESSAGE_USER_NAME, null);
         List<EMMessage> listAll = SendMessageHelper.getInstance().getEMMessageList(friendName);
@@ -142,6 +143,8 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
             }
             addAll(msgList);
             notifyDataChange();
+            //让控件显示最后一行数据
+            recyclerView.smoothScrollToPosition(data.size() - 1);
         }
         loadingClose();
     }
@@ -150,9 +153,9 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     protected void onResume() {
         super.onResume();
         //注册消息监听
-        EMChatManager.getInstance().registerEventListener(this,
-                new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewMessage, EMNotifierEvent.Event.EventOfflineMessage, EMNotifierEvent.Event.EventConversationListChanged});
-        //EMChatManager.getInstance().registerEventListener(this);
+        //EMChatManager.getInstance().registerEventListener(this,
+        //new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewMessage, EMNotifierEvent.Event.EventOfflineMessage, EMNotifierEvent.Event.EventConversationListChanged});
+        EMChatManager.getInstance().registerEventListener(this);
         if (data != null || data.size() > 0)
             notifyDataChange();
     }
@@ -184,7 +187,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
             List<EMMessage> messages = (List<EMMessage>) event.getData();
             messageBean.setGetMsgCode(MessageContant.receiveMsgByOffline);
             messageBean.setMessageList(messages);
-            //eventBus.post(messageBean);
             return;
         } else return;
         switch (event.getEvent()) {
@@ -210,7 +212,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 break;
             default:
                 messageBean.setEmMessage(message);
-                //eventBus.post(messageBean);
                 break;
         }
 
@@ -220,7 +221,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
      * 图文混排
      * 该方法获得的是资源原始大小
      */
-
     private void addImageByText(EditText editText, int drawableId, int imgId) {
         SpannableString spannableString = new SpannableString("[ee_" + imgId + "]");
         //获取Drawable资源
@@ -485,7 +485,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                             showShortToast("用户详情" + messageBean.getEmMessage().getUserName());
                         }
                     });
-                    text_msg_edit.setText("");
+                    //text_msg_edit.setText("");
                 } else {
                     receiveTextViewHolder = (ReceiveTextViewHolder) holder;
                     receiveTextViewHolder.get_msg_text.setText(textMessageBody.getMessage());
@@ -519,8 +519,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 }
             }
         }
-        //让控件显示最后一行数据
-        recyclerView.smoothScrollToPosition(data.size() - 1);
     }
 
     @Override
@@ -545,7 +543,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
 
     @Override
     protected void onItemClick(RecyclerView parent, View itemView, int position) {
-
+        return;
     }
 
     @Override
@@ -613,7 +611,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 break;
             case R.id.ee_1:
                 addImageByText(text_msg_edit, ee_1.getDrawable());
-                break;
             case R.id.ee_2:
                 addImageByText(text_msg_edit, BiaoqingMap.getInstance().getBiaoqingMap().get(BiaoqingMap.getInstance().ee_2), 2);
                 break;
