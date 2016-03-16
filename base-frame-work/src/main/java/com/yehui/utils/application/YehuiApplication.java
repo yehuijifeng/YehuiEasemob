@@ -35,7 +35,6 @@ import java.io.File;
  * GifView
  */
 public abstract class YehuiApplication extends Application {
-
     //日志统一管理
     public static final String TAG = "YehuiEasemob";
     //取得默认image的配置类
@@ -54,7 +53,6 @@ public abstract class YehuiApplication extends Application {
         FileContact.createLog();//存放日志
         FileContact.createCacheImage();//存放缓存图片
         FileContact.createSettigns();//存放设置信息
-
         /**
          * 初始化imageloader
          */

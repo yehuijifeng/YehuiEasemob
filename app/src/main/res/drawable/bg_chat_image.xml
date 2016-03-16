@@ -2,5 +2,6 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@drawable/ic_em_image_tow" android:state_pressed="true" />
     <item android:drawable="@drawable/ic_em_image_tow" android:state_selected="true" />
+    <item android:drawable="@drawable/ic_em_image_tow" android:state_focused="true" />
     <item android:drawable="@drawable/ic_em_image_one" />
 </selector>

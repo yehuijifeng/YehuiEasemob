@@ -133,18 +133,20 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         List<EMMessage> listAll = SendMessageHelper.getInstance().getEMMessageList(friendName);
         if (listAll != null && listAll.size() > 0) {
             List<EMMessage> listMsg = SendMessageHelper.getInstance().getEMMessageList(friendName, listAll.get(listAll.size() - 1).getMsgId(), pageSize);
-            msgList = new ArrayList<>();
-            for (EMMessage emMessage : listMsg) {
-                MessageBean messageBean = new MessageBean();
-                messageBean.setBackStatus(1);
-                messageBean.setEmMessage(emMessage);
-                messageBean.setUserName(emMessage.getUserName());
-                msgList.add(messageBean);
+            if (listMsg != null && listMsg.size() > 0) {
+                msgList = new ArrayList<>();
+                for (EMMessage emMessage : listMsg) {
+                    MessageBean messageBean = new MessageBean();
+                    messageBean.setBackStatus(1);
+                    messageBean.setEmMessage(emMessage);
+                    messageBean.setUserName(emMessage.getUserName());
+                    msgList.add(messageBean);
+                }
+                addAll(msgList);
+                notifyDataChange();
+                //让控件显示最后一行数据
+                recyclerView.smoothScrollToPosition(data.size() - 1);
             }
-            addAll(msgList);
-            notifyDataChange();
-            //让控件显示最后一行数据
-            recyclerView.smoothScrollToPosition(data.size() - 1);
         }
         loadingClose();
     }
@@ -236,22 +238,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         int en = editText.getSelectionEnd();
         e.replace(st, en, spannableString);
         //editText.setMovementMethod(LinkMovementMethod.getInstance()); //实现文本的滚动
-    }
-
-    /**
-     * 该方法直接获得显示图片的大小
-     *
-     * @param editText
-     * @param drawable
-     */
-    private void addImageByText(EditText editText, Drawable drawable) {
-        SpannableString spannableString = new SpannableString("[ee_biaoqing]");
-        ImageSpan imageSpan = new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE);//插入图
-        spannableString.setSpan(imageSpan, 0, spannableString.length(), SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
-        Editable e = editText.getText();
-        int st = editText.getSelectionStart();
-        int en = editText.getSelectionEnd();
-        e.replace(st, en, spannableString);
     }
 
     /**
@@ -542,11 +528,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     }
 
     @Override
-    protected void onItemClick(RecyclerView parent, View itemView, int position) {
-        return;
-    }
-
-    @Override
     protected void onLongItemClick(RecyclerView parent, View itemView, int position) {
 
     }
@@ -610,7 +591,8 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 biaoqing_layout.setVisibility(View.GONE);
                 break;
             case R.id.ee_1:
-                addImageByText(text_msg_edit, ee_1.getDrawable());
+                addImageByText(text_msg_edit, BiaoqingMap.getInstance().getBiaoqingMap().get(BiaoqingMap.getInstance().ee_1), 2);
+                break;
             case R.id.ee_2:
                 addImageByText(text_msg_edit, BiaoqingMap.getInstance().getBiaoqingMap().get(BiaoqingMap.getInstance().ee_2), 2);
                 break;

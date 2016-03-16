@@ -76,9 +76,14 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         
          */
         public static int AppBaseTheme=0x7f030000;
-        /**  All customizations that are NOT specific to a particular API-level can go here. 
+        /** 标题栏高度
+ toolbar（actionbar）颜色 
+ 状态栏颜色 
+ 底部导航栏颜色 
+<item name="navigationBarColor">#4876FF</item>
+ All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static int AppTheme=0x7f030001;
+        public static int AppThemes=0x7f030001;
     }
     public static final class styleable {
         /** Attributes that can be used with a CropImageView.

@@ -26,11 +26,12 @@ public class BiaoqingMap {
     }
 
     private static Map<String, Integer> biaoqingMap;
-    public static final String ee_1 = "[ee_1]";
-    public static final String ee_2 = "[ee_2]";
-    public static final String ee_3 = "[ee_3]";
-    public static final String ee_4 = "[ee_4]";
-    public static final String ee_5 = "[ee_5]";
+    private static final String ee = "[ee";
+    public static final String ee_1 = ee+"1]";
+    public static final String ee_2 = ee+"2]";
+    public static final String ee_3 = ee+"3]";
+    public static final String ee_4 = ee+"4]";
+    public static final String ee_5 = ee+"5]";
 
     public void initMap() {
         biaoqingMap = new HashMap<>();

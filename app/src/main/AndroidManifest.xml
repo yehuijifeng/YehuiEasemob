@@ -50,15 +50,21 @@
         <!-- 声明sdk所需的service SDK核心功能-->
         <service android:name="com.easemob.chat.EMChatService" />
 
-        <!--登陆页面-->
+        <!--加载页-->
         <activity
-            android:name=".activity.LoginActivity"
-            android:launchMode="singleTop">
+            android:name=".activity.LoadingActivity"
+            android:launchMode="singleTop"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+        </activity>
+        <!--登陆页面-->
+        <activity
+            android:name=".activity.LoginActivity"
+            android:launchMode="singleTop">
         </activity>
 
         <!--主页面-->

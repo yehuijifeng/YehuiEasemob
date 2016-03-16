@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">YehuiEasemob</string>
+    <string name="app_name">畅聊</string>
     <array name="pwd_issue_content">
         <item>你的出生年月是什么？</item>
         <item>你父亲的名字是什么？</item>

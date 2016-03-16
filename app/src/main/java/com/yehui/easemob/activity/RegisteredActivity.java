@@ -47,8 +47,6 @@ public class RegisteredActivity extends EasemobActivity {
     private UserInfoBean userInfoBean;
     private UserInfoDao userInfoDao;
 
-    private LoadingDialog loadingDialog;
-
     @Override
     protected void setContentView() {
         setContentView(R.layout.layout_registered);

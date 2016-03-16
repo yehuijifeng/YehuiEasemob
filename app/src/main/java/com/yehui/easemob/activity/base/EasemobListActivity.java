@@ -60,7 +60,7 @@ public abstract class EasemobListActivity extends EasemobActivity implements Swi
      * @param itemView
      * @param position
      */
-    protected abstract void onItemClick(RecyclerView parent, View itemView, int position);
+    protected void onItemClick(RecyclerView parent, View itemView, int position){}
     protected abstract void onLongItemClick(RecyclerView parent, View itemView, int position);
 
     /**

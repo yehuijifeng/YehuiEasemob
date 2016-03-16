@@ -99,7 +99,6 @@ public class LoginActivity extends EasemobActivity implements View.OnClickListen
     public void onEventMainThread(ServerBean serverBean) {
         if(serverBean.getStatusCode()== EasemobContant.userLogin){
             loadingDialog.dismissLoadingDialog();
-
             if(serverBean.isOperation()){
                 List<UserInfoBean> list = userInfoDao.queryByWhere(UserInfoContant.userName, serverBean.getUserInfoBean().getUserName());
                 if (list != null && list.size() != 0)

@@ -90,9 +90,8 @@ public class AppUtil {
             return packageInfo.versionName;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            return " ";
         }
-        return null;
     }
 
 

@@ -12,7 +12,7 @@ int id onTouch 0x7f060002
 int layout crop_image_view 0x7f020000
 int string app_name 0x7f050000
 int style AppBaseTheme 0x7f030000
-int style AppTheme 0x7f030001
+int style AppThemes 0x7f030001
 int[] styleable CropImageView { 0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003, 0x7f010004 }
 int styleable CropImageView_aspectRatioX 2
 int styleable CropImageView_aspectRatioY 3

@@ -22,8 +22,8 @@ import com.yehui.utils.view.dialog.PromptDialog;
  */
 public abstract class EasemobActivity extends BaseActivity {
 
-    private PromptDialog promptDialog;
-    private LoadingDialog loadingDialog;
+    protected PromptDialog promptDialog;
+    protected LoadingDialog loadingDialog;
 
     @Override
     protected void onResume() {
@@ -38,8 +38,8 @@ public abstract class EasemobActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        promptDialog = new PromptDialog(this);
-        loadingDialog = new LoadingDialog(this);
+        promptDialog = new PromptDialog(EasemobActivity.this);
+        loadingDialog = new LoadingDialog(EasemobActivity.this);
     }
 
     /**

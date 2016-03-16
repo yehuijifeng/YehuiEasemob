@@ -22,7 +22,9 @@
         android:gravity="center_vertical"
         android:layout_toLeftOf="@+id/set_msg_image"
         android:layout_toStartOf="@+id/set_msg_image"
-        android:background="@drawable/bg_get_msg_text" />
+        android:background="@drawable/bg_get_msg_text"
+        android:textSize="@dimen/default_x_text_size"
+        android:textColor="@color/black"/>
 
     <ProgressBar
         android:id="@+id/msg_progress_bar"
