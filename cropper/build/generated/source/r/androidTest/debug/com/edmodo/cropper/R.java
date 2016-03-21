@@ -32,7 +32,7 @@ public final class R {
 	}
 	public static final class style {
 		public static final int AppBaseTheme = 0x7f030000;
-		public static final int AppTheme = 0x7f030001;
+		public static final int AppThemes = 0x7f030001;
 	}
 	public static final class styleable {
 		public static final int[] CropImageView = { 0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003, 0x7f010004 };

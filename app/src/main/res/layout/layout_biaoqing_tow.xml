@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bq_view_tow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding_and_margin">
+
+        <ImageView
+            android:id="@+id/ee_29"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_29" />
+
+        <ImageView
+            android:id="@+id/ee_28"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_28" />
+
+       <!-- <ImageView
+            android:id="@+id/ee_2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_2" />
+
+        <ImageView
+            android:id="@+id/ee_1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_1" />-->
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding_and_margin">
+
+        <ImageView
+            android:id="@+id/ee_25"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_25" />
+
+       <!-- <ImageView
+            android:id="@+id/emoji_180"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/emoji_180" />-->
+
+        <!--<ImageView
+            android:id="@+id/ee_7"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_7" />
+
+        <ImageView
+            android:id="@+id/ee_8"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_8" />-->
+
+
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding_and_margin">
+
+        <ImageView
+            android:id="@+id/ee_26"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_26" />
+
+        <!--<ImageView
+            android:id="@+id/emoji_181"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/emoji_181" />
+
+        <ImageView
+            android:id="@+id/emoji_11"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_11" />
+
+        <ImageView
+            android:id="@+id/ee_12"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_12" />-->
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding_and_margin">
+
+        <ImageView
+            android:id="@+id/ee_27"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_27" />
+
+       <!-- <ImageView
+            android:id="@+id/ee_14"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_14" />
+
+        <ImageView
+            android:id="@+id/ee_15"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_15" />
+
+        <ImageView
+            android:id="@+id/ee_16"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_16" />-->
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding_and_margin">
+
+        <ImageView
+            android:id="@+id/ee_33"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_33" />
+
+      <!--  <ImageView
+            android:id="@+id/ee_18"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_18" />
+
+        <ImageView
+            android:id="@+id/ee_19"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_19" />
+
+        <ImageView
+            android:id="@+id/ee_20"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_20" />-->
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding_and_margin">
+
+        <ImageView
+            android:id="@+id/ee_34"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_34" />
+
+       <!-- <ImageView
+            android:id="@+id/ee_22"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_22" />
+
+        <ImageView
+            android:id="@+id/ee_23"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_23" />
+
+        <ImageView
+            android:id="@+id/ee_24"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_24" />-->
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding_and_margin">
+
+        <ImageView
+            android:id="@+id/ee_35"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_35" />
+
+       <!-- <ImageView
+            android:id="@+id/ee_26"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_26" />
+
+        <ImageView
+            android:id="@+id/ee_27"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/ee_27" />-->
+
+        <ImageView
+            android:id="@+id/ee_del"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/bg_default_view"
+            android:scaleType="fitXY"
+            android:src="@drawable/face_del_ico_dafeult" />
+    </LinearLayout>
+
+</LinearLayout>

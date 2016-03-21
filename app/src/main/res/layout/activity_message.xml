@@ -93,7 +93,7 @@
                     android:textSize="@dimen/default_xxx_text_size"
                     android:visibility="gone" />
 
-                <EditText
+                <com.yehui.easemob.view.EditTexts
                     android:id="@+id/text_msg_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -154,7 +154,14 @@
 
         <include layout="@layout/layout_function" />
 
-        <include layout="@layout/layout_biaoqing" />
+        <!--<include layout="@layout/layout_biaoqing" />-->
 
+        <com.yehui.easemob.view.BiaoqingView
+            android:id="@+id/biaoqing_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+        </com.yehui.easemob.view.BiaoqingView>
     </LinearLayout>
 </RelativeLayout>

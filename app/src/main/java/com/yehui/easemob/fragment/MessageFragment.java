@@ -17,6 +17,7 @@ import com.yehui.easemob.db.UserInfoDao;
 import com.yehui.easemob.fragment.base.EasemobListFragment;
 import com.yehui.easemob.helper.ReceiveMessageHelper;
 import com.yehui.easemob.helper.SendMessageHelper;
+import com.yehui.easemob.utils.BiaoqingUtil;
 import com.yehui.easemob.utils.DateUtil;
 import com.yehui.utils.adapter.base.BaseViewHolder;
 import com.yehui.utils.view.CircularImageView;
@@ -120,21 +121,22 @@ public class MessageFragment extends EasemobListFragment {
             messageViewHolder.message_number_text.setText("99+");
         else
             messageViewHolder.message_number_text.setText(emConversation.getUnreadMsgCount() + "");
-        getMsgType(emMessage, messageViewHolder.user_message_text);
+        getMsgType(emConversation, messageViewHolder.user_message_text);
     }
 
-    private void getMsgType(EMMessage emMessage, TextView textView) {
+    private void getMsgType(EMConversation emConversation, TextView textView) {
+        EMMessage emMessage = emConversation.getLastMessage();
         if (emMessage.getType() == EMMessage.Type.TXT) {
             TextMessageBody textMessageBody = (TextMessageBody) emMessage.getBody();
-            textView.setText(textMessageBody.getMessage());
+            textView.setText(BiaoqingUtil.getInstance().showBiaoqing(parentActivity,textMessageBody.getMessage()));
         } else if (emMessage.getType() == EMMessage.Type.VOICE) {
-            textView.setText("语音消息");
+            textView.setText(emMessage.getUserName()+"给您发来了"+emConversation.getUnreadMsgCount()+"条语音消息");
         } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
-            textView.setText("图片");
+            textView.setText(emMessage.getUserName()+"给您发来了"+emConversation.getUnreadMsgCount()+"张图片");
         } else if (emMessage.getType() == EMMessage.Type.FILE) {
-            textView.setText("文件");
+            textView.setText(emMessage.getUserName()+"给您发来了"+emConversation.getUnreadMsgCount()+"个文件");
         } else if (emMessage.getType() == EMMessage.Type.VIDEO) {
-            textView.setText("视频");
+            textView.setText(emMessage.getUserName()+"给您发来了"+emConversation.getUnreadMsgCount()+"个视频");
         } else if (emMessage.getType() == EMMessage.Type.LOCATION) {
             textView.setText("地理位置：我在这里");
         } else if (emMessage.getType() == EMMessage.Type.CMD) {

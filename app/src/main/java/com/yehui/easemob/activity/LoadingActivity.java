@@ -1,5 +1,6 @@
 package com.yehui.easemob.activity;
 
+import android.os.Handler;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ public class LoadingActivity extends EasemobActivity {
     private boolean isAutomaticLogin;
     private UserInfoBean userInfoBean;
     private UserInfoDao userInfoDao;
+
     @Override
     protected void setContentView() {
         setContentView(R.layout.activity_loading);
@@ -62,31 +64,39 @@ public class LoadingActivity extends EasemobActivity {
         }
     }
 
+    private Handler handler = new Handler();
+
     /**
      * 登录回调
      *
      * @param serverBean
      */
-    public void onEventMainThread(ServerBean serverBean) {
-        if (serverBean.getStatusCode() == EasemobContant.userLogin) {
-            if (serverBean.isOperation()) {
-                List<UserInfoBean> list = userInfoDao.queryByWhere(UserInfoContant.userName, serverBean.getUserInfoBean().getUserName());
-                if (list != null && list.size() != 0)
-                    userInfoBean = list.get(0);
-                userInfoBean.setUserName(serverBean.getUserInfoBean().getUserName());
-                userInfoBean.setUserPwd(serverBean.getUserInfoBean().getUserPwd());
-                if (list == null || list.size() == 0)
-                    userInfoDao.addData(userInfoBean);
-                else
-                    userInfoDao.updateData(userInfoBean);
-                EasemobAppliaction.user = userInfoBean;
-                FriendStatushelper.getInstance().getFriendStatus();//初始化好友体系
-                EMChat.getInstance().setAppInited();//告诉环信，ui已经初始化好了
-                startActivity(HomeActivity.class);
-                finish();
-            } else {
-                showLongToast(serverBean.getStatusMsg());
+    public void onEventMainThread(final ServerBean serverBean) {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (serverBean.getStatusCode() == EasemobContant.userLogin) {
+                    if (serverBean.isOperation()) {
+                        List<UserInfoBean> list = userInfoDao.queryByWhere(UserInfoContant.userName, serverBean.getUserInfoBean().getUserName());
+                        if (list != null && list.size() != 0)
+                            userInfoBean = list.get(0);
+                        userInfoBean.setUserName(serverBean.getUserInfoBean().getUserName());
+                        userInfoBean.setUserPwd(serverBean.getUserInfoBean().getUserPwd());
+                        if (list == null || list.size() == 0)
+                            userInfoDao.addData(userInfoBean);
+                        else
+                            userInfoDao.updateData(userInfoBean);
+                        EasemobAppliaction.user = userInfoBean;
+                        FriendStatushelper.getInstance().getFriendStatus();//初始化好友体系
+                        EMChat.getInstance().setAppInited();//告诉环信，ui已经初始化好了
+                        startActivity(HomeActivity.class);
+                        finish();
+                    } else {
+                        showLongToast(serverBean.getStatusMsg());
+                        startActivity(LoginActivity.class);
+                    }
+                }
             }
-        }
+        }, 1000);
     }
 }

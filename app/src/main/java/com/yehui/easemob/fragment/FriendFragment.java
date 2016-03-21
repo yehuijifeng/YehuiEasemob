@@ -80,9 +80,10 @@ public class FriendFragment extends EasemobListFragment {
                 if (friendBean.isOperation()) {
                     addAll(friendBean.getFriendNameist());
                     if (friendBean.getStatusMsg().equals("1")) {//正常加载
-                        loadingSuccess();
                         notifyDataChange();
+                        loadingSuccess();
                     } else if (friendBean.getStatusMsg().equals("2")) {//刷新加载
+                        notifyDataChange();
                         refreshSuccess();
                     } else if (friendBean.getStatusMsg().equals("3")) {//重载
                         loadingSuccess();

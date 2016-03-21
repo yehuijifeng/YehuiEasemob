@@ -1,17 +1,12 @@
 package com.yehui.easemob.activity;
 
 
-import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -28,10 +23,12 @@ import com.yehui.easemob.R;
 import com.yehui.easemob.activity.base.EasemobListActivity;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.MessageBean;
-import com.yehui.easemob.contants.BiaoqingMap;
 import com.yehui.easemob.contants.MapContant;
 import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.helper.SendMessageHelper;
+import com.yehui.easemob.utils.BiaoqingUtil;
+import com.yehui.easemob.view.BiaoqingView;
+import com.yehui.easemob.view.EditTexts;
 import com.yehui.utils.adapter.base.BaseViewHolder;
 import com.yehui.utils.utils.LogUtil;
 import com.yehui.utils.view.CircularImageView;
@@ -40,7 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Luhao on 2016/3/8.
+ * Created by Luhao
+ * on 2016/3/8.
  */
 public class MessageActivity extends EasemobListActivity implements View.OnClickListener, TextWatcher, View.OnLayoutChangeListener, EMEventListener {
 
@@ -52,19 +50,13 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
             biaoqing_msg_img,
             often_msg_img,
             gengduo_msg_img;
-    private LinearLayout function_layout, biaoqing_layout;
-    private EditText text_msg_edit;
+    private LinearLayout function_layout;
     private Button fasong_msg_btn;
     private String friendName;
     private int pageSize = 20;
     private List<MessageBean> msgList;
-    private ImageView
-            ee_1,
-            ee_2,
-            ee_3,
-            ee_4,
-            ee_5,
-            ee_del;
+    private BiaoqingView biaoqing_layout;
+    private EditTexts editTexts;
 
     @Override
     protected void initView() {
@@ -77,22 +69,9 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         gengduo_msg_img = (ImageView) findViewById(R.id.gengduo_msg_img);
         often_msg_img = (ImageView) findViewById(R.id.often_msg_img);
         function_layout = (LinearLayout) findViewById(R.id.function_layout);
-        biaoqing_layout = (LinearLayout) findViewById(R.id.biaoqing_layout);
-        text_msg_edit = (EditText) findViewById(R.id.text_msg_edit);
+        biaoqing_layout = (BiaoqingView) findViewById(R.id.biaoqing_layout);
+        editTexts = (EditTexts) findViewById(R.id.text_msg_edit);
         fasong_msg_btn = (Button) findViewById(R.id.fasong_msg_btn);
-        ee_1 = (ImageView) biaoqing_layout.findViewById(R.id.ee_1);
-        ee_2 = (ImageView) biaoqing_layout.findViewById(R.id.ee_2);
-        ee_3 = (ImageView) biaoqing_layout.findViewById(R.id.ee_3);
-        ee_4 = (ImageView) biaoqing_layout.findViewById(R.id.ee_4);
-        ee_5 = (ImageView) biaoqing_layout.findViewById(R.id.ee_5);
-        ee_del = (ImageView) biaoqing_layout.findViewById(R.id.ee_del);
-
-        ee_1.setOnClickListener(this);
-        ee_2.setOnClickListener(this);
-        ee_3.setOnClickListener(this);
-        ee_4.setOnClickListener(this);
-        ee_5.setOnClickListener(this);
-        ee_del.setOnClickListener(this);
 
         fasong_msg_btn.setOnClickListener(this);
         voice_msg_img.setOnClickListener(this);
@@ -101,10 +80,9 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         biaoqing_msg_img.setOnClickListener(this);
         start_voice_text.setOnClickListener(this);
         gengduo_msg_img.setOnClickListener(this);
-        text_msg_edit.setOnClickListener(this);
-
-        text_msg_edit.addTextChangedListener(this);
-
+        editTexts.setOnClickListener(this);
+        editTexts.addTextChangedListener(this);
+        biaoqing_layout.onBiaoqingClick(editTexts);
         //添加layout大小发生改变监听器
         msg_root_ly.addOnLayoutChangeListener(this);
     }
@@ -112,15 +90,16 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     @Override
     protected void initData() {
         super.initData();
-        text_msg_edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        setIsFastClick(false);//不启用快速点击回避
+        editTexts.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     // 此处为得到焦点时的处理内容
-                    showSoftInputFromWindow(text_msg_edit);
+                    showSoftInputFromWindow(editTexts);
                 } else {
                     // 此处为失去焦点时的处理内容
-                    hideSoftInputFromWindow(text_msg_edit);
+                    hideSoftInputFromWindow(editTexts);
                 }
                 function_layout.setVisibility(View.GONE);
                 biaoqing_layout.setVisibility(View.GONE);
@@ -130,6 +109,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         setIsRefresh(false);//禁止下拉刷新
         loadingView();
         friendName = getString(MapContant.MESSAGE_USER_NAME, null);
+        mTitleView.setTitleText(friendName);
         List<EMMessage> listAll = SendMessageHelper.getInstance().getEMMessageList(friendName);
         if (listAll != null && listAll.size() > 0) {
             List<EMMessage> listMsg = SendMessageHelper.getInstance().getEMMessageList(friendName, listAll.get(listAll.size() - 1).getMsgId(), pageSize);
@@ -150,6 +130,38 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         }
         loadingClose();
     }
+
+    //重写edittext为了能够监听复制粘贴的操作
+//    public class EditTexts extends EditText {
+//        public EditTexts(Context context) {
+//            super(context);
+//
+//        }
+//
+//        //重写EditText的
+//        @Override
+//        public boolean onTextContextMenuItem(int id) {
+//            /**
+//             * id:16908319
+//             全选
+//             id:16908328
+//             选择
+//             id:16908320
+//             剪贴
+//             id:16908321
+//             复制
+//             id:16908322
+//             粘贴
+//             id:16908324
+//             输入法
+//             **/
+//            if (id == 16908324) {
+//                BiaoqingUtil.getInstance().showBiaoqing(MessageActivity.this, editTexts.getText().toString());
+//            }
+//            return super.onTextContextMenuItem(id);
+//        }
+//    }
+
 
     @Override
     protected void onResume() {
@@ -219,50 +231,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
 
     }
 
-    /**
-     * 图文混排
-     * 该方法获得的是资源原始大小
-     */
-    private void addImageByText(EditText editText, int drawableId, int imgId) {
-        SpannableString spannableString = new SpannableString("[ee_" + imgId + "]");
-        //获取Drawable资源
-        Drawable drawable = getResourceDrawable(drawableId);
-        //这句话必须，不然图片不显示
-        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-        //创建ImageSpan
-        ImageSpan span = new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE);
-        //用ImageSpan替换文本
-        spannableString.setSpan(span, 0, spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        Editable e = editText.getText();
-        int st = editText.getSelectionStart();
-        int en = editText.getSelectionEnd();
-        e.replace(st, en, spannableString);
-        //editText.setMovementMethod(LinkMovementMethod.getInstance()); //实现文本的滚动
-    }
-
-    /**
-     * 删除表情
-     */
-    private void deleteImageByText() {
-        int selectionStart = text_msg_edit.getSelectionStart();// 获取光标的位置
-        if (selectionStart > 0) {
-            String body = text_msg_edit.getText().toString();
-            if (!TextUtils.isEmpty(body)) {
-                String tempStr = body.substring(0, selectionStart);
-                int i = tempStr.lastIndexOf("[");// 获取最后一个表情的位置
-                if (i != -1) {
-                    CharSequence cs = tempStr.subSequence(i, selectionStart);
-                    if (cs.equals("[ee_")) {// 判断是否是一个表情
-                        text_msg_edit.getEditableText().delete(i, selectionStart);
-                        return;
-                    }
-                }
-                text_msg_edit.getEditableText().delete(tempStr.length() - 1,
-                        selectionStart);
-            }
-        }
-    }
-
     @Override
     protected int getItemType(int position) {
         MessageBean messageBean = (MessageBean) data.get(position);
@@ -326,7 +294,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                         notifyDataChange();
                     } else {
                         addOne(messageBean, data.size());
-                        text_msg_edit.setText("");
+                        editTexts.setText("");
                         recyclerView.smoothScrollToPosition(data.size() - 1);
                     }
                 } else {
@@ -447,7 +415,8 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 final TextMessageBody textMessageBody = (TextMessageBody) emMessage.getBody();
                 if (emMessage.direct == EMMessage.Direct.SEND) {//判断这条消息是否是发送消息
                     sendTextViewHolder = (SendTextViewHolder) holder;
-                    sendTextViewHolder.set_msg_text.setText(textMessageBody.getMessage());
+                    // 设置内容
+                    sendTextViewHolder.set_msg_text.setText(BiaoqingUtil.getInstance().showBiaoqing(MessageActivity.this, textMessageBody.getMessage()));
                     if (messageBean.getBackStatus() == 0) {
                         sendTextViewHolder.msg_progress_bar.setVisibility(View.VISIBLE);
                         sendTextViewHolder.msg_status_img.setVisibility(View.GONE);
@@ -471,7 +440,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                             showShortToast("用户详情" + messageBean.getEmMessage().getUserName());
                         }
                     });
-                    //text_msg_edit.setText("");
                 } else {
                     receiveTextViewHolder = (ReceiveTextViewHolder) holder;
                     receiveTextViewHolder.get_msg_text.setText(textMessageBody.getMessage());
@@ -546,20 +514,20 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fasong_msg_btn://发送消息
-                SendMessageHelper.getInstance().getConversationByText(friendName, text_msg_edit.getText().toString());
+                SendMessageHelper.getInstance().getConversationByText(friendName, editTexts.getText().toString());
                 break;
             case R.id.voice_msg_img://切换语音消息
-                hideSoftInputFromWindow(text_msg_edit);
+                hideSoftInputFromWindow(editTexts);
                 start_voice_text.setVisibility(View.VISIBLE);
                 text_msg_img.setVisibility(View.VISIBLE);
                 biaoqing_msg_img.setVisibility(View.GONE);
-                text_msg_edit.setVisibility(View.GONE);
+                editTexts.setVisibility(View.GONE);
                 voice_msg_img.setVisibility(View.GONE);
                 function_layout.setVisibility(View.GONE);
                 biaoqing_layout.setVisibility(View.GONE);
                 break;
             case R.id.often_msg_img://常用语
-                showLongToast("暂未开放该功能");
+                showLongToast("直接发送常用语，暂未开放该功能");
                 function_layout.setVisibility(View.GONE);
                 biaoqing_layout.setVisibility(View.GONE);
                 break;
@@ -567,14 +535,14 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 start_voice_text.setVisibility(View.GONE);
                 text_msg_img.setVisibility(View.GONE);
                 biaoqing_msg_img.setVisibility(View.VISIBLE);
-                text_msg_edit.setVisibility(View.VISIBLE);
+                editTexts.setVisibility(View.VISIBLE);
                 voice_msg_img.setVisibility(View.VISIBLE);
-                showSoftInputFromWindow(text_msg_edit);
+                showSoftInputFromWindow(editTexts);
                 function_layout.setVisibility(View.GONE);
                 biaoqing_layout.setVisibility(View.GONE);
                 break;
             case R.id.biaoqing_msg_img://打开表情
-                hideSoftInputFromWindow(text_msg_edit);
+                hideSoftInputFromWindow(editTexts);
                 biaoqing_layout.setVisibility(View.VISIBLE);
                 function_layout.setVisibility(View.GONE);
                 break;
@@ -582,7 +550,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 //语音
                 break;
             case R.id.gengduo_msg_img://打开更多功能
-                hideSoftInputFromWindow(text_msg_edit);
+                hideSoftInputFromWindow(editTexts);
                 function_layout.setVisibility(View.VISIBLE);
                 biaoqing_layout.setVisibility(View.GONE);
                 break;
@@ -590,32 +558,18 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 function_layout.setVisibility(View.GONE);
                 biaoqing_layout.setVisibility(View.GONE);
                 break;
-            case R.id.ee_1:
-                addImageByText(text_msg_edit, BiaoqingMap.getInstance().getBiaoqingMap().get(BiaoqingMap.getInstance().ee_1), 2);
-                break;
-            case R.id.ee_2:
-                addImageByText(text_msg_edit, BiaoqingMap.getInstance().getBiaoqingMap().get(BiaoqingMap.getInstance().ee_2), 2);
-                break;
-            case R.id.ee_3:
-                addImageByText(text_msg_edit, BiaoqingMap.getInstance().getBiaoqingMap().get(BiaoqingMap.getInstance().ee_3), 3);
-                break;
-            case R.id.ee_4:
-                addImageByText(text_msg_edit, BiaoqingMap.getInstance().getBiaoqingMap().get(BiaoqingMap.getInstance().ee_4), 4);
-                break;
-            case R.id.ee_5:
-                addImageByText(text_msg_edit, BiaoqingMap.getInstance().getBiaoqingMap().get(BiaoqingMap.getInstance().ee_5), 5);
-                break;
             case R.id.ee_del:// 删除表情，当时表情时删除“[fac”的长度，是文字时删除一个长度
-                deleteImageByText();
+                BiaoqingUtil.getInstance().removeBiaoqing(editTexts);
                 break;
         }
     }
+
 
     /**
      * 显示发送按钮
      */
     private void showSendBtn() {
-        if (text_msg_edit.length() <= 0) {
+        if (editTexts.length() <= 0) {
             fasong_msg_btn.setVisibility(View.GONE);
             gengduo_msg_img.setVisibility(View.VISIBLE);
         } else {
@@ -634,7 +588,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
      */
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        showSendBtn();
+
     }
 
     /**
@@ -650,14 +604,26 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
 
     }
 
+    private Handler handler = new Handler();
+
     /**
-     * 文本改变之后
+     * 文本改变之中
      *
      * @param s
      */
     @Override
-    public void afterTextChanged(Editable s) {
-        showSendBtn();
+    public void afterTextChanged(final Editable s) {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showSendBtn();
+                if (editTexts.isCopy()) {
+                    editTexts.setText(BiaoqingUtil.getInstance().showBiaoqing(MessageActivity.this, s.toString()));
+                    editTexts.setCopy(false);
+                }
+            }
+        }, 10);
+
     }
 
     /**

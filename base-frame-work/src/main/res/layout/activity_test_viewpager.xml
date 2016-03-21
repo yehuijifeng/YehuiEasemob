@@ -10,10 +10,10 @@
     <!--若viewpager的头在上面，则用注释掉的代码即可-->
     <include layout="@layout/layout_my_title" />
 
-    <include
-        layout="@layout/layout_default_viewpager_tab" />
+    <include layout="@layout/layout_default_viewpager_tab" />
     <!--数据加载的提示遮罩层-->
     <include layout="@layout/layout_my_loading" />
+
     <include layout="@layout/layout_my_viewpager" />
 
     <!-- <com.yehui.utils.view.viewpager.MyViewPager

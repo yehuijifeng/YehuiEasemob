@@ -2,6 +2,7 @@ package com.yehui.easemob.activity;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yehui.easemob.R;
@@ -20,17 +21,21 @@ public class HomeActivity extends EasemobViewPagerActivity {
 
     @Override
     protected View setTabView(ViewGroup container, int position) {
-        View view = inflate(R.layout.item_default_viewpager_tab, container, false);
+        View view = inflate(R.layout.item_easemob_viewpager_tab, container, false);
         TextView tabText = (TextView) view.findViewById(R.id.viewpager_tab_text);
+        ImageView tabImage = (ImageView) view.findViewById(R.id.viewpager_tab_img);
         switch (position) {
             case 0:
                 tabText.setText("消息");
+                tabImage.setImageDrawable(getResourceDrawable(R.drawable.bg_message_selected));
                 break;
             case 1:
                 tabText.setText("好友");
+                tabImage.setImageDrawable(getResourceDrawable(R.drawable.bg_friend_selected));
                 break;
             case 2:
                 tabText.setText("个人");
+                tabImage.setImageDrawable(getResourceDrawable(R.drawable.bg_home_selected));
                 break;
         }
         return view;

@@ -5,14 +5,21 @@
     <color name="black_translucent">#50000000</color>
     <declare-styleable name="CropImageView"><attr name="guidelines"><enum name="on" value="2"/><enum name="onTouch" value="1"/><enum name="off" value="0"/></attr><attr format="boolean" name="fixAspectRatio"/><attr format="integer" name="aspectRatioX"/><attr format="integer" name="aspectRatioY"/><attr format="reference" name="imageResource"/></declare-styleable>
     <string name="app_name">Cropper</string>
-    <style name="AppBaseTheme" parent="android:Theme.Light">
+    <style name="AppBaseTheme" parent="android:style/Theme.Black.NoTitleBar.Fullscreen">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
     </style>
-    <style name="AppTheme" parent="AppBaseTheme">
+    <style name="AppThemes" parent="AppBaseTheme">
+        <!--背景设置为透明-->
+        <item name="android:windowIsTranslucent"> true </item>
+        <!--标题栏高度-->
+        <!-- toolbar（actionbar）颜色 -->
+        <!-- 状态栏颜色 -->
+        <!-- 底部导航栏颜色 -->
+        <!--<item name="navigationBarColor">#4876FF</item>-->
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 </resources>

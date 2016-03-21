@@ -16,6 +16,9 @@ import com.yehui.easemob.contants.EasemobContant;
 import com.yehui.easemob.fragment.base.EasemobFragment;
 import com.yehui.easemob.helper.FriendStatushelper;
 import com.yehui.easemob.helper.ServerStatusHelper;
+import com.yehui.utils.utils.AppUtil;
+import com.yehui.utils.utils.files.FileContact;
+import com.yehui.utils.utils.files.FileFoundUtil;
 import com.yehui.utils.view.dialog.CustomDialog;
 import com.yehui.utils.view.dialog.LoadingDialog;
 import com.yehui.utils.view.dialog.PromptDialog;
@@ -60,7 +63,6 @@ public class SquareFragment extends EasemobFragment implements View.OnClickListe
         user_close_cache_rl.setOnClickListener(this);
         ic_register_user_rl.setOnClickListener(this);
         add_friend_rl.setOnClickListener(this);
-
         imageLoader.displayImage("file:///"+EasemobAppliaction.user.getUserIconPath(),user_image_square,EasemobAppliaction.defaultOptions);
 
     }
@@ -99,7 +101,7 @@ public class SquareFragment extends EasemobFragment implements View.OnClickListe
                 startActivity(UserCenterActivity.class);
                 break;
             case R.id.user_exit_rl://推出登陆
-                promptDialog.showPromptDialog("提示", "确定要退出当前账号?", new PromptDialog.PromptOnClickListener() {
+                promptDialog.showPromptDialog( "确定要退出当前账号?", new PromptDialog.PromptOnClickListener() {
                     @Override
                     public void onDetermine() {
                         ServerStatusHelper.getInstance().outlogin(parentActivity);
@@ -112,7 +114,18 @@ public class SquareFragment extends EasemobFragment implements View.OnClickListe
 
                 break;
             case R.id.user_close_cache_rl://清楚缓存
-                showShortToast("清除缓存");
+                promptDialog.showPromptDialog("确定要清除 \"" + AppUtil.getAppName(parentActivity) + "\" 的缓存？", new PromptDialog.PromptOnClickListener() {
+                    @Override
+                    public void onDetermine() {
+                        FileFoundUtil.deleteFileByPath(FileContact.YEHUI_CACHE_IMG_PATH);
+                        showShortToast("清楚完成");
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
                 break;
             case R.id.ic_register_user_rl:
                 startActivity(RegisteredActivity.class);

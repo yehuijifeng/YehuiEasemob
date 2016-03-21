@@ -26,7 +26,7 @@ public class BiaoqingMap {
     }
 
     private static Map<String, Integer> biaoqingMap;
-    private static final String ee = "[ee";
+    private static final String ee = "[ee_";
     public static final String ee_1 = ee+"1]";
     public static final String ee_2 = ee+"2]";
     public static final String ee_3 = ee+"3]";

@@ -9,9 +9,16 @@
         <attr format="integer" name="aspectRatioX"/>
         <attr format="integer" name="aspectRatioY"/>
         <attr format="reference" name="imageResource"/>
-    </declare-styleable></file><file path="D:\AndroidStudioProjects\YehuiEasemob\cropper\res\values\colors.xml" qualifiers=""><color name="black_translucent">#50000000</color></file><file path="D:\AndroidStudioProjects\YehuiEasemob\cropper\res\values\strings.xml" qualifiers=""><string name="app_name">Cropper</string></file><file path="D:\AndroidStudioProjects\YehuiEasemob\cropper\res\values\styles.xml" qualifiers=""><style name="AppTheme" parent="AppBaseTheme">
+    </declare-styleable></file><file path="D:\AndroidStudioProjects\YehuiEasemob\cropper\res\values\colors.xml" qualifiers=""><color name="black_translucent">#50000000</color></file><file path="D:\AndroidStudioProjects\YehuiEasemob\cropper\res\values\strings.xml" qualifiers=""><string name="app_name">Cropper</string></file><file path="D:\AndroidStudioProjects\YehuiEasemob\cropper\res\values\styles.xml" qualifiers=""><style name="AppThemes" parent="AppBaseTheme">
+        <!--背景设置为透明-->
+        <item name="android:windowIsTranslucent"> true </item>
+        <!--标题栏高度-->
+        <!-- toolbar（actionbar）颜色 -->
+        <!-- 状态栏颜色 -->
+        <!-- 底部导航栏颜色 -->
+        <!--<item name="navigationBarColor">#4876FF</item>-->
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-    </style><style name="AppBaseTheme" parent="android:Theme.Light">
+    </style><style name="AppBaseTheme" parent="android:style/Theme.Black.NoTitleBar.Fullscreen">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
