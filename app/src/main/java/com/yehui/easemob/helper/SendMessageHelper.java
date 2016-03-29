@@ -1,6 +1,7 @@
 package com.yehui.easemob.helper;
 
 import android.support.v4.util.Pair;
+import android.text.TextUtils;
 
 import com.easemob.EMCallBack;
 import com.easemob.chat.EMChatManager;
@@ -8,12 +9,14 @@ import com.easemob.chat.EMConversation;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.ImageMessageBody;
 import com.easemob.chat.LocationMessageBody;
+import com.easemob.chat.MessageBody;
 import com.easemob.chat.NormalFileMessageBody;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.chat.VoiceMessageBody;
 import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.interfaces.SendMessageInterfaces;
+import com.yehui.utils.utils.DateUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,36 +64,36 @@ public class SendMessageHelper implements SendMessageInterfaces {
         messageBean = new MessageBean();
     }
 
-    /**
-     * 发送文本消息及表情
-     *
-     * @param content  发送的内容
-     * @param username 接收人
-     */
+
     @Override
-    public void getConversationByText(String username, String content) {
+    public MessageBean sendConversationByText(String username, String content, boolean isReSend, String msgId) {
         //获取到与聊天人的会话对象。参数username为聊天人的userid或者groupid，后文中的username皆是如此
         EMConversation conversation = EMChatManager.getInstance().getConversation(username);
-        //创建一条文本消息
-        EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
         //如果是群聊，设置chattype,默认是单聊
         //message.setChatType(EMMessage.ChatType.GroupChat);
 
-        //设置消息body
-        TextMessageBody txtBody = new TextMessageBody(content);
-        message.addBody(txtBody);
+        EMMessage emMessage = EMMessage.createSendMessage(EMMessage.Type.TXT);
+        MessageBody messageBody = new TextMessageBody(content);
+        emMessage.addBody(messageBody);
+        emMessage.direct = EMMessage.Direct.SEND;
         //设置接收人
-        message.setReceipt(username);
+        emMessage.setReceipt(username);
+        if (isReSend) {
+            if (TextUtils.isEmpty(msgId)) return null;
+            emMessage.setMsgId(msgId);//如果是重发，则套用原来的id
+        } else
+            emMessage.setMsgId(DateUtil.getTimeString());//以时间戳作为id
         //把消息加入到此会话对象中
-        conversation.addMessage(message);
+        conversation.addMessage(emMessage);
         //初始化发送信息
         initSendMsg();
+        messageBean.setBackStatus(0);
         messageBean.setGetMsgCode(MessageContant.sendMsgByText);
         messageBean.setUserName(username);
         messageBean.setContent(content);
-        messageBean.setEmMessage(message);
+        messageBean.setEmMessage(emMessage);
         //发送消息
-        EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
+        EMChatManager.getInstance().sendMessage(emMessage, new EMCallBack() {
             @Override
             public void onSuccess() {
                 messageBean.setBackStatus(1);
@@ -113,6 +116,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
                 eventBus.post(messageBean);
             }
         });
+        return messageBean;
     }
 
 
@@ -124,17 +128,26 @@ public class SendMessageHelper implements SendMessageInterfaces {
      * @param length   文件长度，大小
      */
     @Override
-    public void getConversationByVoice(String username, String filePath, int length) {
+    public MessageBean sendConversationByVoice(String username, String filePath, int length, boolean isReSend, String msgId) {
         EMConversation conversation = EMChatManager.getInstance().getConversation(username);
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.VOICE);
         //如果是群聊，设置chattype,默认是单聊
         //message.setChatType(EMMessage.ChatType.GroupChat);
         VoiceMessageBody body = new VoiceMessageBody(new File(filePath), length);
         message.addBody(body);
+        //设置发送状态
+        message.direct = EMMessage.Direct.SEND;
+        //设置接收人
         message.setReceipt(username);
+        if (isReSend) {
+            if (TextUtils.isEmpty(msgId)) return null;
+            message.setMsgId(msgId);//如果是重发，则套用原来的id
+        } else
+            message.setMsgId(DateUtil.getTimeString());//以时间戳作为id
         conversation.addMessage(message);
         //初始化发送信息
         initSendMsg();
+        messageBean.setBackStatus(0);
         messageBean.setGetMsgCode(MessageContant.sendMsgByVoice);
         messageBean.setUserName(username);
         messageBean.setContent(filePath);
@@ -162,6 +175,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
                 eventBus.post(messageBean);
             }
         });
+        return messageBean;
     }
 
     /**
@@ -315,6 +329,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
         });
     }
 
+
     /**
      * 获取会话列表
      */
@@ -388,6 +403,15 @@ public class SendMessageHelper implements SendMessageInterfaces {
     }
 
     /**
+     * 获得未读消息总数
+     *
+     * @return
+     */
+    public int getMessageCount() {
+        return EMChatManager.getInstance().getUnreadMsgsCount();
+    }
+
+    /**
      * 获取聊天记录
      */
     @Override
@@ -403,6 +427,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
 
     /**
      * 获取未读消息数量
+     *
      * @param usernameOrGroupid 用户名名和群id
      */
     @Override
@@ -413,6 +438,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
 
     /**
      * 获取消息总数
+     *
      * @param usernameOrGroupid 用户名名和群id
      */
     @Override

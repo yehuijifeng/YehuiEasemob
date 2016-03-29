@@ -1,5 +1,10 @@
 package com.yehui.utils.utils.files;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.text.TextUtils;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -27,26 +32,32 @@ public class FileFoundUtil {
      * 删除文件夹下全部文件
      * 递归删除
      */
-    public static void deleteFileByPath(String filePath) {
-        File file=new File(filePath);
-        if (file.isFile())
+    public static void deleteFileByPath(Activity context, String filePath) {
+        deleteFileByPath(filePath);
+        sendBroadcast(context);
+    }
+
+    private static void deleteFileByPath(String filePath) {
+        if (TextUtils.isEmpty(filePath)) return;
+        File file = new File(filePath);
+        if (file.isFile() && file.exists()) {
             file.delete();
-        else {
+            return;
+        }
+        if (file.isDirectory()) {
             File[] files = file.listFiles();
-            if (files == null || files.length == 0) {
-                file.delete();
-                return ;
-            }
-            if (files != null) {
-                for (final File f : files) {
-                    if (f.isFile()) {
-                        file.delete();
-                    } else {
-                        deleteFileByPath(f.getPath());
-                    }
+            if (files != null && files.length > 0) {
+                for (File f : files) {
+                    deleteFileByPath(f.getPath());
                 }
             }
         }
+    }
+
+
+    private static void sendBroadcast(Activity context) {
+        Intent media = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(FileContact.YEHUI_CHACHE)));
+        context.sendBroadcast(media);
     }
 
     /**
@@ -220,7 +231,7 @@ public class FileFoundUtil {
     /**
      * 剪切
      */
-    public boolean shearFile(File toFile, String filePath,String fileName) {
+    public boolean shearFile(File toFile, String filePath, String fileName) {
         if (copyFile(toFile, filePath, fileName)) {
             toFile.delete();
             return true;

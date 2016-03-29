@@ -1,5 +1,6 @@
 package com.yehui.easemob.activity;
 
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,15 +20,18 @@ import com.yehui.utils.view.titleview.MyTitleView;
  */
 public class HomeActivity extends EasemobViewPagerActivity {
 
+    public TextView message_number_text;
     @Override
     protected View setTabView(ViewGroup container, int position) {
         View view = inflate(R.layout.item_easemob_viewpager_tab, container, false);
         TextView tabText = (TextView) view.findViewById(R.id.viewpager_tab_text);
         ImageView tabImage = (ImageView) view.findViewById(R.id.viewpager_tab_img);
+
         switch (position) {
             case 0:
                 tabText.setText("消息");
                 tabImage.setImageDrawable(getResourceDrawable(R.drawable.bg_message_selected));
+                message_number_text= (TextView) view.findViewById(R.id.message_number_text);
                 break;
             case 1:
                 tabText.setText("好友");
@@ -71,5 +75,22 @@ public class HomeActivity extends EasemobViewPagerActivity {
     protected void initData() {
         super.initData();
         setIsFastClick(false);
+    }
+
+    private long exitTime = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                showShortToast(getResourceString(R.string.exit_app));
+                exitTime = System.currentTimeMillis();
+            } else {
+                finishAll();
+            }
+            return false;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 }

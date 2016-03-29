@@ -60,8 +60,18 @@ public abstract class EasemobListActivity extends EasemobActivity implements Swi
      * @param itemView
      * @param position
      */
-    protected void onItemClick(RecyclerView parent, View itemView, int position){}
+    protected void onItemClick(RecyclerView parent, View itemView, int position) {
+    }
+
     protected abstract void onLongItemClick(RecyclerView parent, View itemView, int position);
+
+    /**
+     * 使用外部适配器
+     */
+    public void setmAdapter(BaseAdapter mAdapter) {
+        //添加适配器
+        recyclerView.setAdapter(mAdapter);
+    }
 
     /**
      * 初始化
@@ -88,14 +98,14 @@ public abstract class EasemobListActivity extends EasemobActivity implements Swi
      * 设置每个item的间距,
      * 紧紧针对listview可用！(其他代理类有自己的方法)
      */
-    private int itemDecoration=1;
+    private int itemDecoration = 1;
 
     protected int getItemDecoration() {
         return itemDecoration;
     }
 
     protected void setItemDecoration(int itemDecoration) {
-        this.itemDecoration = DisplayUtil.dip2px(this,itemDecoration);
+        this.itemDecoration = DisplayUtil.dip2px(this, itemDecoration);
     }
 
     @Override
@@ -245,7 +255,7 @@ public abstract class EasemobListActivity extends EasemobActivity implements Swi
      * isLoadMore 是否可以上拉加载
      */
     protected void setIsLoadMore(boolean isLoadMore) {
-        this.isLoadMore=isLoadMore;
+        this.isLoadMore = isLoadMore;
         mRecyclerView.setIsLoadMore(isLoadMore);
         defaultLoadMore();
         if (isLoadMore()) {
@@ -263,7 +273,7 @@ public abstract class EasemobListActivity extends EasemobActivity implements Swi
      * isRefresh 是否可以下拉刷新
      */
     protected void setIsRefresh(boolean isRefresh) {
-        this.isRefresh=isRefresh;
+        this.isRefresh = isRefresh;
         mRecyclerView.setIsRefresh(isRefresh);
         defaultRefresh();
     }
@@ -497,6 +507,7 @@ public abstract class EasemobListActivity extends EasemobActivity implements Swi
             onItemClick(mRecyclerView.recyclerView, v, position);
         }
     }
+
     /**
      * item的长按事件
      */

@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <include layout="@layout/layout_my_loading"/>
+
+    <include layout="@layout/layout_my_loading" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,7 +24,8 @@
                 android:layout_weight="0.25"
                 android:background="@drawable/bg_user_login"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingTop="@dimen/default_padding_and_margin">
 
                 <com.yehui.utils.view.CircularImageView
                     android:id="@+id/user_image_square"
@@ -134,6 +137,7 @@
                         android:src="@drawable/ic_close_cache" />
 
                     <TextView
+                        android:id="@+id/textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
@@ -142,7 +146,18 @@
                         android:layout_toRightOf="@+id/ic_close_cache_img"
                         android:text="清除缓存" />
 
+                    <TextView
+                        android:id="@+id/cache_size_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/imageView"
+                        android:layout_toStartOf="@+id/imageView"
+                        android:padding="@dimen/default_padding_and_margin"
+                        android:text="0KB" />
+
                     <ImageView
+                        android:id="@+id/imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -152,6 +167,7 @@
                         android:src="@drawable/ic_go" />
 
                 </RelativeLayout>
+
                 <RelativeLayout
                     android:id="@+id/ic_register_user_rl"
                     android:layout_width="match_parent"
@@ -186,6 +202,7 @@
                         android:src="@drawable/ic_go" />
 
                 </RelativeLayout>
+
                 <RelativeLayout
                     android:id="@+id/user_settings_rl"
                     android:layout_width="match_parent"

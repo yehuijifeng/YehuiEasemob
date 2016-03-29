@@ -5,11 +5,11 @@ import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,20 +18,21 @@ import com.easemob.EMNotifierEvent;
 import com.easemob.chat.CmdMessageBody;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMMessage;
-import com.easemob.chat.TextMessageBody;
 import com.yehui.easemob.R;
 import com.yehui.easemob.activity.base.EasemobListActivity;
+import com.yehui.easemob.adapter.MessageAdapter;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.contants.MapContant;
 import com.yehui.easemob.contants.MessageContant;
+import com.yehui.easemob.helper.ReceiveMessageHelper;
 import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.utils.BiaoqingUtil;
 import com.yehui.easemob.view.BiaoqingView;
 import com.yehui.easemob.view.EditTexts;
+import com.yehui.easemob.view.VoiceView;
 import com.yehui.utils.adapter.base.BaseViewHolder;
 import com.yehui.utils.utils.LogUtil;
-import com.yehui.utils.view.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,29 +40,34 @@ import java.util.List;
 /**
  * Created by Luhao
  * on 2016/3/8.
+ * 消息队列
  */
-public class MessageActivity extends EasemobListActivity implements View.OnClickListener, TextWatcher, View.OnLayoutChangeListener, EMEventListener {
+public class MessageActivity extends EasemobListActivity implements View.OnClickListener, TextWatcher, View.OnLayoutChangeListener, EMEventListener, View.OnTouchListener {
 
-    private RelativeLayout msg_root_ly;
-    private TextView start_voice_text;
+    private RelativeLayout msg_root_ly, start_voice_rl;
+    private TextView start_voice_text, speaker_text;
     private ImageView
             voice_msg_img,
             text_msg_img,
             biaoqing_msg_img,
             often_msg_img,
             gengduo_msg_img;
-    private LinearLayout function_layout;
+    private LinearLayout function_layout, speaker_ly;
     private Button fasong_msg_btn;
     private String friendName;
-    private int pageSize = 20;
+    private int pageSize = 19;
     private List<MessageBean> msgList;
     private BiaoqingView biaoqing_layout;
     private EditTexts editTexts;
+    private VoiceView voiceView;
+    private MessageAdapter messageAdapter;
+    private Handler handler = new Handler();
 
     @Override
     protected void initView() {
         super.initView();
         msg_root_ly = (RelativeLayout) findViewById(R.id.msg_root_ly);
+        start_voice_rl = (RelativeLayout) findViewById(R.id.start_voice_rl);
         start_voice_text = (TextView) findViewById(R.id.start_voice_text);
         voice_msg_img = (ImageView) findViewById(R.id.voice_msg_img);
         text_msg_img = (ImageView) findViewById(R.id.text_msg_img);
@@ -72,16 +78,22 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         biaoqing_layout = (BiaoqingView) findViewById(R.id.biaoqing_layout);
         editTexts = (EditTexts) findViewById(R.id.text_msg_edit);
         fasong_msg_btn = (Button) findViewById(R.id.fasong_msg_btn);
+        voiceView = (VoiceView) findViewById(R.id.voice_view);
+        speaker_ly = (LinearLayout) findViewById(R.id.speaker_ly);
+        speaker_text = (TextView) findViewById(R.id.speaker_text);
+
+        start_voice_rl.setOnTouchListener(this);//事件分发
 
         fasong_msg_btn.setOnClickListener(this);
         voice_msg_img.setOnClickListener(this);
         often_msg_img.setOnClickListener(this);
         text_msg_img.setOnClickListener(this);
         biaoqing_msg_img.setOnClickListener(this);
-        start_voice_text.setOnClickListener(this);
+        start_voice_rl.setOnClickListener(this);
         gengduo_msg_img.setOnClickListener(this);
         editTexts.setOnClickListener(this);
         editTexts.addTextChangedListener(this);
+
         biaoqing_layout.onBiaoqingClick(editTexts);
         //添加layout大小发生改变监听器
         msg_root_ly.addOnLayoutChangeListener(this);
@@ -106,13 +118,15 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
             }
         });
         setIsLoadMore(false);//禁止加载更多
-        setIsRefresh(false);//禁止下拉刷新
-        loadingView();
+        setIsRefresh(false);//禁止下拉刷新v
         friendName = getString(MapContant.MESSAGE_USER_NAME, null);
         mTitleView.setTitleText(friendName);
+        loadingView();
         List<EMMessage> listAll = SendMessageHelper.getInstance().getEMMessageList(friendName);
+
         if (listAll != null && listAll.size() > 0) {
             List<EMMessage> listMsg = SendMessageHelper.getInstance().getEMMessageList(friendName, listAll.get(listAll.size() - 1).getMsgId(), pageSize);
+            listMsg.add(listMsg.size(), listAll.get(listAll.size() - 1));
             if (listMsg != null && listMsg.size() > 0) {
                 msgList = new ArrayList<>();
                 for (EMMessage emMessage : listMsg) {
@@ -122,64 +136,33 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                     messageBean.setUserName(emMessage.getUserName());
                     msgList.add(messageBean);
                 }
-                addAll(msgList);
-                notifyDataChange();
-                //让控件显示最后一行数据
-                recyclerView.smoothScrollToPosition(data.size() - 1);
+                getWindowWidth();
+                messageAdapter = new MessageAdapter(this, msgList, friendName, speaker_ly, speaker_text);
+                messageAdapter.getLastHour(recyclerView);//将数据显示到最后一行
+                setmAdapter(messageAdapter);
             }
         }
         loadingClose();
+        ReceiveMessageHelper.getInstance().markAllMessagesAsRead(friendName);
     }
-
-    //重写edittext为了能够监听复制粘贴的操作
-//    public class EditTexts extends EditText {
-//        public EditTexts(Context context) {
-//            super(context);
-//
-//        }
-//
-//        //重写EditText的
-//        @Override
-//        public boolean onTextContextMenuItem(int id) {
-//            /**
-//             * id:16908319
-//             全选
-//             id:16908328
-//             选择
-//             id:16908320
-//             剪贴
-//             id:16908321
-//             复制
-//             id:16908322
-//             粘贴
-//             id:16908324
-//             输入法
-//             **/
-//            if (id == 16908324) {
-//                BiaoqingUtil.getInstance().showBiaoqing(MessageActivity.this, editTexts.getText().toString());
-//            }
-//            return super.onTextContextMenuItem(id);
-//        }
-//    }
-
 
     @Override
     protected void onResume() {
-        super.onResume();
         //注册消息监听
         //EMChatManager.getInstance().registerEventListener(this,
         //new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewMessage, EMNotifierEvent.Event.EventOfflineMessage, EMNotifierEvent.Event.EventConversationListChanged});
         EMChatManager.getInstance().registerEventListener(this);
-        if (data != null || data.size() > 0)
-            notifyDataChange();
+        super.onResume();
+        if (messageAdapter.data != null && messageAdapter.data.size() > 0)
+            messageAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onStop() {
         EMChatManager.getInstance().unregisterEventListener(this);//注销消息监听
+        messageAdapter.stopVoicePlay();
         super.onStop();
     }
-
 
     /**
      * 接收消息回调
@@ -231,35 +214,14 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
 
     }
 
-    @Override
-    protected int getItemType(int position) {
-        MessageBean messageBean = (MessageBean) data.get(position);
-        EMMessage emMessage = messageBean.getEmMessage();
-        if (emMessage.getType() == EMMessage.Type.TXT ||
-                emMessage.getType() == EMMessage.Type.IMAGE ||
-                emMessage.getType() == EMMessage.Type.LOCATION ||
-                emMessage.getType() == EMMessage.Type.FILE) {
-            if (emMessage.direct == EMMessage.Direct.SEND) //判断这条消息是否是发送消息
-                return MessageContant.sendMsgByText;
-            else
-                return MessageContant.receiveMsgByText;
-        } else if (emMessage.getType() == EMMessage.Type.VOICE) {
-            if (emMessage.direct == EMMessage.Direct.SEND)
-                return MessageContant.sendMsgByVoice;
-            else
-                return MessageContant.receiveMsgByVoice;
-        }
-        return MessageContant.sendMsgByText;
-    }
-
     /**
      * 添加聊天记录
      */
     private void addMessageRecord() {
         if (SendMessageHelper.getInstance().getEMMessageList(friendName) != null && SendMessageHelper.getInstance().getEMMessageList(friendName).size() > 0) {
-            if (SendMessageHelper.getInstance().getEMMessageList(friendName).size() <= data.size())
+            if (SendMessageHelper.getInstance().getEMMessageList(friendName).size() <= messageAdapter.data.size())
                 return;
-            List<EMMessage> list = SendMessageHelper.getInstance().getEMMessageList(friendName, SendMessageHelper.getInstance().getEMMessageList(friendName).get(SendMessageHelper.getInstance().getEMMessageList(friendName).size() - data.size()).getMsgId(), pageSize);
+            List<EMMessage> list = SendMessageHelper.getInstance().getEMMessageList(friendName, SendMessageHelper.getInstance().getEMMessageList(friendName).get(SendMessageHelper.getInstance().getEMMessageList(friendName).size() - messageAdapter.data.size()).getMsgId(), pageSize);
             msgList = new ArrayList<>();
             for (EMMessage emMessage : list) {
                 MessageBean messageBean = new MessageBean();
@@ -268,49 +230,36 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 messageBean.setUserName(emMessage.getUserName());
                 msgList.add(messageBean);
             }
-            addAll(msgList);
+            messageAdapter.addData(msgList);
         }
     }
 
     /**
      * 发送消息回调状态
      *
-     * @param getMessageBean
+     * @param messageBean
      */
-    private String msgId = "";
-
     @Override
     protected void getMessageStatus(MessageBean messageBean) {
+        //改变item的视图状态
+        //如果回调的消息不属于任何一个消息id，说明它是一条新的消息
+        if (messageAdapter.data != null && messageAdapter.data.size() > 0) {
+            for (int i = messageAdapter.data.size() - 1; i > 0; i--) {
+                MessageBean msg = (MessageBean) messageAdapter.data.get(i);
+                if (msg.getEmMessage().getMsgId().equals(messageBean.getEmMessage().getMsgId())) {
+                    messageAdapter.data.set(i, messageBean);
+                    messageAdapter.getLastHour(recyclerView);
+                    return;
+                }
+            }
+        }
+        messageAdapter.data.add(messageBean);
+        messageAdapter.getLastHour(recyclerView);
         switch (messageBean.getGetMsgCode()) {
             case MessageContant.sendMsgByText://发送文本消息后状态回调
-                //改变item的视图状态
-                //如果回调的消息不属于任何一个消息id，说明它是一条新的消息
-                if (!messageBean.getEmMessage().getMsgId().equals(msgId)) {
-                    msgId = messageBean.getEmMessage().getMsgId();
-                    if (data == null || data.size() == 0) {
-                        List<MessageBean> msgList = new ArrayList<>();
-                        msgList.add(messageBean);
-                        addAll(msgList);
-                        notifyDataChange();
-                    } else {
-                        addOne(messageBean, data.size());
-                        editTexts.setText("");
-                        recyclerView.smoothScrollToPosition(data.size() - 1);
-                    }
-                } else {
-                    for (int i = data.size(); i > 0; i--) {
-                        MessageBean msg = (MessageBean) data.get(i);
-                        if (msg.getEmMessage().getMsgId().equals(msgId)) {
-                            data.add(i, msg);
-                            mAdapter.notifyItemInserted(i);//精确改变
-                            break;
-                        }
-                    }
-
-                }
+                editTexts.setText("");
                 break;
             case MessageContant.sendMsgByVoice://语音
-
                 break;
             case MessageContant.sendMsgByImage://图片
 
@@ -346,8 +295,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     private void getMessageByType(MessageBean messageBean) {
         EMMessage emMessage = messageBean.getEmMessage();
         if (emMessage.getType() == EMMessage.Type.TXT) {//文本消息
-            addOne(messageBean, data.size());
-            recyclerView.smoothScrollToPosition(data.size());
+
         } else if (emMessage.getType() == EMMessage.Type.VOICE) {//语音消息
 
         } else if (emMessage.getType() == EMMessage.Type.LOCATION) {//地理位置
@@ -361,143 +309,21 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         } else if (emMessage.getType() == EMMessage.Type.CMD) {//视频
 
         }
+        messageAdapter.data.add(messageBean);
+        messageAdapter.getLastHour(recyclerView);
+        SendMessageHelper.getInstance().getMarkAsRead(friendName, emMessage, true);
     }
 
-    /**
-     * 根据每一行item的数据不同返回不同的视图
-     *
-     * @param resId
-     * @return
-     */
     @Override
-    protected int getItemLayoutById(int resId) {
-        int viewId = 0;
-        switch (resId) {
-            case MessageContant.sendMsgByText:
-            case MessageContant.sendMsgByImage://图片
-            case MessageContant.sendMsgByLocation://地理位置
-            case MessageContant.sendMsgByFile://文件
-                viewId = R.layout.item_set_msg_text;
-                break;
-            case MessageContant.sendMsgByVoice://语音
-                viewId = R.layout.item_set_msg_voice;
-                break;
-            case MessageContant.receiveMsgByText:
-            case MessageContant.receiveMsgByImage:
-            case MessageContant.receiveMsgByLocation:
-            case MessageContant.receiveMsgByFile:
-                viewId = R.layout.item_get_msg_text;
-                break;
-            case MessageContant.receiveMsgByVoice:
-                viewId = R.layout.item_get_msg_voice;
-                break;
-        }
-        return viewId;
-    }
-
-    private ReceiveVoiceViewHolder receiveVoiceViewHolder;
-    private SendVoiceViewHolder sendVoiceViewHolder;
-    private ReceiveTextViewHolder receiveTextViewHolder;
-    private SendTextViewHolder sendTextViewHolder;
-
-    @Override
-    protected void initItemData(BaseViewHolder holder, int position) {
-        final MessageBean messageBean = (MessageBean) data.get(position);
-        EMMessage emMessage = messageBean.getEmMessage();
-        if (emMessage.getType() == EMMessage.Type.VOICE) {//语音消息
-            if (emMessage.direct == EMMessage.Direct.SEND) {
-                receiveVoiceViewHolder = (ReceiveVoiceViewHolder) holder;
-            } else {
-                sendVoiceViewHolder = (SendVoiceViewHolder) holder;
+    public boolean onTouch(View v, MotionEvent event) {
+        voiceView.onPressToSpeakBtnTouch(v, event, new VoiceView.EaseVoiceRecorderCallback() {
+            @Override
+            public void onVoiceRecordComplete(String voiceFilePath, int voiceTimeLength) {
+                //录音完成，发送、
+                SendMessageHelper.getInstance().sendConversationByVoice(friendName, voiceFilePath, voiceTimeLength, false, null);
             }
-        } else {
-            if (emMessage.getType() == EMMessage.Type.TXT) {//文本消息
-                final TextMessageBody textMessageBody = (TextMessageBody) emMessage.getBody();
-                if (emMessage.direct == EMMessage.Direct.SEND) {//判断这条消息是否是发送消息
-                    sendTextViewHolder = (SendTextViewHolder) holder;
-                    // 设置内容
-                    sendTextViewHolder.set_msg_text.setText(BiaoqingUtil.getInstance().showBiaoqing(MessageActivity.this, textMessageBody.getMessage()));
-                    if (messageBean.getBackStatus() == 0) {
-                        sendTextViewHolder.msg_progress_bar.setVisibility(View.VISIBLE);
-                        sendTextViewHolder.msg_status_img.setVisibility(View.GONE);
-                    } else if (messageBean.getBackStatus() == 1) {
-                        sendTextViewHolder.msg_progress_bar.setVisibility(View.GONE);
-                        sendTextViewHolder.msg_status_img.setVisibility(View.GONE);
-                    } else if (messageBean.getBackStatus() == -1) {
-                        sendTextViewHolder.msg_progress_bar.setVisibility(View.GONE);
-                        sendTextViewHolder.msg_status_img.setVisibility(View.VISIBLE);
-                        sendTextViewHolder.msg_status_img.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                SendMessageHelper.getInstance().getConversationByText(friendName, textMessageBody.getMessage());
-                            }
-                        });
-                    }
-                    sendTextViewHolder.set_msg_image.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //用户详情
-                            showShortToast("用户详情" + messageBean.getEmMessage().getUserName());
-                        }
-                    });
-                } else {
-                    receiveTextViewHolder = (ReceiveTextViewHolder) holder;
-                    receiveTextViewHolder.get_msg_text.setText(textMessageBody.getMessage());
-                    receiveTextViewHolder.msg_progress_bar.setVisibility(View.GONE);
-                    receiveTextViewHolder.msg_status_img.setVisibility(View.GONE);
-                    receiveTextViewHolder.get_msg_image.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //用户详情
-                            showShortToast("用户详情" + messageBean.getEmMessage().getUserName());
-                        }
-                    });
-                }
-            } else if (emMessage.getType() == EMMessage.Type.LOCATION) {//地理位置
-                if (emMessage.getUserName().equals(friendName)) {
-                    receiveTextViewHolder = (ReceiveTextViewHolder) holder;
-                } else {
-                    sendTextViewHolder = (SendTextViewHolder) holder;
-                }
-            } else if (emMessage.getType() == EMMessage.Type.IMAGE) {//图片
-                if (emMessage.getUserName().equals(friendName)) {
-                    receiveTextViewHolder = (ReceiveTextViewHolder) holder;
-                } else {
-                    sendTextViewHolder = (SendTextViewHolder) holder;
-                }
-            } else if (emMessage.getType() == EMMessage.Type.FILE) {//文件
-                if (emMessage.getUserName().equals(friendName)) {
-                    receiveTextViewHolder = (ReceiveTextViewHolder) holder;
-                } else {
-                    sendTextViewHolder = (SendTextViewHolder) holder;
-                }
-            }
-        }
-    }
-
-    @Override
-    protected BaseViewHolder getViewHolder(View itemView, int type) {
-        if (type == MessageContant.sendMsgByText || type ==
-                MessageContant.sendMsgByImage || type ==
-                MessageContant.sendMsgByLocation || type ==
-                MessageContant.sendMsgByFile) {
-            return new SendTextViewHolder(itemView);
-        } else if (type == MessageContant.receiveMsgByText || type ==
-                MessageContant.receiveMsgByImage || type ==
-                MessageContant.receiveMsgByLocation || type ==
-                MessageContant.receiveMsgByFile) {
-            return new ReceiveTextViewHolder(itemView);
-        } else if (type == MessageContant.sendMsgByVoice) {
-            return new SendVoiceViewHolder(itemView);
-        } else if (type == MessageContant.receiveMsgByVoice) {
-            return new ReceiveVoiceViewHolder(itemView);
-        }
-        return null;
-    }
-
-    @Override
-    protected void onLongItemClick(RecyclerView parent, View itemView, int position) {
-
+        });
+        return false;
     }
 
     @Override
@@ -514,11 +340,14 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fasong_msg_btn://发送消息
-                SendMessageHelper.getInstance().getConversationByText(friendName, editTexts.getText().toString());
+                MessageBean messageBean = SendMessageHelper.getInstance().sendConversationByText(friendName, editTexts.getText().toString(), false, null);
+                messageAdapter.data.add(messageBean);
+                editTexts.setText("");
+                recyclerView.smoothScrollToPosition(messageAdapter.data.size() - 1);
                 break;
             case R.id.voice_msg_img://切换语音消息
                 hideSoftInputFromWindow(editTexts);
-                start_voice_text.setVisibility(View.VISIBLE);
+                start_voice_rl.setVisibility(View.VISIBLE);
                 text_msg_img.setVisibility(View.VISIBLE);
                 biaoqing_msg_img.setVisibility(View.GONE);
                 editTexts.setVisibility(View.GONE);
@@ -532,7 +361,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 biaoqing_layout.setVisibility(View.GONE);
                 break;
             case R.id.text_msg_img://切换文本消息
-                start_voice_text.setVisibility(View.GONE);
+                start_voice_rl.setVisibility(View.GONE);
                 text_msg_img.setVisibility(View.GONE);
                 biaoqing_msg_img.setVisibility(View.VISIBLE);
                 editTexts.setVisibility(View.VISIBLE);
@@ -546,7 +375,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 biaoqing_layout.setVisibility(View.VISIBLE);
                 function_layout.setVisibility(View.GONE);
                 break;
-            case R.id.start_voice_text://按住说话
+            case R.id.start_voice_rl://按住说话
                 //语音
                 break;
             case R.id.gengduo_msg_img://打开更多功能
@@ -563,7 +392,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 break;
         }
     }
-
 
     /**
      * 显示发送按钮
@@ -604,10 +432,8 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
 
     }
 
-    private Handler handler = new Handler();
-
     /**
-     * 文本改变之中
+     * 文本改变之后
      *
      * @param s
      */
@@ -645,139 +471,54 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         //old是改变前的左上右下坐标点值，没有old的是改变后的左上右下坐标点值
-
 //      System.out.println(oldLeft + " " + oldTop +" " + oldRight + " " + oldBottom);
 //      System.out.println(left + " " + top +" " + right + " " + bottom);
-
         keyHeight = getWindowHeight() / 3;
-        if (data == null || data.size() == 0) return;
+        if (messageAdapter.data == null || messageAdapter.data.size() == 0) return;
         //现在认为只要控件将Activity向上推的高度超过了1/3屏幕高，就认为软键盘弹起
         if (oldBottom != 0 && bottom != 0 && (oldBottom - bottom > keyHeight)) {
             LogUtil.i("监听到软键盘弹起");
-            recyclerView.smoothScrollToPosition(data.size() - 1);
+            recyclerView.smoothScrollToPosition(messageAdapter.data.size() - 1);
         } else if (oldBottom != 0 && bottom != 0 && (bottom - oldBottom > keyHeight)) {
             LogUtil.i("监听到软件盘关闭");
-            recyclerView.smoothScrollToPosition(data.size() - 1);
+            recyclerView.smoothScrollToPosition(messageAdapter.data.size() - 1);
         }
     }
 
-
-    /**
-     * 好友发来的文本类消息
-     */
-    private class ReceiveTextViewHolder extends BaseViewHolder {
-        private CircularImageView get_msg_image;
-        private TextView get_msg_text;
-        private ProgressBar msg_progress_bar;
-        private ImageView msg_status_img;
-
-        public ReceiveTextViewHolder(View itemView) {
-            super(itemView);
-
-        }
-
-        @Override
-        public void initItemView(View itemView) {
-            get_msg_image = (CircularImageView) itemView.findViewById(R.id.get_msg_image);
-            get_msg_text = (TextView) itemView.findViewById(R.id.get_msg_text);
-            msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
-            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
-            msg_progress_bar.setVisibility(View.GONE);
-            msg_status_img.setVisibility(View.GONE);
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
-    /**
-     * 用户发给好友的文本类消息
-     */
-    private class SendTextViewHolder extends BaseViewHolder {
-        private CircularImageView set_msg_image;
-        private TextView set_msg_text;
-        private ProgressBar msg_progress_bar;
-        private ImageView msg_status_img;
+    /**************************
+     * 废弃代码
+     ********************************************************************/
 
-        public SendTextViewHolder(View itemView) {
-            super(itemView);
-
-        }
-
-        @Override
-        public void initItemView(View itemView) {
-            set_msg_image = (CircularImageView) itemView.findViewById(R.id.set_msg_image);
-            set_msg_text = (TextView) itemView.findViewById(R.id.set_msg_text);
-            msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
-            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
-            msg_progress_bar.setVisibility(View.GONE);
-            msg_status_img.setVisibility(View.GONE);
-        }
+    @Override
+    protected int getItemLayoutById(int resId) {
+        return 0;
     }
 
-    /**
-     * 好友发送过来的语音类消息
-     */
-    private class ReceiveVoiceViewHolder extends BaseViewHolder {
-        private CircularImageView get_msg_image;
-        private TextView get_msg_text, msg_voice_length;
-        private ProgressBar msg_progress_bar;
-        private ImageView msg_status_img, msg_voice_is_open;
-
-        public ReceiveVoiceViewHolder(View itemView) {
-            super(itemView);
-
-        }
-
-        @Override
-        public void initItemView(View itemView) {
-            get_msg_image = (CircularImageView) itemView.findViewById(R.id.get_msg_image);
-            get_msg_text = (TextView) itemView.findViewById(R.id.get_msg_text);
-            msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
-            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
-            msg_progress_bar.setVisibility(View.GONE);
-            msg_status_img.setVisibility(View.GONE);
-        }
+    @Override
+    protected int getItemType(int position) {
+        return 0;
     }
 
-    /**
-     * 好友发来的语音类消息
-     */
-    private class SendVoiceViewHolder extends BaseViewHolder {
-        private CircularImageView set_msg_image;
-        private TextView set_msg_text, msg_voice_length;
-        private ProgressBar msg_progress_bar;
-        private ImageView msg_status_img, msg_voice_is_open;
-
-        public SendVoiceViewHolder(View itemView) {
-            super(itemView);
-        }
-
-        @Override
-        public void initItemView(View itemView) {
-            set_msg_image = (CircularImageView) itemView.findViewById(R.id.set_msg_image);
-            set_msg_text = (TextView) itemView.findViewById(R.id.set_msg_text);
-            msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
-            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
-            msg_progress_bar.setVisibility(View.GONE);
-            msg_status_img.setVisibility(View.GONE);
-        }
+    @Override
+    protected void initItemData(BaseViewHolder holder, int position) {
     }
 
-    /**
-     * 显示时间
-     */
-    private class MessageTimeVIewHolder extends BaseViewHolder {
-        private TextView msg_time_text, load_more_text;
-        private ProgressBar msg_progress_bar;
-
-        public MessageTimeVIewHolder(View itemView) {
-            super(itemView);
-        }
-
-        @Override
-        public void initItemView(View itemView) {
-            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
-            load_more_text = (TextView) itemView.findViewById(R.id.load_more_text);
-            msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
-        }
+    @Override
+    protected BaseViewHolder getViewHolder(View itemView, int type) {
+        return null;
     }
 
+    @Override
+    protected void onLongItemClick(RecyclerView parent, View itemView, int position) {
+
+    }
+
+    /**************************
+     * 废弃代码
+     ********************************************************************/
 }

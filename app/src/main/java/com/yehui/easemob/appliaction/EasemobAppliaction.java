@@ -4,7 +4,6 @@ import com.yehui.easemob.bean.UserInfoBean;
 import com.yehui.easemob.contants.BiaoqingMap;
 import com.yehui.easemob.helper.ServerStatusHelper;
 import com.yehui.utils.application.YehuiApplication;
-import com.yehui.utils.utils.LogUtil;
 
 /**
  * Created by
@@ -17,7 +16,6 @@ public class EasemobAppliaction extends YehuiApplication {
 
     @Override
     public void initAppliaction() {
-long a= System.currentTimeMillis();
         //全局捕获异常的代理类
         //CrashHandler.getInstance().init(getApplicationContext());
         //初始化环信
@@ -28,7 +26,7 @@ long a= System.currentTimeMillis();
         ServerStatusHelper.getInstance().getConnectionStatus();
         //初始化表情包
         BiaoqingMap.getInstance().initMap();
-        LogUtil.e( System.currentTimeMillis()-a+"环信全局 ");
+
     }
 
 

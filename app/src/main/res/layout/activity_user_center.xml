@@ -5,7 +5,9 @@
     android:orientation="vertical">
 
     <include layout="@layout/layout_my_title" />
-    <include layout="@layout/layout_my_loading"/>
+
+    <include layout="@layout/layout_my_loading" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -56,14 +58,15 @@
                     android:gravity="right"
                     android:text="昵称：" />
 
-                <TextView
+                <EditText
                     android:id="@+id/user_center_nickname"
                     style="@style/default_textview_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.7"
                     android:gravity="left"
-                    android:text="xxx" />
+                    android:hint="16个字符内，可以是中文"
+                    android:maxLength="16" />
             </LinearLayout>
 
             <LinearLayout
@@ -81,14 +84,15 @@
                     android:gravity="right"
                     android:text="个人说明：" />
 
-                <TextView
+                <EditText
                     android:id="@+id/user_center_introduce"
                     style="@style/default_textview_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.7"
                     android:gravity="left"
-                    android:text="xxx" />
+                    android:hint="200个字符内，可以是中文"
+                    android:maxLength="200" />
             </LinearLayout>
 
             <LinearLayout
@@ -106,14 +110,14 @@
                     android:gravity="right"
                     android:text="电子邮箱：" />
 
-                <TextView
+                <EditText
                     android:id="@+id/user_center_email"
                     style="@style/default_textview_style"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.7"
                     android:gravity="left"
-                    android:text="xxx" />
+                    android:hint="请输入正确的邮箱格式" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

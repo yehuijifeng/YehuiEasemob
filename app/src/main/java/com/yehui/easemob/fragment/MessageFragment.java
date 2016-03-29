@@ -9,8 +9,10 @@ import com.easemob.chat.EMConversation;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.TextMessageBody;
 import com.yehui.easemob.R;
+import com.yehui.easemob.activity.HomeActivity;
 import com.yehui.easemob.activity.MessageActivity;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
+import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.bean.UserInfoBean;
 import com.yehui.easemob.contants.MapContant;
 import com.yehui.easemob.db.UserInfoDao;
@@ -51,6 +53,10 @@ public class MessageFragment extends EasemobListFragment {
                     public void onDetermine() {
                         ReceiveMessageHelper.getInstance().markAllConversationsAsRead();
                         reLoad();
+                        if (((HomeActivity) parentActivity).message_number_text != null) {
+                            ((HomeActivity) parentActivity).message_number_text.setText("0");
+                            ((HomeActivity) parentActivity).message_number_text.setVisibility(View.GONE);
+                        }
                     }
 
                     @Override
@@ -70,7 +76,30 @@ public class MessageFragment extends EasemobListFragment {
         loadData();
         userInfoDao = new UserInfoDao(parentActivity);
         userInfoBean = (UserInfoBean) userInfoDao.queryByWhere(MapContant.USER_NAME, EasemobAppliaction.user.getUserName()).get(0);
+        showMessageCount();
+    }
 
+    @Override
+    public void getNewMessage(MessageBean messageBean) {
+        loadData();
+    }
+
+    /**
+     * 显示未读消息的角标
+     */
+    private void showMessageCount() {
+        int j = SendMessageHelper.getInstance().getMessageCount();
+        if (((HomeActivity) parentActivity).message_number_text != null) {
+            if (j <= 0)
+                ((HomeActivity) parentActivity).message_number_text.setVisibility(View.GONE);
+            else if (j > 99) {
+                ((HomeActivity) parentActivity).message_number_text.setText("99+");
+                ((HomeActivity) parentActivity).message_number_text.setVisibility(View.VISIBLE);
+            } else {
+                ((HomeActivity) parentActivity).message_number_text.setText(j + "");
+                ((HomeActivity) parentActivity).message_number_text.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private void loadData() {
@@ -80,12 +109,12 @@ public class MessageFragment extends EasemobListFragment {
         loadingSuccess();
         if (data == null || data.size() == 0)
             loadingEmpty("暂无消息");
+        showMessageCount();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        loadingView();
         loadData();
     }
 
@@ -99,6 +128,7 @@ public class MessageFragment extends EasemobListFragment {
     @Override
     protected void reLoad() {
         super.reLoad();
+        loadingView();
         loadData();
     }
 
@@ -117,10 +147,13 @@ public class MessageFragment extends EasemobListFragment {
         messageViewHolder.message_time_text.setText(DateUtil.stampToTime(emMessage.getMsgTime()));
         if (emConversation.getUnreadMsgCount() == 0)
             messageViewHolder.message_number_text.setVisibility(View.GONE);
-        else if (emConversation.getUnreadMsgCount() >= 100)
+        else if (emConversation.getUnreadMsgCount() >= 100) {
             messageViewHolder.message_number_text.setText("99+");
-        else
+            messageViewHolder.message_number_text.setVisibility(View.VISIBLE);
+        } else {
             messageViewHolder.message_number_text.setText(emConversation.getUnreadMsgCount() + "");
+            messageViewHolder.message_number_text.setVisibility(View.VISIBLE);
+        }
         getMsgType(emConversation, messageViewHolder.user_message_text);
     }
 
@@ -128,15 +161,15 @@ public class MessageFragment extends EasemobListFragment {
         EMMessage emMessage = emConversation.getLastMessage();
         if (emMessage.getType() == EMMessage.Type.TXT) {
             TextMessageBody textMessageBody = (TextMessageBody) emMessage.getBody();
-            textView.setText(BiaoqingUtil.getInstance().showBiaoqing(parentActivity,textMessageBody.getMessage()));
+            textView.setText(BiaoqingUtil.getInstance().showBiaoqing(parentActivity, textMessageBody.getMessage()));
         } else if (emMessage.getType() == EMMessage.Type.VOICE) {
-            textView.setText(emMessage.getUserName()+"给您发来了"+emConversation.getUnreadMsgCount()+"条语音消息");
+            textView.setText(emConversation.getUnreadMsgCount()==0?"[语音消息]":emConversation.getUnreadMsgCount() + "条语音消息");
         } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
-            textView.setText(emMessage.getUserName()+"给您发来了"+emConversation.getUnreadMsgCount()+"张图片");
+            textView.setText(emConversation.getUnreadMsgCount()==0?"[语图片]":emConversation.getUnreadMsgCount() + "张图片");
         } else if (emMessage.getType() == EMMessage.Type.FILE) {
-            textView.setText(emMessage.getUserName()+"给您发来了"+emConversation.getUnreadMsgCount()+"个文件");
+            textView.setText(emConversation.getUnreadMsgCount()==0?"[文件]":emConversation.getUnreadMsgCount() + "个文件");
         } else if (emMessage.getType() == EMMessage.Type.VIDEO) {
-            textView.setText(emMessage.getUserName()+"给您发来了"+emConversation.getUnreadMsgCount()+"个视频");
+            textView.setText(emConversation.getUnreadMsgCount()==0?"[视频]":emConversation.getUnreadMsgCount() + "个视频");
         } else if (emMessage.getType() == EMMessage.Type.LOCATION) {
             textView.setText("地理位置：我在这里");
         } else if (emMessage.getType() == EMMessage.Type.CMD) {
@@ -164,7 +197,7 @@ public class MessageFragment extends EasemobListFragment {
 
     @Override
     protected void onLongItemClick(RecyclerView parent, View itemView, int position) {
-        showShortToast("长按第" + position + "行");
+        //showShortToast("长按第" + position + "行");
     }
 
     @Override

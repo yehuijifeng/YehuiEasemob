@@ -173,7 +173,6 @@ public class ReceiveMessageHelper implements ReceiveMessageInterfaces {
      */
     @Override
     public void markAllMessagesAsRead(String usernameOrGroupid) {
-        initSerMsg();
         EMConversation conversation = EMChatManager.getInstance().getConversation(usernameOrGroupid);
         conversation.markAllMessagesAsRead();
     }

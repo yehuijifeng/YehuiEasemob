@@ -117,7 +117,7 @@ public class UserInfoBean extends BaseDaoEnabled<UserInfoBean, Integer> implemen
     }
 
     public String getUserIconPath() {
-        return userIconPath;
+        return "file:///"+userIconPath;
     }
 
     public void setUserIconPath(String userIconPath) {

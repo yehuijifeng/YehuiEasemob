@@ -7,4 +7,8 @@
         <item>你的小学班主任叫什么？</item>
         <item>你母亲的名字是什么？</item>
     </array>
+
+    <string name="voice_tishi">手指上滑，取消发送</string>
+    <string name="voice_quxiao">松开手指，取消发送</string>
+
 </resources>

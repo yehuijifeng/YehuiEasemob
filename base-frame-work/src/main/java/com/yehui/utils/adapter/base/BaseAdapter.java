@@ -12,7 +12,7 @@ import java.util.List;
  */
 public abstract class BaseAdapter<T> extends UltimateViewAdapter<BaseViewHolder> {
 
-    protected List<T> data;
+    public List<T> data;
 
     public BaseAdapter(List<T> data) {
         this.data = data;
@@ -108,4 +108,6 @@ public abstract class BaseAdapter<T> extends UltimateViewAdapter<BaseViewHolder>
         if (customHeaderView != null) position++;
         notifyItemInserted(position);//精确添加
     }
+
+
 }

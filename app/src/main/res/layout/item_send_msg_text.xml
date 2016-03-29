@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_weight="0.15"
+        android:layout_height="match_parent"
+        android:minWidth="@dimen/default_msg_height_and_width">
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_weight="0.85"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <com.yehui.utils.view.CircularImageView
+            android:id="@+id/set_msg_image"
+            android:layout_width="@dimen/default_msg_height_and_width"
+            android:layout_height="@dimen/default_msg_height_and_width"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/small_padding_and_margin"
+            android:src="@drawable/ease_default_avatar" />
+
+        <TextView
+            android:id="@+id/set_msg_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/set_msg_image"
+            android:layout_toStartOf="@+id/set_msg_image"
+            android:background="@drawable/bg_get_msg_text"
+            android:gravity="center_vertical"
+            android:textColor="@color/black"
+            android:textSize="@dimen/default_x_text_size" />
+
+        <ProgressBar
+            android:id="@+id/msg_progress_bar"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/set_msg_text"
+            android:layout_toStartOf="@+id/set_msg_text"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/msg_status_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/msg_progress_bar"
+            android:layout_toStartOf="@+id/msg_progress_bar"
+            android:src="@drawable/ease_msg_state_fail_resend_pressed" />
+    </RelativeLayout>
+
+</LinearLayout>

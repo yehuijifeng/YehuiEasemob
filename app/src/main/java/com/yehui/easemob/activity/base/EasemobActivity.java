@@ -3,6 +3,9 @@ package com.yehui.easemob.activity.base;
 import android.os.Bundle;
 
 import com.easemob.EMError;
+import com.easemob.EMEventListener;
+import com.easemob.EMNotifierEvent;
+import com.easemob.chat.EMMessage;
 import com.yehui.easemob.activity.HomeActivity;
 import com.yehui.easemob.activity.LoginActivity;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
@@ -11,16 +14,20 @@ import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.bean.ServerBean;
 import com.yehui.easemob.contants.EasemobContant;
 import com.yehui.easemob.contants.MapContant;
+import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.helper.FriendStatushelper;
 import com.yehui.easemob.helper.ServerStatusHelper;
 import com.yehui.utils.activity.base.BaseActivity;
+import com.yehui.utils.utils.LogUtil;
 import com.yehui.utils.view.dialog.LoadingDialog;
 import com.yehui.utils.view.dialog.PromptDialog;
+
+import java.util.List;
 
 /**
  * Created by Luhao on 2016/2/28.
  */
-public abstract class EasemobActivity extends BaseActivity {
+public abstract class EasemobActivity extends BaseActivity implements EMEventListener {
 
     protected PromptDialog promptDialog;
     protected LoadingDialog loadingDialog;
@@ -38,9 +45,12 @@ public abstract class EasemobActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        long a= System.currentTimeMillis();
         promptDialog = new PromptDialog(EasemobActivity.this);
         loadingDialog = new LoadingDialog(EasemobActivity.this);
+        LogUtil.e(System.currentTimeMillis()-a+"聊天基类");
     }
+
 
     /**
      * 好友体系状态回调
@@ -176,6 +186,70 @@ public abstract class EasemobActivity extends BaseActivity {
 
     }
 
+    /**接收新消息
+     * @param messageBean
+     */
+    public void getNewMessage(MessageBean messageBean){
+
+    }
+
+    /**接收透传消息
+     * @param messageBean
+     */
+    public void getNewCMDMessage(MessageBean messageBean){
+
+    }
+
+    /**
+     * 接收消息回调
+     *
+     * @param event
+     */
+    @Override
+    public void onEvent(EMNotifierEvent event) {
+        EMMessage message;
+        MessageBean messageBean;
+        if (event.getData() instanceof EMMessage) {
+            message = (EMMessage) event.getData();
+            messageBean = new MessageBean();
+            messageBean.setEmMessage(message);
+            LogUtil.d("receive the event : " + event.getEvent() + ",id : " + message.getMsgId());
+        } else if (event.getData() instanceof List) {
+            LogUtil.d("received offline messages");
+            messageBean = new MessageBean();
+            List<EMMessage> messages = (List<EMMessage>) event.getData();
+            messageBean.setGetMsgCode(MessageContant.receiveMsgByOffline);
+            messageBean.setMessageList(messages);
+            return;
+        } else return;
+        switch (event.getEvent()) {
+            default:
+                messageBean.setEmMessage(message);
+                break;
+            case EventNewMessage://接收新消息event注册
+                messageBean.setGetMsgCode(MessageContant.receiveMsgByNew);
+                getNewMessage(messageBean);
+                break;
+            case EventNewCMDMessage://接收透传event注册
+                LogUtil.d("收到透传消息");
+                messageBean.setGetMsgCode(MessageContant.receiveMsgByNewCMDM);
+                // 获取消息body
+                //CmdMessageBody cmdMsgBody = (CmdMessageBody) message.getBody();
+                //final String action = cmdMsgBody.action;// 获取自定义action
+                getNewCMDMessage(messageBean);
+                break;
+            case EventDeliveryAck://已发送回执event注册
+                message.setDelivered(true);
+                messageBean.setGetMsgCode(MessageContant.receiveMsgByDeliveryAck);
+                break;
+            case EventReadAck://已读回执event注册
+                message.setAcked(true);
+                messageBean.setGetMsgCode(MessageContant.receiveMsgByReadAck);
+                break;
+
+        }
+
+    }
 
     @Override
     protected void onDestroy() {

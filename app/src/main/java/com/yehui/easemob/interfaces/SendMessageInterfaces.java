@@ -2,6 +2,7 @@ package com.yehui.easemob.interfaces;
 
 import com.easemob.chat.EMConversation;
 import com.easemob.chat.EMMessage;
+import com.yehui.easemob.bean.MessageBean;
 
 import java.util.List;
 
@@ -11,14 +12,16 @@ import java.util.List;
  */
 public interface SendMessageInterfaces {
 
+
     /**
      * 发送文本消息及表情
-     *
-     * @param content  发送的内容
      * @param username 接收人
+     * @param content 发送的内容
+     * @param isReSend 是否是重新发送
+     * @param msgId 重新发送的信息id
+     * @return
      */
-     void getConversationByText(String username, String content);
-
+    MessageBean sendConversationByText(String username, String content, boolean isReSend, String msgId);
 
     /**
      * 发送语音消息
@@ -26,8 +29,10 @@ public interface SendMessageInterfaces {
      * @param username 接收人
      * @param filePath 语音文件路径
      * @param length   文件长度，大小
+     * @param isReSend 是否是重新发送
+     * @param msgId 重新发送的信息id
      */
-     void getConversationByVoice(String username, String filePath, int length);
+    MessageBean sendConversationByVoice(String username, String filePath, int length, boolean isReSend, String msgId);
 
     /**
      * 发送图片消息
@@ -35,7 +40,7 @@ public interface SendMessageInterfaces {
      * @param username 接收人
      * @param filePath 图片文件路径
      */
-     void getConversationByImage(String username, String filePath);
+    void getConversationByImage(String username, String filePath);
 
     /**
      * 发送地理位置
@@ -45,7 +50,7 @@ public interface SendMessageInterfaces {
      * @param latitude        维度
      * @param longitude       经度
      */
-     void getConversationByLocation(String username, String locationAddress, double latitude, double longitude);
+    void getConversationByLocation(String username, String locationAddress, double latitude, double longitude);
 
     /**
      * 发送图片消息
@@ -58,25 +63,26 @@ public interface SendMessageInterfaces {
     /**
      * 获取会话列表
      */
-     List<EMConversation> loadConversationList();
+    List<EMConversation> loadConversationList();
 
 
     /**
      * 获取聊天记录
      */
-     List<EMMessage> getEMMessageList(String usernameOrGroupid);
+    List<EMMessage> getEMMessageList(String usernameOrGroupid);
 
     /**
      * 获取聊天记录
      */
-     List<EMMessage> getEMMessageList(String usernameOrGroupid, String startMsgId, int pagesize);
+    List<EMMessage> getEMMessageList(String usernameOrGroupid, String startMsgId, int pagesize);
 
     /**
      * 获取未读消息数量
      *
      * @param usernameOrGroupid 用户名名和群id
      */
-     int getUnreadMsgCount(String usernameOrGroupid);
+    int getUnreadMsgCount(String usernameOrGroupid);
+
     /**
      * 获取消息总数
      *

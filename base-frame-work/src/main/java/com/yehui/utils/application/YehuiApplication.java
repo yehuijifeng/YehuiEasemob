@@ -52,6 +52,7 @@ public abstract class YehuiApplication extends Application {
         FileContact.createFiles();//存放文件
         FileContact.createLog();//存放日志
         FileContact.createCacheImage();//存放缓存图片
+        FileContact.createCacheVOice();//存放缓存语音
         FileContact.createSettigns();//存放设置信息
         /**
          * 初始化imageloader
@@ -97,7 +98,7 @@ public abstract class YehuiApplication extends Application {
                 .diskCacheFileCount(100) //缓存的文件数量
                 .diskCache(new UnlimitedDiskCache(new File(FileContact.YEHUI_CACHE_IMG_PATH)))//自定义缓存图片地址
                 .imageDownloader(new BaseImageDownloader(this, 5 * 1000, 30 * 1000)) // connectTimeout (5 s), readTimeout (30 s)超时时间
-                .imageDownloader(new BaseImageDownloader(context)) //图片下载，当前页面
+                //.imageDownloader(new BaseImageDownloader(context)) //图片下载，当前页面
                 .imageDecoder(new BaseImageDecoder(true)) //图片解码
                 .defaultDisplayImageOptions(DisplayImageOptions.createSimple()) //默认图像显示选项：创建简单的
                 .writeDebugLogs()//写入debug的log

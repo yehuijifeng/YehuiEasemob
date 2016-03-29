@@ -184,7 +184,7 @@ public class FileOperationUtil {
     public static FileBean querySDFileByFile(String fileName) {
         File f = new File(fileName);
         if (f.isFile()) {
-            return  queryFileByDetails(f);
+            return queryFileByDetails(f);
         }
         return null;
     }
@@ -332,6 +332,57 @@ public class FileOperationUtil {
                 }
             }
             return 10;
+        }
+    }
+
+    /**
+     * 查看缓存大小
+     */
+    public static String getSDCacheSize() {
+        size = 0;
+        if (cachePath() == null) return "0KB";
+        getFileSize(new File(cachePath()));
+        return fileSize(size);
+
+    }
+
+    public static String cachePath() {
+        if (Environment.MEDIA_MOUNTED.equals(Environment
+                .getExternalStorageState())) {
+            return FileContact.YEHUI_CHACHE;
+        }
+        return null;
+    }
+
+    public static String fileSize(long sizes) {
+        String sizeStr = null;
+        if (sizes < 1024) {
+            sizeStr = sizes + " B";
+        } else if (sizes < 1024 * 1024) {
+            sizeStr = sizes / 1024 + " KB";
+        } else if (sizes < 1024 * 1024 * 1024) {
+            sizeStr = sizes / 1024 / 1024 + " MB";
+        } else if (sizes < 1024 * 1024 * 1024 * 1024) {
+            sizeStr = sizes / 1024 / 1024 / 1024 + " GB";
+        }
+        return sizeStr;
+    }
+
+    private static int size;
+
+    public static void getFileSize(File file) {
+        if (file == null) return;
+        if (!file.isDirectory()) {
+            size += file.length();
+        } else {
+            File[] files = file.listFiles();
+            if (files != null && files.length > 0) {
+                for (int i = 0; i < files.length; i++) {
+                    getFileSize(files[i]);
+                }
+            } else {
+                size += files.length;
+            }
         }
     }
 }
