@@ -24,6 +24,7 @@ import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.model.EaseChatRowVoicePlayClickListener;
 import com.yehui.easemob.utils.BiaoqingUtil;
+import com.yehui.easemob.utils.DateUtil;
 import com.yehui.utils.adapter.base.BaseAdapter;
 import com.yehui.utils.adapter.base.BaseViewHolder;
 import com.yehui.utils.utils.DisplayUtil;
@@ -44,13 +45,19 @@ public class MessageAdapter extends BaseAdapter {
     private EaseChatRowVoicePlayClickListener easeChatRowVoicePlayClickListener;
     private LinearLayout speaker_ly;
     private TextView speaker_text;
+    private RecyclerView recyclerView;
+    private boolean isOutTime = false;
+    private String outTimeStr;
+    private int pageSize = 20;
 
-    public MessageAdapter(Activity context, List<MessageBean> messageList, String friendName, LinearLayout speaker_ly, TextView speaker_text) {
+    public MessageAdapter(Activity context, List<MessageBean> messageList, String friendName, LinearLayout speaker_ly, TextView speaker_text, RecyclerView recyclerView) {
         super(messageList);
         this.context = context;
-        this.friendName = friendName;
-        this.speaker_ly = speaker_ly;
-        this.speaker_text = speaker_text;
+        this.friendName = friendName;//当前聊天的好友id
+        this.speaker_ly = speaker_ly;//切换扬声器和听筒的布局
+        this.speaker_text = speaker_text;//切换扬声器和听筒的文字提示
+        this.recyclerView = recyclerView;//当前使用的recyclerview
+        data.add(0, getLoadMoreItem());
     }
 
     /**
@@ -58,6 +65,18 @@ public class MessageAdapter extends BaseAdapter {
      */
     public MessageAdapter(List<MessageBean> messageList) {
         super(messageList);
+    }
+
+    /**
+     * 加载更多item的适配器
+     *
+     * @return
+     */
+    private MessageBean getLoadMoreItem() {
+        MessageBean messageBean = new MessageBean();
+        messageBean.setContent("点击加载更多");
+        messageBean.setBackStatus(MessageContant.loadMoreData);
+        return messageBean;
     }
 
     /**
@@ -70,13 +89,14 @@ public class MessageAdapter extends BaseAdapter {
 
     /**
      * 向适配器中添加数据
+     *
      * @param messageList
      */
     public void addData(List<MessageBean> messageList) {
-        data.addAll(messageList);
+        data.add(messageList);
     }
 
-    public void getLastHour(RecyclerView recyclerView) {
+    public void getLastHour() {
         if (data != null && data.size() > 0) {
             //让控件显示最后一行数据
             recyclerView.smoothScrollToPosition(data.size() - 1);
@@ -89,11 +109,38 @@ public class MessageAdapter extends BaseAdapter {
     public void onBindDataForItem(BaseViewHolder holder, int position) {
         MessageBean messageBean = (MessageBean) data.get(position);
         EMMessage emMessage = messageBean.getEmMessage();
+        if (position == 0 && messageBean.getBackStatus() == MessageContant.loadMoreData) {
+            MessageMoreVIewHolder messageMoreVIewHolder = (MessageMoreVIewHolder) holder;
+            if (!isMessageRecord()) {
+                messageMoreVIewHolder.load_more_text.setVisibility(View.GONE);
+                messageMoreVIewHolder.msg_progress_bar.setVisibility(View.GONE);
+            } else {
+                messageMoreVIewHolder.load_more_text.setText(messageBean.getContent());
+                messageMoreVIewHolder.load_more_text.setOnClickListener(new OnLoadMoreMessageClick(messageMoreVIewHolder.msg_progress_bar, messageMoreVIewHolder.load_more_text));
+                messageMoreVIewHolder.msg_progress_bar.setVisibility(View.INVISIBLE);
+            }
+            return;
+        }
+        //如果刚刚发送的这条消息和上条消息时间间隔超过3min则显示时间
+        if (position >= 2) {
+            if (emMessage.getMsgTime() - ((MessageBean) data.get(position - 1)).getEmMessage().getMsgTime() >= 180 * 1000) {
+                isOutTime = true;
+                outTimeStr = DateUtil.stampByTime(emMessage.getMsgTime(), ((MessageBean) data.get(position - 1)).getEmMessage().getMsgTime());
+            } else {
+                isOutTime = false;
+            }
+        }
         switch (emMessage.getType()) {
             case TXT://文本消息，带表情
                 TextMessageBody textMessageBody = (TextMessageBody) emMessage.getBody();
                 if (emMessage.direct == EMMessage.Direct.SEND) {//判断这条消息是否是发送消息
                     SendTextViewHolder sendTextViewHolder = (SendTextViewHolder) holder;
+                    if (isOutTime) {
+                        sendTextViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
+                        sendTextViewHolder.msg_time_text.setText(outTimeStr);
+                    } else {
+                        sendTextViewHolder.msg_time_ly.setVisibility(View.GONE);
+                    }
                     // 设置内容
                     sendTextViewHolder.set_msg_text.setText(BiaoqingUtil.getInstance().showBiaoqing(context, textMessageBody.getMessage()));
                     sendTextViewHolder.set_msg_image.setOnClickListener(new OnUserInfoClick(messageBean));
@@ -110,6 +157,12 @@ public class MessageAdapter extends BaseAdapter {
                     }
                 } else {
                     ReceiveTextViewHolder receiveTextViewHolder = (ReceiveTextViewHolder) holder;
+                    if (isOutTime) {
+                        receiveTextViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
+                        receiveTextViewHolder.msg_time_text.setText(outTimeStr);
+                    } else {
+                        receiveTextViewHolder.msg_time_ly.setVisibility(View.GONE);
+                    }
                     receiveTextViewHolder.get_msg_text.setText(BiaoqingUtil.getInstance().showBiaoqing(context, textMessageBody.getMessage()));
                     receiveTextViewHolder.msg_progress_bar.setVisibility(View.GONE);
                     receiveTextViewHolder.msg_status_img.setVisibility(View.GONE);
@@ -121,6 +174,12 @@ public class MessageAdapter extends BaseAdapter {
                 int length = voiceMessageBody.getLength();
                 if (emMessage.direct == EMMessage.Direct.SEND) {
                     SendVoiceViewHolder sendVoiceViewHolder = (SendVoiceViewHolder) holder;
+                    if (isOutTime) {
+                        sendVoiceViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
+                        sendVoiceViewHolder.msg_time_text.setText(outTimeStr);
+                    } else {
+                        sendVoiceViewHolder.msg_time_ly.setVisibility(View.GONE);
+                    }
                     sendVoiceViewHolder.set_msg_image.setOnClickListener(new OnUserInfoClick(messageBean));
                     if (minWidth == 0) minWidth = sendVoiceViewHolder.set_msg_text.getMinWidth();
                     sendVoiceViewHolder.set_msg_text.setWidth(getVoiceLengthByView(length));
@@ -138,6 +197,12 @@ public class MessageAdapter extends BaseAdapter {
                     }
                 } else {
                     ReceiveVoiceViewHolder receiveVoiceViewHolder = (ReceiveVoiceViewHolder) holder;
+                    if (isOutTime) {
+                        receiveVoiceViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
+                        receiveVoiceViewHolder.msg_time_text.setText(outTimeStr);
+                    } else {
+                        receiveVoiceViewHolder.msg_time_ly.setVisibility(View.GONE);
+                    }
                     receiveVoiceViewHolder.get_msg_image.setOnClickListener(new OnUserInfoClick(messageBean));
                     receiveVoiceViewHolder.get_msg_text.setText(length + "");
                     if (minWidth == 0) minWidth = receiveVoiceViewHolder.get_msg_text.getMinWidth();
@@ -149,7 +214,7 @@ public class MessageAdapter extends BaseAdapter {
                     if (emMessage.isListened()) {
                         receiveVoiceViewHolder.msg_voice_is_open.setVisibility(View.INVISIBLE);
                     } else {
-                        receiveVoiceViewHolder.msg_voice_is_open.setVisibility(View.GONE);
+                        receiveVoiceViewHolder.msg_voice_is_open.setVisibility(View.VISIBLE);
                     }
                 }
                 break;
@@ -208,6 +273,10 @@ public class MessageAdapter extends BaseAdapter {
                 break;
             case MessageContant.receiveMsgByFile:
                 break;
+            case MessageContant.loadMoreData:
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_load_msg, parent, false);
+                viewHolder = new MessageMoreVIewHolder(convertView);
+                break;
         }
         return viewHolder;
     }
@@ -215,6 +284,11 @@ public class MessageAdapter extends BaseAdapter {
     @Override
     public int getItemType(int position) {
         MessageBean messageBean = (MessageBean) data.get(position);
+        if (position == 0) {
+            if (messageBean.getBackStatus() == MessageContant.loadMoreData) {
+                return MessageContant.loadMoreData;
+            }
+        }
         EMMessage emMessage = messageBean.getEmMessage();
         switch (emMessage.getType()) {
             case TXT:
@@ -310,6 +384,62 @@ public class MessageAdapter extends BaseAdapter {
         }
     }
 
+    /**
+     * 点击加载更多
+     */
+    class OnLoadMoreMessageClick implements View.OnClickListener {
+        private ProgressBar msg_progress_bar;
+        private TextView load_more_text;
+
+        private OnLoadMoreMessageClick(ProgressBar msg_progress_bar, TextView load_more_text) {
+            this.msg_progress_bar = msg_progress_bar;
+            this.load_more_text = load_more_text;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (!isMessageRecord()) {
+                msg_progress_bar.setVisibility(View.GONE);
+                load_more_text.setVisibility(View.GONE);
+            } else {
+                msg_progress_bar.setVisibility(View.INVISIBLE);
+                addMessageRecord();
+                msg_progress_bar.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    /**
+     * 判断是否还有更多的聊天记录
+     */
+    private boolean isMessageRecord() {
+        String msgId = ((MessageBean) data.get(1)).getEmMessage().getMsgId();//获得当前显示的最后一条记录id
+        List<EMMessage> list = SendMessageHelper.getInstance().getEMMessageList(friendName, msgId, pageSize);
+        if (list != null && list.size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 添加聊天记录
+     */
+    private void addMessageRecord() {
+        String msgId = ((MessageBean) data.get(1)).getEmMessage().getMsgId();//获得当前显示的最后一条记录id
+        List<EMMessage> list = SendMessageHelper.getInstance().getEMMessageList(friendName, msgId, pageSize);
+        if (list != null && list.size() > 0) {
+            for (int i = 0; i < list.size(); i++) {
+                EMMessage emMessage = list.get(i);
+                MessageBean messageBean = new MessageBean();
+                messageBean.setBackStatus(1);
+                messageBean.setEmMessage(emMessage);
+                messageBean.setUserName(emMessage.getUserName());
+                data.add(i + 1, messageBean);
+            }
+            recyclerView.scrollToPosition(list.size() + 1);
+            notifyDataSetChanged();
+        }
+    }
 
     /****************************************viewholder******************************************************/
 
@@ -322,6 +452,8 @@ public class MessageAdapter extends BaseAdapter {
         private TextView get_msg_text;
         private ProgressBar msg_progress_bar;
         private ImageView msg_status_img;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text;
 
         public ReceiveTextViewHolder(View itemView) {
             super(itemView);
@@ -334,6 +466,8 @@ public class MessageAdapter extends BaseAdapter {
             get_msg_text = (TextView) itemView.findViewById(R.id.get_msg_text);
             msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
             msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
             msg_progress_bar.setVisibility(View.GONE);
             msg_status_img.setVisibility(View.GONE);
         }
@@ -347,6 +481,8 @@ public class MessageAdapter extends BaseAdapter {
         private TextView set_msg_text;
         private ProgressBar msg_progress_bar;
         private ImageView msg_status_img;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text;
 
         public SendTextViewHolder(View itemView) {
             super(itemView);
@@ -359,6 +495,8 @@ public class MessageAdapter extends BaseAdapter {
             set_msg_text = (TextView) itemView.findViewById(R.id.set_msg_text);
             msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
             msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
             msg_progress_bar.setVisibility(View.GONE);
             msg_status_img.setVisibility(View.GONE);
         }
@@ -373,6 +511,8 @@ public class MessageAdapter extends BaseAdapter {
         private ProgressBar msg_progress_bar;
         private ImageView msg_status_img, msg_voice_is_open, get_msg_img;
         private RelativeLayout get_msg_ly;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text;
 
         public ReceiveVoiceViewHolder(View itemView) {
             super(itemView);
@@ -388,6 +528,8 @@ public class MessageAdapter extends BaseAdapter {
             msg_voice_is_open = (ImageView) itemView.findViewById(R.id.msg_voice_is_open);
             get_msg_ly = (RelativeLayout) itemView.findViewById(R.id.get_msg_ly);
             get_msg_img = (ImageView) itemView.findViewById(R.id.get_msg_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
             msg_progress_bar.setVisibility(View.GONE);
             msg_status_img.setVisibility(View.GONE);
         }
@@ -402,6 +544,8 @@ public class MessageAdapter extends BaseAdapter {
         private ProgressBar msg_progress_bar;
         private ImageView msg_status_img, msg_voice_is_open, set_msg_img;
         private RelativeLayout set_msg_ly;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text;
 
         public SendVoiceViewHolder(View itemView) {
             super(itemView);
@@ -416,25 +560,26 @@ public class MessageAdapter extends BaseAdapter {
             msg_voice_is_open = (ImageView) itemView.findViewById(R.id.msg_voice_is_open);
             set_msg_ly = (RelativeLayout) itemView.findViewById(R.id.set_msg_ly);
             set_msg_img = (ImageView) itemView.findViewById(R.id.set_msg_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
             msg_progress_bar.setVisibility(View.GONE);
             msg_status_img.setVisibility(View.GONE);
         }
     }
 
     /**
-     * 显示时间
+     * 显示加载更多
      */
-    private class MessageTimeVIewHolder extends BaseViewHolder {
-        private TextView msg_time_text, load_more_text;
+    private class MessageMoreVIewHolder extends BaseViewHolder {
+        private TextView load_more_text;
         private ProgressBar msg_progress_bar;
 
-        public MessageTimeVIewHolder(View itemView) {
+        public MessageMoreVIewHolder(View itemView) {
             super(itemView);
         }
 
         @Override
         public void initItemView(View itemView) {
-            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
             load_more_text = (TextView) itemView.findViewById(R.id.load_more_text);
             msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
         }

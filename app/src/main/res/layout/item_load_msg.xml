@@ -5,16 +5,6 @@
     android:orientation="vertical"
     android:descendantFocusability="blocksDescendants">
 
-    <TextView
-        android:id="@+id/msg_time_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/small_padding_and_margin"
-        android:background="@drawable/bg_msg_tiem"
-        android:padding="@dimen/small_padding_and_margin"
-        android:text="00:00"
-        android:textColor="@color/white" />
 
     <RelativeLayout
         android:id="@+id/load_more_rl"
@@ -26,6 +16,7 @@
             style="?android:attr/progressBarStyleSmall"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_margin="@dimen/default_x_padding_and_margin"
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/load_more_text"
             android:layout_toStartOf="@+id/load_more_text" />

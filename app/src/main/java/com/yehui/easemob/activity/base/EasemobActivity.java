@@ -1,10 +1,12 @@
 package com.yehui.easemob.activity.base;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.easemob.EMError;
 import com.easemob.EMEventListener;
 import com.easemob.EMNotifierEvent;
+import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMMessage;
 import com.yehui.easemob.activity.HomeActivity;
 import com.yehui.easemob.activity.LoginActivity;
@@ -16,6 +18,7 @@ import com.yehui.easemob.contants.EasemobContant;
 import com.yehui.easemob.contants.MapContant;
 import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.helper.FriendStatushelper;
+import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.helper.ServerStatusHelper;
 import com.yehui.utils.activity.base.BaseActivity;
 import com.yehui.utils.utils.LogUtil;
@@ -34,21 +37,26 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
 
     @Override
     protected void onResume() {
+        //注册消息监听
+        //EMChatManager.getInstance().registerEventListener(this,
+        //new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewMessage, EMNotifierEvent.Event.EventOfflineMessage, EMNotifierEvent.Event.EventConversationListChanged});
+        EMChatManager.getInstance().registerEventListener(this);
         super.onResume();
     }
 
     @Override
     protected void onStop() {
+        EMChatManager.getInstance().unregisterEventListener(this);//注销消息监听
         super.onStop();
     }
 
 
     @Override
     protected void initData() {
-        long a= System.currentTimeMillis();
+        long a = System.currentTimeMillis();
         promptDialog = new PromptDialog(EasemobActivity.this);
         loadingDialog = new LoadingDialog(EasemobActivity.this);
-        LogUtil.e(System.currentTimeMillis()-a+"聊天基类");
+        LogUtil.e(System.currentTimeMillis() - a + "聊天基类");
     }
 
 
@@ -166,7 +174,7 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
             case EMError.UNABLE_CONNECT_TO_SERVER://链接不到服务器
             case EMError.NONETWORK_ERROR://网络不可用
                 showLongToast(serverBean.getStatusMsg());
-                loadingEmpty(serverBean.getStatusMsg());
+                //loadingEmpty(serverBean.getStatusMsg());
                 break;
             case EasemobContant.loginOut:
                 if (serverBean.isOperation()) {
@@ -181,22 +189,24 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
 //            default:
 //                showLongToast(serverBean.getStatusMsg());
 //                break;
-
         }
+    }
+
+    /**
+     * 接收新消息
+     *
+     * @param messageBean
+     */
+    public void getNewMessage(MessageBean messageBean) {
 
     }
 
-    /**接收新消息
+    /**
+     * 接收透传消息
+     *
      * @param messageBean
      */
-    public void getNewMessage(MessageBean messageBean){
-
-    }
-
-    /**接收透传消息
-     * @param messageBean
-     */
-    public void getNewCMDMessage(MessageBean messageBean){
+    public void getNewCMDMessage(MessageBean messageBean) {
 
     }
 
@@ -246,10 +256,27 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
                 message.setAcked(true);
                 messageBean.setGetMsgCode(MessageContant.receiveMsgByReadAck);
                 break;
-
         }
-
     }
+
+    /**
+     * 显示未读消息的角标
+     */
+    public void showMessageCount() {
+        int j = SendMessageHelper.getInstance().getMessageCount();
+        if (HomeActivity.message_number_text != null) {
+            if (j <= 0)
+                HomeActivity.message_number_text.setVisibility(View.GONE);
+            else if (j > 99) {
+                HomeActivity.message_number_text.setText("99+");
+                HomeActivity.message_number_text.setVisibility(View.VISIBLE);
+            } else {
+                HomeActivity.message_number_text.setVisibility(View.VISIBLE);
+                HomeActivity.message_number_text.setText("" + j);
+            }
+        }
+    }
+
 
     @Override
     protected void onDestroy() {

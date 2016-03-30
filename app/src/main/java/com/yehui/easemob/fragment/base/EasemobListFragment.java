@@ -2,7 +2,9 @@ package com.yehui.easemob.fragment.base;
 
 import com.easemob.EMEventListener;
 import com.easemob.EMNotifierEvent;
+import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMMessage;
+import com.yehui.easemob.activity.base.EasemobActivity;
 import com.yehui.easemob.bean.FriendBean;
 import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.contants.MessageContant;
@@ -18,25 +20,50 @@ import java.util.List;
  */
 public abstract class EasemobListFragment extends BaseListFragment implements EMEventListener {
 
+    @Override
+    public void onResume() {
+        //注册消息监听
+        EMChatManager.getInstance().registerEventListener(this);
+        super.onResume();
+    }
+
+    @Override
+    public void onStop() {
+        EMChatManager.getInstance().unregisterEventListener(this);//注销消息监听
+        super.onStop();
+    }
+
     public void onEventMainThread(FriendBean friendBean) {
         getFriendStatus(friendBean);
+    }
+
+    public void onEventMainThread(MessageBean messageBean) {
+        getNewMessage(messageBean);
+    }
+
+    protected void showMessageNumberIcon() {
+        ((EasemobActivity) parentActivity).showMessageCount();
     }
 
     protected void getFriendStatus(FriendBean friendBean) {
 
     }
 
-    /**接收新消息
+    /**
+     * 接收新消息
+     *
      * @param messageBean
      */
-    public void getNewMessage(MessageBean messageBean){
-
+    public void getNewMessage(MessageBean messageBean) {
+        showMessageNumberIcon();
     }
 
-    /**接收透传消息
+    /**
+     * 接收透传消息
+     *
      * @param messageBean
      */
-    public void getNewCMDMessage(MessageBean messageBean){
+    public void getNewCMDMessage(MessageBean messageBean) {
 
     }
 
@@ -68,7 +95,8 @@ public abstract class EasemobListFragment extends BaseListFragment implements EM
                 break;
             case EventNewMessage://接收新消息event注册
                 messageBean.setGetMsgCode(MessageContant.receiveMsgByNew);
-                getNewMessage(messageBean);
+                eventBus.post(messageBean);
+
                 break;
             case EventNewCMDMessage://接收透传event注册
                 LogUtil.d("收到透传消息");

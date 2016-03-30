@@ -13,10 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.easemob.EMEventListener;
-import com.easemob.EMNotifierEvent;
-import com.easemob.chat.CmdMessageBody;
-import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMMessage;
 import com.yehui.easemob.R;
 import com.yehui.easemob.activity.base.EasemobListActivity;
@@ -32,7 +28,6 @@ import com.yehui.easemob.view.BiaoqingView;
 import com.yehui.easemob.view.EditTexts;
 import com.yehui.easemob.view.VoiceView;
 import com.yehui.utils.adapter.base.BaseViewHolder;
-import com.yehui.utils.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +37,7 @@ import java.util.List;
  * on 2016/3/8.
  * 消息队列
  */
-public class MessageActivity extends EasemobListActivity implements View.OnClickListener, TextWatcher, View.OnLayoutChangeListener, EMEventListener, View.OnTouchListener {
+public class MessageActivity extends EasemobListActivity implements View.OnClickListener, TextWatcher, View.OnLayoutChangeListener, View.OnTouchListener {
 
     private RelativeLayout msg_root_ly, start_voice_rl;
     private TextView start_voice_text, speaker_text;
@@ -55,7 +50,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     private LinearLayout function_layout, speaker_ly;
     private Button fasong_msg_btn;
     private String friendName;
-    private int pageSize = 19;
+    private int pageSize = 20;
     private List<MessageBean> msgList;
     private BiaoqingView biaoqing_layout;
     private EditTexts editTexts;
@@ -123,12 +118,11 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         mTitleView.setTitleText(friendName);
         loadingView();
         List<EMMessage> listAll = SendMessageHelper.getInstance().getEMMessageList(friendName);
-
+        msgList = new ArrayList<>();
         if (listAll != null && listAll.size() > 0) {
             List<EMMessage> listMsg = SendMessageHelper.getInstance().getEMMessageList(friendName, listAll.get(listAll.size() - 1).getMsgId(), pageSize);
-            listMsg.add(listMsg.size(), listAll.get(listAll.size() - 1));
+            listMsg.add(listAll.get(listAll.size() - 1));
             if (listMsg != null && listMsg.size() > 0) {
-                msgList = new ArrayList<>();
                 for (EMMessage emMessage : listMsg) {
                     MessageBean messageBean = new MessageBean();
                     messageBean.setBackStatus(1);
@@ -137,102 +131,76 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                     msgList.add(messageBean);
                 }
                 getWindowWidth();
-                messageAdapter = new MessageAdapter(this, msgList, friendName, speaker_ly, speaker_text);
-                messageAdapter.getLastHour(recyclerView);//将数据显示到最后一行
-                setmAdapter(messageAdapter);
             }
         }
+        messageAdapter = new MessageAdapter(this, msgList, friendName, speaker_ly, speaker_text, recyclerView);
+        messageAdapter.getLastHour();//将数据显示到最后一行
+        setmAdapter(messageAdapter);
         loadingClose();
         ReceiveMessageHelper.getInstance().markAllMessagesAsRead(friendName);
     }
 
     @Override
     protected void onResume() {
-        //注册消息监听
-        //EMChatManager.getInstance().registerEventListener(this,
-        //new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewMessage, EMNotifierEvent.Event.EventOfflineMessage, EMNotifierEvent.Event.EventConversationListChanged});
-        EMChatManager.getInstance().registerEventListener(this);
         super.onResume();
-        if (messageAdapter.data != null && messageAdapter.data.size() > 0)
+        if (messageAdapter != null && messageAdapter.data != null && messageAdapter.data.size() > 0)
             messageAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onStop() {
-        EMChatManager.getInstance().unregisterEventListener(this);//注销消息监听
-        messageAdapter.stopVoicePlay();
         super.onStop();
+        messageAdapter.stopVoicePlay();
     }
-
-    /**
-     * 接收消息回调
-     *
-     * @param event
-     */
-    @Override
-    public void onEvent(EMNotifierEvent event) {
-        EMMessage message;
-        MessageBean messageBean;
-        if (event.getData() instanceof EMMessage) {
-            message = (EMMessage) event.getData();
-            messageBean = new MessageBean();
-            messageBean.setEmMessage(message);
-            LogUtil.d("receive the event : " + event.getEvent() + ",id : " + message.getMsgId());
-        } else if (event.getData() instanceof List) {
-            LogUtil.d("received offline messages");
-            messageBean = new MessageBean();
-            List<EMMessage> messages = (List<EMMessage>) event.getData();
-            messageBean.setGetMsgCode(MessageContant.receiveMsgByOffline);
-            messageBean.setMessageList(messages);
-            return;
-        } else return;
-        switch (event.getEvent()) {
-            case EventNewMessage://接收新消息event注册
-                messageBean.setGetMsgCode(MessageContant.receiveMsgByNew);
-                getMessageByType(messageBean);
-                break;
-            case EventNewCMDMessage://接收透传event注册
-                LogUtil.d("收到透传消息");
-                messageBean.setEmMessage(message);
-                messageBean.setGetMsgCode(MessageContant.receiveMsgByNewCMDM);
-                // 获取消息body
-                CmdMessageBody cmdMsgBody = (CmdMessageBody) message.getBody();
-                final String action = cmdMsgBody.action;// 获取自定义action
-                break;
-            case EventDeliveryAck://已发送回执event注册
-                message.setDelivered(true);
-                messageBean.setGetMsgCode(MessageContant.receiveMsgByDeliveryAck);
-                break;
-            case EventReadAck://已读回执event注册
-                message.setAcked(true);
-                messageBean.setGetMsgCode(MessageContant.receiveMsgByReadAck);
-                break;
-            default:
-                messageBean.setEmMessage(message);
-                break;
-        }
-
-    }
-
-    /**
-     * 添加聊天记录
-     */
-    private void addMessageRecord() {
-        if (SendMessageHelper.getInstance().getEMMessageList(friendName) != null && SendMessageHelper.getInstance().getEMMessageList(friendName).size() > 0) {
-            if (SendMessageHelper.getInstance().getEMMessageList(friendName).size() <= messageAdapter.data.size())
-                return;
-            List<EMMessage> list = SendMessageHelper.getInstance().getEMMessageList(friendName, SendMessageHelper.getInstance().getEMMessageList(friendName).get(SendMessageHelper.getInstance().getEMMessageList(friendName).size() - messageAdapter.data.size()).getMsgId(), pageSize);
-            msgList = new ArrayList<>();
-            for (EMMessage emMessage : list) {
-                MessageBean messageBean = new MessageBean();
-                messageBean.setBackStatus(1);
-                messageBean.setEmMessage(emMessage);
-                messageBean.setUserName(emMessage.getUserName());
-                msgList.add(messageBean);
-            }
-            messageAdapter.addData(msgList);
-        }
-    }
+//
+//    /**
+//     * 接收消息回调
+//     *
+//     * @param event
+//     */
+//    @Override
+//    public void onEvent(EMNotifierEvent event) {
+//        EMMessage message;
+//        MessageBean messageBean;
+//        if (event.getData() instanceof EMMessage) {
+//            message = (EMMessage) event.getData();
+//            messageBean = new MessageBean();
+//            messageBean.setEmMessage(message);
+//        } else if (event.getData() instanceof List) {
+//            messageBean = new MessageBean();
+//            List<EMMessage> messages = (List<EMMessage>) event.getData();
+//            messageBean.setGetMsgCode(MessageContant.receiveMsgByOffline);
+//            messageBean.setMessageList(messages);
+//            return;
+//        } else return;
+//        switch (event.getEvent()) {
+//            case EventNewMessage://接收新消息event注册
+//                messageBean.setGetMsgCode(MessageContant.receiveMsgByNew);
+//                getMessageByType(messageBean);
+//                break;
+//            case EventNewCMDMessage://接收透传event注册
+//                LogUtil.d("收到透传消息");
+//                messageBean.setEmMessage(message);
+//                messageBean.setGetMsgCode(MessageContant.receiveMsgByNewCMDM);
+//                // 获取消息body
+//                CmdMessageBody cmdMsgBody = (CmdMessageBody) message.getBody();
+//                final String action = cmdMsgBody.action;// 获取自定义action
+//                break;
+//            case EventDeliveryAck://已发送回执event注册
+//                message.setDelivered(true);
+//                messageBean.setGetMsgCode(MessageContant.receiveMsgByDeliveryAck);
+//                break;
+//            case EventReadAck://已读回执event注册
+//                message.setAcked(true);
+//                messageBean.setGetMsgCode(MessageContant.receiveMsgByReadAck);
+//                break;
+//            default:
+//                messageBean.setEmMessage(message);
+//                break;
+//        }
+//
+//    }
+//
 
     /**
      * 发送消息回调状态
@@ -248,13 +216,13 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 MessageBean msg = (MessageBean) messageAdapter.data.get(i);
                 if (msg.getEmMessage().getMsgId().equals(messageBean.getEmMessage().getMsgId())) {
                     messageAdapter.data.set(i, messageBean);
-                    messageAdapter.getLastHour(recyclerView);
+                    messageAdapter.getLastHour();
                     return;
                 }
             }
         }
         messageAdapter.data.add(messageBean);
-        messageAdapter.getLastHour(recyclerView);
+        messageAdapter.getLastHour();
         switch (messageBean.getGetMsgCode()) {
             case MessageContant.sendMsgByText://发送文本消息后状态回调
                 editTexts.setText("");
@@ -287,31 +255,12 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         }
     }
 
-    /**
-     * 新消息类型解析
-     *
-     * @param messageBean
-     */
-    private void getMessageByType(MessageBean messageBean) {
+    @Override
+    public void getNewMessage(MessageBean messageBean) {
         EMMessage emMessage = messageBean.getEmMessage();
-        if (emMessage.getType() == EMMessage.Type.TXT) {//文本消息
-
-        } else if (emMessage.getType() == EMMessage.Type.VOICE) {//语音消息
-
-        } else if (emMessage.getType() == EMMessage.Type.LOCATION) {//地理位置
-
-        } else if (emMessage.getType() == EMMessage.Type.IMAGE) {//图片
-
-        } else if (emMessage.getType() == EMMessage.Type.FILE) {//文件
-
-        } else if (emMessage.getType() == EMMessage.Type.VIDEO) {//视频
-
-        } else if (emMessage.getType() == EMMessage.Type.CMD) {//视频
-
-        }
         messageAdapter.data.add(messageBean);
-        messageAdapter.getLastHour(recyclerView);
         SendMessageHelper.getInstance().getMarkAsRead(friendName, emMessage, true);
+        messageAdapter.getLastHour();
     }
 
     @Override
@@ -473,14 +422,13 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         //old是改变前的左上右下坐标点值，没有old的是改变后的左上右下坐标点值
 //      System.out.println(oldLeft + " " + oldTop +" " + oldRight + " " + oldBottom);
 //      System.out.println(left + " " + top +" " + right + " " + bottom);
-        keyHeight = getWindowHeight() / 3;
-        if (messageAdapter.data == null || messageAdapter.data.size() == 0) return;
-        //现在认为只要控件将Activity向上推的高度超过了1/3屏幕高，就认为软键盘弹起
+        keyHeight = getWindowHeight() / 4;
+        if (messageAdapter == null || messageAdapter.data == null || messageAdapter.data.size() == 0)
+            return;
+        //现在认为只要控件将Activity向上推的高度超过了1/4屏幕高，就认为软键盘弹起
         if (oldBottom != 0 && bottom != 0 && (oldBottom - bottom > keyHeight)) {
-            LogUtil.i("监听到软键盘弹起");
             recyclerView.smoothScrollToPosition(messageAdapter.data.size() - 1);
         } else if (oldBottom != 0 && bottom != 0 && (bottom - oldBottom > keyHeight)) {
-            LogUtil.i("监听到软件盘关闭");
             recyclerView.smoothScrollToPosition(messageAdapter.data.size() - 1);
         }
     }

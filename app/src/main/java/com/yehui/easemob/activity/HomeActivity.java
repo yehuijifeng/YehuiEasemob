@@ -20,7 +20,21 @@ import com.yehui.utils.view.titleview.MyTitleView;
  */
 public class HomeActivity extends EasemobViewPagerActivity {
 
-    public TextView message_number_text;
+    public static TextView message_number_text;
+
+//    @Override
+//    protected void onResume() {
+//        //注册消息监听
+//        EMChatManager.getInstance().registerEventListener(this);
+//        super.onResume();
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        EMChatManager.getInstance().unregisterEventListener(this);//注销消息监听
+//        super.onStop();
+//    }
+
     @Override
     protected View setTabView(ViewGroup container, int position) {
         View view = inflate(R.layout.item_easemob_viewpager_tab, container, false);
@@ -31,7 +45,7 @@ public class HomeActivity extends EasemobViewPagerActivity {
             case 0:
                 tabText.setText("消息");
                 tabImage.setImageDrawable(getResourceDrawable(R.drawable.bg_message_selected));
-                message_number_text= (TextView) view.findViewById(R.id.message_number_text);
+                message_number_text = (TextView) view.findViewById(R.id.message_number_text);
                 break;
             case 1:
                 tabText.setText("好友");
@@ -90,7 +104,6 @@ public class HomeActivity extends EasemobViewPagerActivity {
             }
             return false;
         }
-
         return super.onKeyDown(keyCode, event);
     }
 }

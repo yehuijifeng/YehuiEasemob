@@ -23,5 +23,5 @@ public class MessageContant {
     public static final int receiveMsgByNewCMDM = receiveMsgByOffline + 1;//透传消息
     public static final int receiveMsgByReadAck = receiveMsgByNewCMDM + 1;//已读
     public static final int receiveMsgByListChanged = receiveMsgByReadAck + 1;//会话列表改变
-
+    public static final int loadMoreData = receiveMsgByListChanged + 1;//加载更多聊天记录
 }

@@ -76,31 +76,18 @@ public class MessageFragment extends EasemobListFragment {
         loadData();
         userInfoDao = new UserInfoDao(parentActivity);
         userInfoBean = (UserInfoBean) userInfoDao.queryByWhere(MapContant.USER_NAME, EasemobAppliaction.user.getUserName()).get(0);
-        showMessageCount();
     }
 
     @Override
     public void getNewMessage(MessageBean messageBean) {
-        loadData();
+        clearAll();
+        addAll(SendMessageHelper.getInstance().loadConversationList());
+        if (data == null || data.size() == 0)
+            loadingEmpty("暂无消息");
+        notifyDataChange();
+        showMessageNumberIcon();
     }
 
-    /**
-     * 显示未读消息的角标
-     */
-    private void showMessageCount() {
-        int j = SendMessageHelper.getInstance().getMessageCount();
-        if (((HomeActivity) parentActivity).message_number_text != null) {
-            if (j <= 0)
-                ((HomeActivity) parentActivity).message_number_text.setVisibility(View.GONE);
-            else if (j > 99) {
-                ((HomeActivity) parentActivity).message_number_text.setText("99+");
-                ((HomeActivity) parentActivity).message_number_text.setVisibility(View.VISIBLE);
-            } else {
-                ((HomeActivity) parentActivity).message_number_text.setText(j + "");
-                ((HomeActivity) parentActivity).message_number_text.setVisibility(View.VISIBLE);
-            }
-        }
-    }
 
     private void loadData() {
         clearAll();
@@ -109,7 +96,7 @@ public class MessageFragment extends EasemobListFragment {
         loadingSuccess();
         if (data == null || data.size() == 0)
             loadingEmpty("暂无消息");
-        showMessageCount();
+        showMessageNumberIcon();
     }
 
     @Override
@@ -142,7 +129,7 @@ public class MessageFragment extends EasemobListFragment {
         EMConversation emConversation = (EMConversation) data.get(position);
         EMMessage emMessage = emConversation.getLastMessage();
         MessageViewHolder messageViewHolder = (MessageViewHolder) holder;
-        imageLoader.displayImage("", messageViewHolder.user_icon_img, EasemobAppliaction.roundOptions);
+        imageLoader.displayImage("图片资源路径，暂无", messageViewHolder.user_icon_img, EasemobAppliaction.roundOptions);
         messageViewHolder.user_name_text.setText(emMessage.getUserName());
         messageViewHolder.message_time_text.setText(DateUtil.stampToTime(emMessage.getMsgTime()));
         if (emConversation.getUnreadMsgCount() == 0)
@@ -163,13 +150,13 @@ public class MessageFragment extends EasemobListFragment {
             TextMessageBody textMessageBody = (TextMessageBody) emMessage.getBody();
             textView.setText(BiaoqingUtil.getInstance().showBiaoqing(parentActivity, textMessageBody.getMessage()));
         } else if (emMessage.getType() == EMMessage.Type.VOICE) {
-            textView.setText(emConversation.getUnreadMsgCount()==0?"[语音消息]":emConversation.getUnreadMsgCount() + "条语音消息");
+            textView.setText(emConversation.getUnreadMsgCount() == 0 ? "[语音消息]" : emConversation.getUnreadMsgCount() + "条语音消息");
         } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
-            textView.setText(emConversation.getUnreadMsgCount()==0?"[语图片]":emConversation.getUnreadMsgCount() + "张图片");
+            textView.setText(emConversation.getUnreadMsgCount() == 0 ? "[语图片]" : emConversation.getUnreadMsgCount() + "张图片");
         } else if (emMessage.getType() == EMMessage.Type.FILE) {
-            textView.setText(emConversation.getUnreadMsgCount()==0?"[文件]":emConversation.getUnreadMsgCount() + "个文件");
+            textView.setText(emConversation.getUnreadMsgCount() == 0 ? "[文件]" : emConversation.getUnreadMsgCount() + "个文件");
         } else if (emMessage.getType() == EMMessage.Type.VIDEO) {
-            textView.setText(emConversation.getUnreadMsgCount()==0?"[视频]":emConversation.getUnreadMsgCount() + "个视频");
+            textView.setText(emConversation.getUnreadMsgCount() == 0 ? "[视频]" : emConversation.getUnreadMsgCount() + "个视频");
         } else if (emMessage.getType() == EMMessage.Type.LOCATION) {
             textView.setText("地理位置：我在这里");
         } else if (emMessage.getType() == EMMessage.Type.CMD) {

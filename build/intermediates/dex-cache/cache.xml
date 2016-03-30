@@ -6,7 +6,7 @@
         jumboMode="false"
         revision="22.0.1"
         sha1="696d3deb4f7d751a3422dfd903c33523e4ed7d3a">
-        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\classes-a5876916907861f26bc4e55c900031eaa1859932.jar" />
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\release\classes-a5876916907861f26bc4e55c900031eaa1859932.jar" />
     </item>
 
 </items>

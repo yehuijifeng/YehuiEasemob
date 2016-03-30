@@ -15,16 +15,6 @@ public class DateUtil {
      * @param stamp
      * @return
      */
-//    public static String stampToTime(long stamp) {
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        String d = format.format(stamp);
-//        try {
-//            return com.yehui.utils.utils.DateUtil.getTimeReduction(d);
-//        } catch (ParseException e) {
-//            d = d.substring(10, 15);
-//            return d;
-//        }
-//    }
     public static String stampToTime(long stamp) {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         String stampTime = format.format(stamp);
@@ -65,10 +55,10 @@ public class DateUtil {
                     }
                 }
             } else {
-                return ms + "月";
+                return m + "月 " + d + "日";
             }
         } else {
-            return ys + "年";
+            return y + "年 " + m + "月";
         }
     }
 
@@ -87,5 +77,61 @@ public class DateUtil {
             e.printStackTrace();
         }
         return date.getTime();
+    }
+
+    /**
+     * 时间戳转化成时间
+     *
+     * @param stamp
+     * @return
+     */
+    public static String stampByTime(long stamp, long stamps) {
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+        String stampTime = format.format(stamp);
+        String y = stampTime.substring(0, 4);
+        String m = stampTime.substring(4, 6);
+        String d = stampTime.substring(6, 8);
+        String h = stampTime.substring(8, 10);
+        String mm = stampTime.substring(10, 12);
+        String s = stampTime.substring(12, 14);
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+        String returnTime = df.format(stamps);
+        String ys = returnTime.substring(0, 4);
+        String ms = returnTime.substring(4, 6);
+        String ds = returnTime.substring(6, 8);
+        String hs = returnTime.substring(8, 10);
+        String mms = returnTime.substring(10, 12);
+        String ss = returnTime.substring(12, 14);
+
+        if (y.equals(ys)) {
+            if (m.equals(ms)) {
+                if (d.equals(ds)) {
+                    int min = Integer.parseInt(mm);
+                    int mins = Integer.parseInt(mms);
+                    if (min - mins >= 3) {
+                        return h + " : " + mm + " : " + s;
+                    } else if (mins - min >= 3) {
+                        return h + " : " + mm + " : " + s;
+                    } else
+                        return "";
+                } else {
+                    int dd = Integer.parseInt(d);
+                    int ddd = Integer.parseInt(ds);
+                    if (dd - ddd == 1) {
+                        return "昨天 " + h + " : " + mm + " : " + s;
+                    } else if (dd - ddd == 2) {
+                        return "前天 " + h + " : " + mm + " : " + s;
+                    } else {
+                        return dd - ddd + "天前 " + h + " : " + mm + " : " + s;
+                    }
+                }
+            } else {
+                return m + "月 " + d + "日 " + h + " : " + mm + " : " + s;
+            }
+        } else {
+            return y + "年 " + m + "月" + d + "日 " + h + " : " + mm + " : " + s;
+        }
     }
 }

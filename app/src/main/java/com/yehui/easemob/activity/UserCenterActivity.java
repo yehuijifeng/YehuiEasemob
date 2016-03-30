@@ -61,9 +61,6 @@ public class UserCenterActivity extends EasemobActivity implements View.OnClickL
         user_center_introduce = (EditText) findViewById(R.id.user_center_introduce);
         user_center_email = (EditText) findViewById(R.id.user_center_email);
         user_center_image_square.setOnClickListener(this);
-        user_center_nickname.addTextChangedListener(this);
-        user_center_introduce.addTextChangedListener(this);
-        user_center_email.addTextChangedListener(this);
         promptDialog = new PromptDialog(this);
     }
 
@@ -87,6 +84,10 @@ public class UserCenterActivity extends EasemobActivity implements View.OnClickL
         user_center_introduce.setText(userInfoBean.getUserIntroduce());
         user_center_email.setText(userInfoBean.getPwdEmail());
         imageLoader.displayImage(userInfoBean.getUserIconPath(), user_center_image_square, EasemobAppliaction.defaultOptions);
+
+        user_center_nickname.addTextChangedListener(this);
+        user_center_introduce.addTextChangedListener(this);
+        user_center_email.addTextChangedListener(this);
     }
 
     @Override
@@ -138,11 +139,11 @@ public class UserCenterActivity extends EasemobActivity implements View.OnClickL
     }
 
     private void showImage(String imagePath) {
-        imageLoader.displayImage("file:///" + imagePath, user_center_image_square, EasemobAppliaction.defaultOptions);
+        imageLoader.displayImage(imagePath, user_center_image_square, EasemobAppliaction.defaultOptions);
         if (userInfoBean != null) {
             userInfoBean.setUserIconPath(imagePath);
             userInfoDao.updateData(userInfoBean);
-            isChange = false;
+            isChange = true;
         }
     }
 
@@ -153,7 +154,6 @@ public class UserCenterActivity extends EasemobActivity implements View.OnClickL
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-
     }
 
     @Override

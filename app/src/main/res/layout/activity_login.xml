@@ -42,7 +42,8 @@
                 android:digits="0123456789zxcvbnmasdfghjklqwertyuiop"
                 android:drawableLeft="@drawable/ic_user_login_username"
                 android:hint="请输入十位数账号"
-                android:maxLength="16" />
+                android:maxLength="16"
+                android:layout_margin="@dimen/default_padding_and_margin"/>
 
             <EditText
                 android:id="@+id/user_login_pwd_edit"
