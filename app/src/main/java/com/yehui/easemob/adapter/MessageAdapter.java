@@ -2,12 +2,15 @@ package com.yehui.easemob.adapter;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -16,20 +19,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.easemob.chat.EMMessage;
+import com.easemob.chat.ImageMessageBody;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.chat.VoiceMessageBody;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yehui.easemob.R;
+import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.model.EaseChatRowVoicePlayClickListener;
 import com.yehui.easemob.utils.BiaoqingUtil;
+import com.yehui.easemob.utils.BitmapUtil;
 import com.yehui.easemob.utils.DateUtil;
+import com.yehui.utils.activity.PhotoViewActivity;
 import com.yehui.utils.adapter.base.BaseAdapter;
 import com.yehui.utils.adapter.base.BaseViewHolder;
+import com.yehui.utils.contacts.SettingContact;
 import com.yehui.utils.utils.DisplayUtil;
+import com.yehui.utils.utils.files.FileOperationUtil;
 import com.yehui.utils.view.CircularImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,6 +60,8 @@ public class MessageAdapter extends BaseAdapter {
     private boolean isOutTime = false;
     private String outTimeStr;
     private int pageSize = 20;
+    private ImageLoader imageLoader;
+    private int reqWidth = 400, reqHeight = 500;
 
     public MessageAdapter(Activity context, List<MessageBean> messageList, String friendName, LinearLayout speaker_ly, TextView speaker_text, RecyclerView recyclerView) {
         super(messageList);
@@ -57,7 +70,9 @@ public class MessageAdapter extends BaseAdapter {
         this.speaker_ly = speaker_ly;//切换扬声器和听筒的布局
         this.speaker_text = speaker_text;//切换扬声器和听筒的文字提示
         this.recyclerView = recyclerView;//当前使用的recyclerview
+        imageLoader = ImageLoader.getInstance();
         data.add(0, getLoadMoreItem());
+
     }
 
     /**
@@ -153,7 +168,7 @@ public class MessageAdapter extends BaseAdapter {
                     } else if (messageBean.getBackStatus() == -1) {
                         sendTextViewHolder.msg_progress_bar.setVisibility(View.GONE);
                         sendTextViewHolder.msg_status_img.setVisibility(View.VISIBLE);
-                        sendTextViewHolder.msg_status_img.setOnClickListener(new OnReSendClick(textMessageBody.getMessage(), messageBean.getEmMessage()));
+                        sendTextViewHolder.msg_status_img.setOnClickListener(new OnReSendByTextClick(textMessageBody.getMessage(), messageBean.getEmMessage()));
                     }
                 } else {
                     ReceiveTextViewHolder receiveTextViewHolder = (ReceiveTextViewHolder) holder;
@@ -219,6 +234,45 @@ public class MessageAdapter extends BaseAdapter {
                 }
                 break;
             case IMAGE://图片
+                ImageMessageBody imageMessageBody = (ImageMessageBody) emMessage.getBody();
+                //imageMessageBody.isSendOriginalImage();//是否是发送的原图
+                if (emMessage.direct == EMMessage.Direct.SEND) {
+                    SendImageViewHolder sendImageViewHolder = (SendImageViewHolder) holder;
+                    //String url = "http://e.hiphotos.baidu.com/album/w%3D2048/sign=f2edabf44bed2e73fce9812cb339a08b/58ee3d6d55fbb2fb87811c624e4a20a44623dc1c.jpg";
+                    String url = imageMessageBody.getLocalUrl();
+                    if (FileOperationUtil.isHaveFile(url)) {
+                        sendImageViewHolder.set_msg_img.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(url, reqWidth, reqHeight));
+                    } else {
+                        sendImageViewHolder.set_msg_img.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_loadings));
+                    }
+                    //imageLoader.displayImage(url, sendImageViewHolder.set_msg_img, EasemobAppliaction.defaultOptions);
+                    //imageLoader.displayImage("file:///" + imageMessageBody.getLocalUrl(), sendImageViewHolder.set_msg_img, EasemobAppliaction.defaultOptions);
+                    sendImageViewHolder.set_msg_img_fy.setOnClickListener(new OnShowOhotoViewClick(url));
+                    if (messageBean.getBackStatus() == 0) {
+                        FrameLayout.LayoutParams linearParams = (FrameLayout.LayoutParams) sendImageViewHolder.set_msg_dialog.getLayoutParams(); //取控件textView当前的布局参数
+                        linearParams.height = linearParams.height - messageBean.getGetMsgErrorInt() / 100 * linearParams.height;// 控件的高强制设
+                        sendImageViewHolder.set_msg_dialog.setVisibility(View.VISIBLE);
+                        sendImageViewHolder.msg_load_text.setVisibility(View.VISIBLE);
+                        sendImageViewHolder.set_msg_dialog.setLayoutParams(linearParams); //使设置好的布局参数应用到控件</pre>
+                        sendImageViewHolder.msg_load_text.setText((messageBean.getGetMsgErrorInt() + "%"));
+                    } else if (messageBean.getBackStatus() == 1) {
+                        sendImageViewHolder.set_msg_dialog.setVisibility(View.GONE);
+                        sendImageViewHolder.msg_load_text.setVisibility(View.GONE);
+
+                    } else if (messageBean.getBackStatus() == -1) {
+                        sendImageViewHolder.set_msg_dialog.setVisibility(View.GONE);
+                        sendImageViewHolder.msg_load_text.setVisibility(View.GONE);
+                        sendImageViewHolder.msg_status_img.setVisibility(View.VISIBLE);
+                    }
+
+                } else {
+                    ReceiveImageViewHolder receiveImageViewHolder = (ReceiveImageViewHolder) holder;
+                    receiveImageViewHolder.get_msg_dialog.setVisibility(View.VISIBLE);
+                    imageLoader.displayImage(imageMessageBody.getThumbnailUrl(), receiveImageViewHolder.get_msg_img, EasemobAppliaction.defaultOptions);
+                    receiveImageViewHolder.get_msg_dialog.setVisibility(View.GONE);
+                    receiveImageViewHolder.msg_load_text.setVisibility(View.GONE);
+                    receiveImageViewHolder.get_msg_img_fy.setOnClickListener(new OnShowOhotoViewClick(imageMessageBody.getThumbnailUrl()));
+                }
                 break;
             case LOCATION://地理位置
                 break;
@@ -254,6 +308,8 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder = new SendVoiceViewHolder(convertView);
                 break;
             case MessageContant.sendMsgByImage:
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_send_msg_img, parent, false);
+                viewHolder = new SendImageViewHolder(convertView);
                 break;
             case MessageContant.sendMsgByLocation:
                 break;
@@ -268,6 +324,8 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder = new ReceiveVoiceViewHolder(convertView);
                 break;
             case MessageContant.receiveMsgByImage:
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receive_msg_img, parent, false);
+                viewHolder = new ReceiveImageViewHolder(convertView);
                 break;
             case MessageContant.receiveMsgByLocation:
                 break;
@@ -302,7 +360,10 @@ public class MessageAdapter extends BaseAdapter {
                 else
                     return MessageContant.receiveMsgByVoice;
             case IMAGE:
-                break;
+                if (emMessage.direct == EMMessage.Direct.SEND)
+                    return MessageContant.sendMsgByImage;
+                else
+                    return MessageContant.receiveMsgByImage;
             case LOCATION:
                 break;
             case FILE:
@@ -327,6 +388,40 @@ public class MessageAdapter extends BaseAdapter {
         int thisWidth = DisplayUtil.dip2px(context, windowWidth * voicePercenst / 100);
         if (thisWidth < minWidth) thisWidth = minWidth;
         return thisWidth;
+    }
+
+    /**
+     * 监听下载进度
+     */
+    class OnChangeLoadUrlListener {
+        private TextView textView;
+
+        private OnChangeLoadUrlListener(TextView textView) {
+
+        }
+
+    }
+
+    /**
+     * 点击查看大图
+     */
+    class OnShowOhotoViewClick implements View.OnClickListener {
+        private String imageUrl;
+
+        private OnShowOhotoViewClick(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(context, PhotoViewActivity.class);
+            Bundle bundle = new Bundle();
+            ArrayList<String> urls = new ArrayList<>();
+            urls.add(imageUrl);
+            bundle.putStringArrayList(SettingContact.PHOTO_VIEW_LIST, urls);
+            intent.putExtras(bundle);
+            context.startActivity(intent);
+        }
     }
 
     /**
@@ -369,11 +464,11 @@ public class MessageAdapter extends BaseAdapter {
     /**
      * 点击消息重新发送
      */
-    class OnReSendClick implements View.OnClickListener {
+    class OnReSendByTextClick implements View.OnClickListener {
         private String content;
         private EMMessage message;
 
-        private OnReSendClick(String content, EMMessage message) {
+        private OnReSendByTextClick(String content, EMMessage message) {
             this.content = content;
             this.message = message;
         }
@@ -413,6 +508,7 @@ public class MessageAdapter extends BaseAdapter {
      * 判断是否还有更多的聊天记录
      */
     private boolean isMessageRecord() {
+        if (data == null || data.size() <= 1) return false;
         String msgId = ((MessageBean) data.get(1)).getEmMessage().getMsgId();//获得当前显示的最后一条记录id
         List<EMMessage> list = SendMessageHelper.getInstance().getEMMessageList(friendName, msgId, pageSize);
         if (list != null && list.size() > 0) {
@@ -443,9 +539,27 @@ public class MessageAdapter extends BaseAdapter {
 
     /****************************************viewholder******************************************************/
 
+    /**
+     * 显示加载更多
+     */
+    private class MessageMoreVIewHolder extends BaseViewHolder {
+        private TextView load_more_text;
+        private ProgressBar msg_progress_bar;
+
+        public MessageMoreVIewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void initItemView(View itemView) {
+            load_more_text = (TextView) itemView.findViewById(R.id.load_more_text);
+            msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
+        }
+    }
+
 
     /**
-     * 好友发来的文本类消息
+     * 接收文本类消息
      */
     private class ReceiveTextViewHolder extends BaseViewHolder {
         private CircularImageView get_msg_image;
@@ -474,7 +588,7 @@ public class MessageAdapter extends BaseAdapter {
     }
 
     /**
-     * 用户发给好友的文本类消息
+     * 发送文本消息
      */
     private class SendTextViewHolder extends BaseViewHolder {
         private CircularImageView set_msg_image;
@@ -503,11 +617,11 @@ public class MessageAdapter extends BaseAdapter {
     }
 
     /**
-     * 好友发送过来的语音类消息
+     * 接收语音消息
      */
     private class ReceiveVoiceViewHolder extends BaseViewHolder {
         private CircularImageView get_msg_image;
-        private TextView get_msg_text, msg_voice_length;
+        private TextView get_msg_text;
         private ProgressBar msg_progress_bar;
         private ImageView msg_status_img, msg_voice_is_open, get_msg_img;
         private RelativeLayout get_msg_ly;
@@ -536,11 +650,11 @@ public class MessageAdapter extends BaseAdapter {
     }
 
     /**
-     * 发给好友的语音类消息
+     * 发送语音消息
      */
     private class SendVoiceViewHolder extends BaseViewHolder {
         private CircularImageView set_msg_image;
-        private TextView set_msg_text, msg_voice_length;
+        private TextView set_msg_text;
         private ProgressBar msg_progress_bar;
         private ImageView msg_status_img, msg_voice_is_open, set_msg_img;
         private RelativeLayout set_msg_ly;
@@ -567,21 +681,64 @@ public class MessageAdapter extends BaseAdapter {
         }
     }
 
-    /**
-     * 显示加载更多
-     */
-    private class MessageMoreVIewHolder extends BaseViewHolder {
-        private TextView load_more_text;
-        private ProgressBar msg_progress_bar;
 
-        public MessageMoreVIewHolder(View itemView) {
+    /**
+     * 发送图片消息
+     */
+    private class SendImageViewHolder extends BaseViewHolder {
+
+        private CircularImageView set_msg_image;
+        private ImageView msg_status_img, set_msg_img, set_msg_dialog;
+        private FrameLayout set_msg_img_fy;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text, msg_load_text;
+
+        public SendImageViewHolder(View itemView) {
             super(itemView);
         }
 
         @Override
         public void initItemView(View itemView) {
-            load_more_text = (TextView) itemView.findViewById(R.id.load_more_text);
-            msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
+            set_msg_image = (CircularImageView) itemView.findViewById(R.id.set_msg_image);
+            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
+            set_msg_dialog = (ImageView) itemView.findViewById(R.id.set_msg_dialog);
+            set_msg_img = (ImageView) itemView.findViewById(R.id.set_msg_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
+            set_msg_img_fy = (FrameLayout) itemView.findViewById(R.id.set_msg_img_fy);
+            msg_load_text = (TextView) itemView.findViewById(R.id.msg_load_text);
+            msg_status_img.setVisibility(View.GONE);
+            msg_load_text.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 接收图片消息
+     */
+    private class ReceiveImageViewHolder extends BaseViewHolder {
+
+        private CircularImageView get_msg_image;
+        private ImageView msg_status_img, get_msg_img, get_msg_dialog;
+        private FrameLayout get_msg_img_fy;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text, msg_load_text;
+
+        public ReceiveImageViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void initItemView(View itemView) {
+            get_msg_image = (CircularImageView) itemView.findViewById(R.id.get_msg_image);
+            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
+            get_msg_dialog = (ImageView) itemView.findViewById(R.id.get_msg_dialog);
+            get_msg_img = (ImageView) itemView.findViewById(R.id.get_msg_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
+            get_msg_img_fy = (FrameLayout) itemView.findViewById(R.id.get_msg_img_fy);
+            msg_load_text = (TextView) itemView.findViewById(R.id.msg_load_text);
+            msg_status_img.setVisibility(View.GONE);
+            msg_load_text.setVisibility(View.GONE);
         }
     }
 }

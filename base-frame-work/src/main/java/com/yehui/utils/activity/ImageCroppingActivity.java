@@ -1,4 +1,4 @@
-package com.yehui.easemob.activity;
+package com.yehui.utils.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,7 +9,7 @@ import android.widget.Button;
 
 import com.edmodo.cropper.CropImageView;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
-import com.yehui.easemob.R;
+import com.yehui.utils.R;
 import com.yehui.utils.activity.base.BaseActivity;
 import com.yehui.utils.application.YehuiApplication;
 import com.yehui.utils.utils.DateUtil;
@@ -125,18 +125,18 @@ public class ImageCroppingActivity extends BaseActivity implements OnClickListen
     @Override
     public void onClick(View v) {
         try {
-            switch (v.getId()) {
-                case R.id.btn_crop_rotate:
-                    mCropImageView.rotateImage(mRotateNinetyDegrees);
-                    break;
-                case R.id.btn_crop_confirm:
-                    croppedImage = mCropImageView.getCroppedImage();
-                    saveBitmap(croppedImage);
-                    Intent data = new Intent();
-                    data.putExtra(KEY_SAVE_IMAGE_PATH, saveImagePath);
-                    setResult(RESULT_OK, data);
-                    finish();
-                    break;
+            int i = v.getId();
+            if (i == R.id.btn_crop_rotate) {
+                mCropImageView.rotateImage(mRotateNinetyDegrees);
+
+            } else if (i == R.id.btn_crop_confirm) {
+                croppedImage = mCropImageView.getCroppedImage();
+                saveBitmap(croppedImage);
+                Intent data = new Intent();
+                data.putExtra(KEY_SAVE_IMAGE_PATH, saveImagePath);
+                setResult(RESULT_OK, data);
+                finish();
+
             }
         } catch (NullPointerException e) {
             e.printStackTrace();

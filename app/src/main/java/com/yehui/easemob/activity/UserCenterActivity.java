@@ -18,7 +18,7 @@ import com.yehui.easemob.contants.UserInfoContant;
 import com.yehui.easemob.db.UserInfoDao;
 import com.yehui.easemob.fragment.SquareFragment;
 import com.yehui.easemob.utils.BitmapUtil;
-import com.yehui.easemob.utils.CropUtil;
+import com.yehui.utils.activity.ImageCroppingActivity;
 import com.yehui.utils.utils.DateUtil;
 import com.yehui.utils.utils.PickLocalImageUtils;
 import com.yehui.utils.utils.files.FileContact;
@@ -125,13 +125,12 @@ public class UserCenterActivity extends EasemobActivity implements View.OnClickL
                 break;
             case PickLocalImageUtils.CODE_FOR_CAMERA://来自于系统相机的回调
                 imagePath = FileContact.YEHUI_SAVE_IMG_PATH + imageFileName;
-                CropUtil.toCrop(this, imagePath);
+                PickLocalImageUtils.toCrop(this, imagePath);
                 break;
-            case CropUtil.CODE_FOR_CROP://来自于剪切照片的回调
+            case PickLocalImageUtils.CODE_FOR_CROP://来自于剪切照片的回调
                 if (data == null) return;
                 imagePath = data.getStringExtra(ImageCroppingActivity.KEY_SAVE_IMAGE_PATH);
                 Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromFile(imagePath, 100, 100);
-                //user_center_image_square.setImageBitmap(bitmap);
                 BitmapUtil.saveBitmap(bitmap, imagePath, 100);
                 break;
         }

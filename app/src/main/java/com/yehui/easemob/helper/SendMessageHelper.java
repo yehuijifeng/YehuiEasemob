@@ -183,26 +183,39 @@ public class SendMessageHelper implements SendMessageInterfaces {
      *
      * @param username 接收人
      * @param filePath 图片文件路径
+     *                 是否是重新发送
+     *                 聊天id
      */
     @Override
-    public void getConversationByImage(String username, String filePath) {
+    public MessageBean getConversationByImage(String username, String filePath, boolean isSendOriginalImage, boolean isReSend, String msgId) {
         EMConversation conversation = EMChatManager.getInstance().getConversation(username);
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.IMAGE);
         //如果是群聊，设置chattype,默认是单聊
         //message.setChatType(EMMessage.ChatType.GroupChat);
-
         ImageMessageBody body = new ImageMessageBody(new File(filePath));
-        // 默认超过100k的图片会压缩后发给对方，可以设置成发送原图
-        // body.setSendOriginalImage(true);
         message.addBody(body);
+        //设置发送状态
+        message.direct = EMMessage.Direct.SEND;
+        //设置接收人
         message.setReceipt(username);
+        if (isReSend) {
+            if (TextUtils.isEmpty(msgId)) return null;
+            message.setMsgId(msgId);//如果是重发，则套用原来的id
+        } else
+            message.setMsgId(DateUtil.getTimeString());//以时间戳作为id
         conversation.addMessage(message);
         //初始化发送信息
         initSendMsg();
-        messageBean.setGetMsgCode(MessageContant.sendMsgByImage);
+        messageBean.setBackStatus(0);
         messageBean.setUserName(username);
-        messageBean.setContent(filePath);
+        messageBean.setLoadUrl(filePath);
         messageBean.setEmMessage(message);
+        // 默认超过100k的图片会压缩后发给对方，可以设置成发送原图
+        body.setSendOriginalImage(isSendOriginalImage);
+        //初始化发送信息
+        messageBean.setGetMsgCode(MessageContant.sendMsgByImage);
+        messageBean.setEmMessage(message);
+
         EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
             @Override
             public void onSuccess() {
@@ -226,6 +239,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
                 eventBus.post(messageBean);
             }
         });
+        return messageBean;
     }
 
     /**
@@ -237,7 +251,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
      * @param longitude       经度
      */
     @Override
-    public void getConversationByLocation(String username, String locationAddress, double latitude, double longitude) {
+    public MessageBean getConversationByLocation(String username, String locationAddress, double latitude, double longitude, boolean isReSend, String msgId) {
         EMConversation conversation = EMChatManager.getInstance().getConversation(username);
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.LOCATION);
         //如果是群聊，设置chattype,默认是单聊
@@ -275,16 +289,17 @@ public class SendMessageHelper implements SendMessageInterfaces {
                 eventBus.post(messageBean);
             }
         });
+        return messageBean;
     }
 
     /**
-     * 发送图片消息
+     * 发送文件消息
      *
      * @param username 接收人
      * @param filePath 图片文件路径
      */
     @Override
-    public void getConversationByFile(String username, String filePath) {
+    public MessageBean getConversationByFile(String username, String filePath, boolean isReSend, String msgId) {
         EMConversation conversation = EMChatManager.getInstance().getConversation(username);
         // 创建一个文件消息
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.FILE);
@@ -327,6 +342,12 @@ public class SendMessageHelper implements SendMessageInterfaces {
                 eventBus.post(messageBean);
             }
         });
+        return messageBean;
+    }
+
+    @Override
+    public MessageBean getConversationByVideo(String username, String filePath, boolean isReSend, String msgId) {
+        return messageBean;
     }
 
 

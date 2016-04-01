@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/msg_time_ly"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/msg_time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/small_padding_and_margin"
+            android:background="@drawable/bg_msg_tiem"
+            android:padding="@dimen/small_padding_and_margin"
+            android:text="00:00"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <com.yehui.utils.view.CircularImageView
+            android:id="@+id/set_msg_image"
+            android:layout_width="@dimen/default_msg_height_and_width"
+            android:layout_height="@dimen/default_msg_height_and_width"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/small_padding_and_margin"
+            android:src="@drawable/ease_default_avatar" />
+
+        <FrameLayout
+            android:id="@+id/set_msg_img_fy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/set_msg_image"
+            android:layout_toStartOf="@+id/set_msg_image"
+            android:background="@drawable/bg_get_msg_text">
+
+            <ImageView
+                android:id="@+id/set_msg_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_loadings" />
+
+            <ImageView
+                android:id="@+id/set_msg_dialog"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:src="@color/msg_image_color" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/msg_load_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/set_msg_img_fy"
+            android:layout_toStartOf="@+id/set_msg_img_fy"
+            android:text="0%" />
+
+        <ImageView
+            android:id="@+id/msg_status_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/msg_load_text"
+            android:layout_toStartOf="@+id/msg_load_text"
+            android:src="@drawable/ease_msg_state_fail_resend_pressed" />
+    </RelativeLayout>
+</LinearLayout>

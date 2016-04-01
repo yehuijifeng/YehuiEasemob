@@ -15,10 +15,11 @@ public interface SendMessageInterfaces {
 
     /**
      * 发送文本消息及表情
+     *
      * @param username 接收人
-     * @param content 发送的内容
+     * @param content  发送的内容
      * @param isReSend 是否是重新发送
-     * @param msgId 重新发送的信息id
+     * @param msgId    重新发送的信息id
      * @return
      */
     MessageBean sendConversationByText(String username, String content, boolean isReSend, String msgId);
@@ -30,17 +31,20 @@ public interface SendMessageInterfaces {
      * @param filePath 语音文件路径
      * @param length   文件长度，大小
      * @param isReSend 是否是重新发送
-     * @param msgId 重新发送的信息id
+     * @param msgId    重新发送的信息id
      */
     MessageBean sendConversationByVoice(String username, String filePath, int length, boolean isReSend, String msgId);
 
     /**
      * 发送图片消息
      *
-     * @param username 接收人
-     * @param filePath 图片文件路径
+     * @param username            接收人
+     * @param filePath            图片文件路径
+     * @param isSendOriginalImage 是否发送原图
+     * @param isReSend            是否是重新发送
+     * @param msgId               重新发送的信息id
      */
-    void getConversationByImage(String username, String filePath);
+    MessageBean getConversationByImage(String username, String filePath, boolean isSendOriginalImage, boolean isReSend, String msgId);
 
     /**
      * 发送地理位置
@@ -49,16 +53,30 @@ public interface SendMessageInterfaces {
      * @param locationAddress 位置地址
      * @param latitude        维度
      * @param longitude       经度
+     * @param isReSend        是否是重新发送
+     * @param msgId           重新发送的信息id
      */
-    void getConversationByLocation(String username, String locationAddress, double latitude, double longitude);
+    MessageBean getConversationByLocation(String username, String locationAddress, double latitude, double longitude, boolean isReSend, String msgId);
 
     /**
-     * 发送图片消息
+     * 发送文件消息
      *
      * @param username 接收人
      * @param filePath 图片文件路径
+     * @param isReSend 是否是重新发送
+     * @param msgId    重新发送的信息id
      */
-    void getConversationByFile(String username, String filePath);
+    MessageBean getConversationByFile(String username, String filePath, boolean isReSend, String msgId);
+
+    /**
+     * 发送视频消息
+     *
+     * @param username 接收人
+     * @param filePath 图片文件路径
+     * @param isReSend 是否是重新发送
+     * @param msgId    重新发送的信息id
+     */
+    MessageBean getConversationByVideo(String username, String filePath, boolean isReSend, String msgId);
 
     /**
      * 获取会话列表

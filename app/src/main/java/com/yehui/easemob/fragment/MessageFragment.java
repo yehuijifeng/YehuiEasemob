@@ -152,7 +152,7 @@ public class MessageFragment extends EasemobListFragment {
         } else if (emMessage.getType() == EMMessage.Type.VOICE) {
             textView.setText(emConversation.getUnreadMsgCount() == 0 ? "[语音消息]" : emConversation.getUnreadMsgCount() + "条语音消息");
         } else if (emMessage.getType() == EMMessage.Type.IMAGE) {
-            textView.setText(emConversation.getUnreadMsgCount() == 0 ? "[语图片]" : emConversation.getUnreadMsgCount() + "张图片");
+            textView.setText(emConversation.getUnreadMsgCount() == 0 ? "[图片]" : emConversation.getUnreadMsgCount() + "张图片");
         } else if (emMessage.getType() == EMMessage.Type.FILE) {
             textView.setText(emConversation.getUnreadMsgCount() == 0 ? "[文件]" : emConversation.getUnreadMsgCount() + "个文件");
         } else if (emMessage.getType() == EMMessage.Type.VIDEO) {

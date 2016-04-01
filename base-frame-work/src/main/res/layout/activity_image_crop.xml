@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/ll_crop_bottom"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/my_title_view" />
 
     <LinearLayout
@@ -20,7 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:orientation="horizontal">
 
         <Button

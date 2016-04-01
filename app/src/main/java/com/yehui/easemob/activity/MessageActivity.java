@@ -1,6 +1,9 @@
 package com.yehui.easemob.activity;
 
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -24,10 +27,15 @@ import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.helper.ReceiveMessageHelper;
 import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.utils.BiaoqingUtil;
+import com.yehui.easemob.utils.BitmapUtil;
 import com.yehui.easemob.view.BiaoqingView;
 import com.yehui.easemob.view.EditTexts;
 import com.yehui.easemob.view.VoiceView;
+import com.yehui.utils.activity.ImageCroppingActivity;
 import com.yehui.utils.adapter.base.BaseViewHolder;
+import com.yehui.utils.utils.DateUtil;
+import com.yehui.utils.utils.PickLocalImageUtils;
+import com.yehui.utils.utils.files.FileContact;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +54,17 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
             text_msg_img,
             biaoqing_msg_img,
             often_msg_img,
-            gengduo_msg_img;
+            gengduo_msg_img,
+            function_image_img,
+            function_laction_img,
+            function_shipin_img,
+            function_tel_img,
+            function_file_img,
+            function_camera_img,
+            function_video_img;
     private LinearLayout function_layout, speaker_ly;
     private Button fasong_msg_btn;
-    private String friendName;
+    private String friendName, imageFileName;
     private int pageSize = 20;
     private List<MessageBean> msgList;
     private BiaoqingView biaoqing_layout;
@@ -77,6 +92,14 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         speaker_ly = (LinearLayout) findViewById(R.id.speaker_ly);
         speaker_text = (TextView) findViewById(R.id.speaker_text);
 
+        function_image_img = (ImageView) findViewById(R.id.function_image_img);
+        function_laction_img = (ImageView) findViewById(R.id.function_laction_img);
+        function_shipin_img = (ImageView) findViewById(R.id.function_shipin_img);
+        function_tel_img = (ImageView) findViewById(R.id.function_tel_img);
+        function_file_img = (ImageView) findViewById(R.id.function_file_img);
+        function_camera_img = (ImageView) findViewById(R.id.function_camera_img);
+        function_video_img = (ImageView) findViewById(R.id.function_video_img);
+
         start_voice_rl.setOnTouchListener(this);//事件分发
 
         fasong_msg_btn.setOnClickListener(this);
@@ -87,7 +110,15 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         start_voice_rl.setOnClickListener(this);
         gengduo_msg_img.setOnClickListener(this);
         editTexts.setOnClickListener(this);
-        editTexts.addTextChangedListener(this);
+        function_image_img.setOnClickListener(this);
+        function_laction_img.setOnClickListener(this);
+        function_shipin_img.setOnClickListener(this);
+        function_tel_img.setOnClickListener(this);
+        function_file_img.setOnClickListener(this);
+        function_camera_img.setOnClickListener(this);
+        function_video_img.setOnClickListener(this);
+
+        editTexts.addTextChangedListener(this);//文本改变监听
 
         biaoqing_layout.onBiaoqingClick(editTexts);
         //添加layout大小发生改变监听器
@@ -112,7 +143,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 biaoqing_layout.setVisibility(View.GONE);
             }
         });
-        setIsLoadMore(false);//禁止加载更多
+        setIsLoadMore(false);//禁止加载更多o'n
         setIsRefresh(false);//禁止下拉刷新v
         friendName = getString(MapContant.MESSAGE_USER_NAME, null);
         mTitleView.setTitleText(friendName);
@@ -152,55 +183,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         super.onStop();
         messageAdapter.stopVoicePlay();
     }
-//
-//    /**
-//     * 接收消息回调
-//     *
-//     * @param event
-//     */
-//    @Override
-//    public void onEvent(EMNotifierEvent event) {
-//        EMMessage message;
-//        MessageBean messageBean;
-//        if (event.getData() instanceof EMMessage) {
-//            message = (EMMessage) event.getData();
-//            messageBean = new MessageBean();
-//            messageBean.setEmMessage(message);
-//        } else if (event.getData() instanceof List) {
-//            messageBean = new MessageBean();
-//            List<EMMessage> messages = (List<EMMessage>) event.getData();
-//            messageBean.setGetMsgCode(MessageContant.receiveMsgByOffline);
-//            messageBean.setMessageList(messages);
-//            return;
-//        } else return;
-//        switch (event.getEvent()) {
-//            case EventNewMessage://接收新消息event注册
-//                messageBean.setGetMsgCode(MessageContant.receiveMsgByNew);
-//                getMessageByType(messageBean);
-//                break;
-//            case EventNewCMDMessage://接收透传event注册
-//                LogUtil.d("收到透传消息");
-//                messageBean.setEmMessage(message);
-//                messageBean.setGetMsgCode(MessageContant.receiveMsgByNewCMDM);
-//                // 获取消息body
-//                CmdMessageBody cmdMsgBody = (CmdMessageBody) message.getBody();
-//                final String action = cmdMsgBody.action;// 获取自定义action
-//                break;
-//            case EventDeliveryAck://已发送回执event注册
-//                message.setDelivered(true);
-//                messageBean.setGetMsgCode(MessageContant.receiveMsgByDeliveryAck);
-//                break;
-//            case EventReadAck://已读回执event注册
-//                message.setAcked(true);
-//                messageBean.setGetMsgCode(MessageContant.receiveMsgByReadAck);
-//                break;
-//            default:
-//                messageBean.setEmMessage(message);
-//                break;
-//        }
-//
-//    }
-//
 
     /**
      * 发送消息回调状态
@@ -216,6 +198,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 MessageBean msg = (MessageBean) messageAdapter.data.get(i);
                 if (msg.getEmMessage().getMsgId().equals(messageBean.getEmMessage().getMsgId())) {
                     messageAdapter.data.set(i, messageBean);
+                    //messageAdapter.notifyDataSetChanged();
                     messageAdapter.getLastHour();
                     return;
                 }
@@ -230,13 +213,10 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
             case MessageContant.sendMsgByVoice://语音
                 break;
             case MessageContant.sendMsgByImage://图片
-
                 break;
             case MessageContant.sendMsgByLocation://地理位置
-
                 break;
             case MessageContant.sendMsgByFile://文件
-
                 break;
             case MessageContant.receiveMsgByAll://接收所有消息
                 break;
@@ -323,6 +303,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 hideSoftInputFromWindow(editTexts);
                 biaoqing_layout.setVisibility(View.VISIBLE);
                 function_layout.setVisibility(View.GONE);
+                recyclerView.smoothScrollToPosition(messageAdapter.data.size() - 1);
                 break;
             case R.id.start_voice_rl://按住说话
                 //语音
@@ -331,6 +312,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 hideSoftInputFromWindow(editTexts);
                 function_layout.setVisibility(View.VISIBLE);
                 biaoqing_layout.setVisibility(View.GONE);
+                recyclerView.smoothScrollToPosition(messageAdapter.data.size() - 1);
                 break;
             case R.id.text_msg_edit:
                 function_layout.setVisibility(View.GONE);
@@ -339,7 +321,61 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
             case R.id.ee_del:// 删除表情，当时表情时删除“[fac”的长度，是文字时删除一个长度
                 BiaoqingUtil.getInstance().removeBiaoqing(editTexts);
                 break;
+            case R.id.function_image_img://发送图片
+                PickLocalImageUtils.toAlbum(MessageActivity.this);
+                break;
+            case R.id.function_laction_img://发送地理位置
+                break;
+            case R.id.function_shipin_img://发送视频
+                break;
+            case R.id.function_tel_img://请求视频电话
+                break;
+            case R.id.function_file_img://发送文件
+                break;
+            case R.id.function_camera_img://打开相机
+                imageFileName = DateUtil.format(System.currentTimeMillis(), "'" + friendName + "'" + "_yyyyMMddHHmmss") + ".jpg";
+                PickLocalImageUtils.toCamera(MessageActivity.this, imageFileName);
+                break;
+            case R.id.function_video_img://打开录像
+
+                break;
+
+
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            String imagePath;
+            switch (requestCode) {
+                case PickLocalImageUtils.CODE_FOR_ALBUM://来自于系统相册的回调
+                    if (data == null) return;
+                    Uri uri = data.getData();
+                    imagePath = PickLocalImageUtils.getPath(uri, getContentResolver());
+                    SendMessageHelper.getInstance().getConversationByImage(friendName, imagePath, false, false, null);
+                    break;
+                case PickLocalImageUtils.CODE_FOR_CAMERA://来自于系统相机的回调
+                    imagePath = FileContact.YEHUI_SAVE_IMG_PATH + imageFileName;
+                    SendMessageHelper.getInstance().getConversationByImage(friendName, imagePath, false, false, null);
+                    //PickLocalImageUtils.toCrop(this, imagePath);
+                    break;
+                case PickLocalImageUtils.CODE_FOR_CROP://来自于剪切照片的回调
+                    imagePath = data.getStringExtra(ImageCroppingActivity.KEY_SAVE_IMAGE_PATH);
+                    Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromFile(imagePath, 100, 100);
+                    BitmapUtil.saveBitmap(bitmap, imagePath, 100);
+                    showImage(imagePath);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * 显示图片
+     */
+    private void showImage(String imagePath) {
+        //imageLoader.displayImage("file:///" + imagePath, show_image, YehuiApplication.defaultOptions);
     }
 
     /**

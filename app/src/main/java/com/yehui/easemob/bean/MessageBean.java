@@ -15,8 +15,26 @@ public class MessageBean {
     private String userName;
     private String content;
     private int backStatus;//0,正在发送，-1，发送失败，1成功
+    private float loadDegree;//上传/下载进度
+    private String loadUrl;//用于保存缓存的url，提高工作效率
     private EMMessage emMessage;
     private List<EMMessage> messageList;//离线消息
+
+    public String getLoadUrl() {
+        return loadUrl;
+    }
+
+    public void setLoadUrl(String loadUrl) {
+        this.loadUrl = loadUrl;
+    }
+
+    public float getLoadDegree() {
+        return loadDegree;
+    }
+
+    public void setLoadDegree(float loadDegree) {
+        this.loadDegree = loadDegree;
+    }
 
     public List<EMMessage> getMessageList() {
         return messageList;

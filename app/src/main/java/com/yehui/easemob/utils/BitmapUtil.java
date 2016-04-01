@@ -97,7 +97,7 @@ public class BitmapUtil {
     public static Bitmap decodeSampledBitmapFromFile(String pathName,
                                                      int reqWidth, int reqHeight) {
         // 第一次解析将inJustDecodeBounds设置为true，来获取图片大小
-        final BitmapFactory.Options options = new BitmapFactory.Options();
+        BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(pathName, options);
         // 调用上面定义的方法计算inSampleSize值
@@ -212,7 +212,6 @@ public class BitmapUtil {
 
         //从资源中获取Bitmap
         Resources res = context.getResources();
-        Bitmap bmp = BitmapFactory.decodeResource(res, imageID);
 
         // 获得图片的宽高
         int width = bm2.getWidth();
