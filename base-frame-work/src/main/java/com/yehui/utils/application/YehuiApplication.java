@@ -88,14 +88,14 @@ public abstract class YehuiApplication extends Application {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration
                 .Builder(context)
                 .memoryCacheExtraOptions(800, 800)//额外的内存缓存选项, 即保存的每个缓存文件的最大长宽
-                .threadPoolSize(3)//线程池的并发数大小
-                .threadPriority(Thread.NORM_PRIORITY - 1)//线程池的优先级，标准优先级
-                .tasksProcessingOrder(QueueProcessingType.FIFO)//任务处理订单，队列处理类型.FIFO:先进先出
+                .threadPoolSize(5)//线程池的并发数大小
+                .threadPriority(Thread.NORM_PRIORITY)//线程池的优先级，标准优先级
+                .tasksProcessingOrder(QueueProcessingType.LIFO)//任务处理订单，队列处理类型.FIFO:先进先出;LIFO:先进后出
                 .denyCacheImageMultipleSizesInMemory()//缓存显示不同大小的同一张图片
                 .memoryCache(new LruMemoryCache(2 * 1024 * 1024))//最低内存缓存
                 .memoryCacheSize(2 * 1024 * 1024)//内存缓存大小，2M
                 .memoryCacheSizePercentage(13)//内存缓存百分比
-                .diskCacheFileCount(100) //缓存的文件数量
+                .diskCacheFileCount(50) //缓存的文件数量
                 .diskCache(new UnlimitedDiskCache(new File(FileContact.YEHUI_CACHE_IMG_PATH)))//自定义缓存图片地址
                 .imageDownloader(new BaseImageDownloader(this, 5 * 1000, 30 * 1000)) // connectTimeout (5 s), readTimeout (30 s)超时时间
                 //.imageDownloader(new BaseImageDownloader(context)) //图片下载，当前页面

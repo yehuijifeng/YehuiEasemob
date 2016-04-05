@@ -24,6 +24,7 @@ import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.contants.MapContant;
 import com.yehui.easemob.contants.MessageContant;
+import com.yehui.easemob.function.BitmapCacheFunction;
 import com.yehui.easemob.helper.ReceiveMessageHelper;
 import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.utils.BiaoqingUtil;
@@ -182,6 +183,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     protected void onStop() {
         super.onStop();
         messageAdapter.stopVoicePlay();
+        BitmapCacheFunction.getInstance().closeLruCache();
     }
 
     /**

@@ -3,6 +3,7 @@ package com.yehui.easemob.adapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.yehui.easemob.R;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.contants.MessageContant;
+import com.yehui.easemob.function.BitmapCacheFunction;
 import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.model.EaseChatRowVoicePlayClickListener;
 import com.yehui.easemob.utils.BiaoqingUtil;
@@ -238,15 +240,18 @@ public class MessageAdapter extends BaseAdapter {
                 //imageMessageBody.isSendOriginalImage();//是否是发送的原图
                 if (emMessage.direct == EMMessage.Direct.SEND) {
                     SendImageViewHolder sendImageViewHolder = (SendImageViewHolder) holder;
-                    //String url = "http://e.hiphotos.baidu.com/album/w%3D2048/sign=f2edabf44bed2e73fce9812cb339a08b/58ee3d6d55fbb2fb87811c624e4a20a44623dc1c.jpg";
                     String url = imageMessageBody.getLocalUrl();
                     if (FileOperationUtil.isHaveFile(url)) {
-                        sendImageViewHolder.set_msg_img.setImageBitmap(BitmapUtil.decodeSampledBitmapFromFile(url, reqWidth, reqHeight));
+                        if (BitmapCacheFunction.getInstance().isBitmapByLruCache(url)) {
+                            sendImageViewHolder.set_msg_img.setImageBitmap(BitmapCacheFunction.getInstance().getBitmapFromLruCache(url));
+                        } else {
+                            Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromFile(url, reqWidth, reqHeight);
+                            sendImageViewHolder.set_msg_img.setImageBitmap(bitmap);
+                            BitmapCacheFunction.getInstance().addBitmapToLruCache(url, bitmap);
+                        }
                     } else {
                         sendImageViewHolder.set_msg_img.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_loadings));
                     }
-                    //imageLoader.displayImage(url, sendImageViewHolder.set_msg_img, EasemobAppliaction.defaultOptions);
-                    //imageLoader.displayImage("file:///" + imageMessageBody.getLocalUrl(), sendImageViewHolder.set_msg_img, EasemobAppliaction.defaultOptions);
                     sendImageViewHolder.set_msg_img_fy.setOnClickListener(new OnShowOhotoViewClick(url));
                     if (messageBean.getBackStatus() == 0) {
                         FrameLayout.LayoutParams linearParams = (FrameLayout.LayoutParams) sendImageViewHolder.set_msg_dialog.getLayoutParams(); //取控件textView当前的布局参数
