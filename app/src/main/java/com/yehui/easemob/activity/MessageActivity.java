@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,6 +30,8 @@ import com.yehui.easemob.helper.ReceiveMessageHelper;
 import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.utils.BiaoqingUtil;
 import com.yehui.easemob.utils.BitmapUtil;
+import com.yehui.easemob.utils.MusicUtil;
+import com.yehui.easemob.utils.VibratorUtil;
 import com.yehui.easemob.view.BiaoqingView;
 import com.yehui.easemob.view.EditTexts;
 import com.yehui.easemob.view.VoiceView;
@@ -123,7 +126,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
 
         biaoqing_layout.onBiaoqingClick(editTexts);
         //添加layout大小发生改变监听器
-        msg_root_ly.addOnLayoutChangeListener(this);
+        mRecyclerView.addOnLayoutChangeListener(this);
     }
 
     @Override
@@ -240,9 +243,18 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     @Override
     public void getNewMessage(MessageBean messageBean) {
         EMMessage emMessage = messageBean.getEmMessage();
-        messageAdapter.data.add(messageBean);
-        SendMessageHelper.getInstance().getMarkAsRead(friendName, emMessage, true);
-        messageAdapter.getLastHour();
+        if (TextUtils.isEmpty(friendName)) return;
+        if (emMessage.getFrom().equals(friendName)) {
+            messageAdapter.data.add(messageBean);
+            SendMessageHelper.getInstance().getMarkAsRead(friendName, emMessage, true);
+            messageAdapter.getLastHour();
+            MusicUtil.getInstance().stopMusic();
+            VibratorUtil.vibrate(this, 0);//新消息震动1s
+        } else {
+            MusicUtil.getInstance().playMusic(this);
+            VibratorUtil.vibrate(this, 1000);//新消息震动1s
+        }
+
     }
 
     @Override
@@ -305,7 +317,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 hideSoftInputFromWindow(editTexts);
                 biaoqing_layout.setVisibility(View.VISIBLE);
                 function_layout.setVisibility(View.GONE);
-                recyclerView.smoothScrollToPosition(messageAdapter.data.size() - 1);
+                //recyclerView.smoothScrollToPosition(messageAdapter.data.size() - 1);
                 break;
             case R.id.start_voice_rl://按住说话
                 //语音
@@ -314,7 +326,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 hideSoftInputFromWindow(editTexts);
                 function_layout.setVisibility(View.VISIBLE);
                 biaoqing_layout.setVisibility(View.GONE);
-                recyclerView.smoothScrollToPosition(messageAdapter.data.size() - 1);
+                //recyclerView.smoothScrollToPosition(messageAdapter.data.size() - 1);
                 break;
             case R.id.text_msg_edit:
                 function_layout.setVisibility(View.GONE);
@@ -341,8 +353,6 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
             case R.id.function_video_img://打开录像
 
                 break;
-
-
         }
     }
 
@@ -363,21 +373,13 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                     SendMessageHelper.getInstance().getConversationByImage(friendName, imagePath, false, false, null);
                     //PickLocalImageUtils.toCrop(this, imagePath);
                     break;
-                case PickLocalImageUtils.CODE_FOR_CROP://来自于剪切照片的回调
+                case PickLocalImageUtils.CODE_FOR_CROP ://来自于剪切照片的回调
                     imagePath = data.getStringExtra(ImageCroppingActivity.KEY_SAVE_IMAGE_PATH);
                     Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromFile(imagePath, 100, 100);
                     BitmapUtil.saveBitmap(bitmap, imagePath, 100);
-                    showImage(imagePath);
                     break;
             }
         }
-    }
-
-    /**
-     * 显示图片
-     */
-    private void showImage(String imagePath) {
-        //imageLoader.displayImage("file:///" + imagePath, show_image, YehuiApplication.defaultOptions);
     }
 
     /**

@@ -525,5 +525,4 @@ public abstract class EasemobListActivity extends EasemobActivity implements Swi
             return false;
         }
     }
-
 }

@@ -36,7 +36,7 @@
             android:layout_height="@dimen/default_msg_height_and_width"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
             android:layout_marginRight="@dimen/small_padding_and_margin"
             android:src="@drawable/ease_default_avatar" />
 

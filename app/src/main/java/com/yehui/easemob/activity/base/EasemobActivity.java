@@ -1,6 +1,8 @@
 package com.yehui.easemob.activity.base;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 
 import com.easemob.EMError;
@@ -20,7 +22,11 @@ import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.helper.FriendStatushelper;
 import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.helper.ServerStatusHelper;
+import com.yehui.easemob.service.MessageService;
+import com.yehui.easemob.utils.MusicUtil;
+import com.yehui.easemob.utils.VibratorUtil;
 import com.yehui.utils.activity.base.BaseActivity;
+import com.yehui.utils.utils.AppUtil;
 import com.yehui.utils.utils.LogUtil;
 import com.yehui.utils.view.dialog.LoadingDialog;
 import com.yehui.utils.view.dialog.PromptDialog;
@@ -41,6 +47,7 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
         //EMChatManager.getInstance().registerEventListener(this,
         //new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewMessage, EMNotifierEvent.Event.EventOfflineMessage, EMNotifierEvent.Event.EventConversationListChanged});
         EMChatManager.getInstance().registerEventListener(this);
+        stopService(new Intent(this, MessageService.class));
         super.onResume();
     }
 
@@ -53,10 +60,8 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
 
     @Override
     protected void initData() {
-        long a = System.currentTimeMillis();
         promptDialog = new PromptDialog(EasemobActivity.this);
         loadingDialog = new LoadingDialog(EasemobActivity.this);
-        LogUtil.e(System.currentTimeMillis() - a + "聊天基类");
     }
 
 
@@ -75,7 +80,13 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
      * @param messageBean
      */
     public void onEventMainThread(MessageBean messageBean) {
-        getMessageStatus(messageBean);
+        if (messageBean.getGetMsgCode() == MessageContant.receiveMsgByNew) {
+            getNewMessage(messageBean);
+        } else if (messageBean.getGetMsgCode() == MessageContant.receiveMsgByNewCMDM) {
+            getNewCMDMessage(messageBean);
+        } else if (messageBean.getEmMessage().direct == EMMessage.Direct.SEND) {
+            getMessageStatus(messageBean);
+        }
 
     }
 
@@ -198,7 +209,8 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
      * @param messageBean
      */
     public void getNewMessage(MessageBean messageBean) {
-
+        VibratorUtil.vibrate(this, 1000);//新消息震动1s
+        MusicUtil.getInstance().playMusic(this);
     }
 
     /**
@@ -238,7 +250,8 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
                 break;
             case EventNewMessage://接收新消息event注册
                 messageBean.setGetMsgCode(MessageContant.receiveMsgByNew);
-                getNewMessage(messageBean);
+                eventBus.post(messageBean);
+                //getNewMessage(messageBean);
                 break;
             case EventNewCMDMessage://接收透传event注册
                 LogUtil.d("收到透传消息");
@@ -246,7 +259,7 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
                 // 获取消息body
                 //CmdMessageBody cmdMsgBody = (CmdMessageBody) message.getBody();
                 //final String action = cmdMsgBody.action;// 获取自定义action
-                getNewCMDMessage(messageBean);
+                //getNewCMDMessage(messageBean);
                 break;
             case EventDeliveryAck://已发送回执event注册
                 message.setDelivered(true);
@@ -277,12 +290,21 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (KeyEvent.KEYCODE_HOME == keyCode || KeyEvent.KEYCODE_MEDIA_TOP_MENU == keyCode) {
+            Intent intent = new Intent(this, MessageService.class);
+            startService(intent);
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        if (promptDialog != null) {
-//            promptDialog.dismissPromptDialog();
-//        }
+        if (AppUtil.isBackground(this)) {
+            Intent intent = new Intent(this, MessageService.class);
+            startService(intent);
+        }
     }
 }

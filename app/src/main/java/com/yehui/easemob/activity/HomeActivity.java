@@ -1,5 +1,7 @@
 package com.yehui.easemob.activity;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,20 +23,7 @@ import com.yehui.utils.view.titleview.MyTitleView;
 public class HomeActivity extends EasemobViewPagerActivity {
 
     public static TextView message_number_text;
-
-//    @Override
-//    protected void onResume() {
-//        //注册消息监听
-//        EMChatManager.getInstance().registerEventListener(this);
-//        super.onResume();
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        EMChatManager.getInstance().unregisterEventListener(this);//注销消息监听
-//        super.onStop();
-//    }
-
+    private NotificationManager nmgr;
     @Override
     protected View setTabView(ViewGroup container, int position) {
         View view = inflate(R.layout.item_easemob_viewpager_tab, container, false);
@@ -83,6 +72,8 @@ public class HomeActivity extends EasemobViewPagerActivity {
         mViewList.add(new FriendFragment());
         mViewList.add(new SquareFragment());
         setPageNumber(0);
+        nmgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        nmgr.cancel(1);
     }
 
     @Override
@@ -102,7 +93,7 @@ public class HomeActivity extends EasemobViewPagerActivity {
             } else {
                 finishAll();
             }
-            return false;
+            return true;
         }
         return super.onKeyDown(keyCode, event);
     }

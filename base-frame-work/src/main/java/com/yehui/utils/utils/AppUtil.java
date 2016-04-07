@@ -10,11 +10,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 
 import com.yehui.utils.application.ActivityCollector;
 import com.yehui.utils.contacts.SettingContact;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -26,38 +26,7 @@ public class AppUtil {
      * 防止被实例化
      */
     private AppUtil() {
-        /* cannot be instantiated */
         throw new UnsupportedOperationException("cannot be instantiated");
-    }
-
-    /**
-     * 获得app的包名
-     *
-     * @param pID
-     * @return
-     */
-    public static String getAppName(Context context, int pID) {
-        String processName = null;
-        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        List l = am.getRunningAppProcesses();
-        Iterator i = l.iterator();
-        PackageManager pm = context.getPackageManager();
-        while (i.hasNext()) {
-            ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (i.next());
-            try {
-                if (info.pid == pID) {
-                    CharSequence c = pm.getApplicationLabel(pm.getApplicationInfo(info.processName, PackageManager.GET_META_DATA));
-                    // Log.d("Process", "Id: "+ info.pid +" ProcessName: "+
-                    // info.processName +"  Label: "+c.toString());
-                    // processName = c.toString();
-                    processName = info.processName;
-                    return processName;
-                }
-            } catch (Exception e) {
-                // Log.d("Process", "Error>> :"+ e.toString());
-            }
-        }
-        return processName;
     }
 
     /**
@@ -185,7 +154,7 @@ public class AppUtil {
     }
 
     /**
-     * 获得应用报名
+     * 获得应用包名
      *
      * @param context
      * @return
@@ -206,5 +175,29 @@ public class AppUtil {
 
         }
         return packageNames;
+    }
+
+
+    /**
+     * 判断app是否处于后台
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isBackground(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+            if (appProcess.processName.equals(context.getPackageName())) {
+                if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_BACKGROUND) {
+                    LogUtil.i("后台" + appProcess.processName);
+                    return true;
+                } else {
+                    LogUtil.i("前台" + appProcess.processName);
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 }
