@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.yehui.easemob">
     <!--麦克风权限-->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -8,6 +9,7 @@
     <!--手机震动-->
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- 设置环信应用的appkey -->
+
     <!--环信所需权限-->
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -32,13 +34,33 @@
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <!-- 需要修改的地方，请注意，需要修改为你自己的包名 -->
-    <!-- 这里需要修改 android:name="包名+.permission.C2D_MESSAGE" -->
+
+    <!-- 环信需要修改的地方，请注意，需要修改为你自己的包名 -->
     <permission
         android:name="com.yehui.easemob.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-    <!-- 这里需要修改 android:name="包名+.permission.C2D_MESSAGE" -->
     <uses-permission android:name="com.yehui.easemob.permission.C2D_MESSAGE" />
+    <permission
+        android:name="com.yehui.easemob.permission.MIPUSH_RECEIVE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.yehui.easemob.permission.MIPUSH_RECEIVE" />
+
+
+    <!--高德地图所需权限-->
+    <!--地图包、搜索包需要的基础权限-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!--定位包、导航包需要的额外权限（注：基础权限也需要）-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission
+        android:name="android.permission.ACCESS_MOCK_LOCATION"
+        tools:ignore="MockLocation" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
         android:name=".appliaction.EasemobAppliaction"
@@ -47,6 +69,13 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!--设置高德地图key-->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="5ba99df032e6cd98bbf0f5184d6cdcff" />
+        <!-- 定位需要的服务 使用2.0的定位需要加上这个 -->
+        <service android:name="com.amap.api.location.APSService"/>
 
         <!-- 设置环信应用的appkey -->
         <meta-data
@@ -59,7 +88,9 @@
         <!--加载页-->
         <activity
             android:name=".activity.LoadingActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -74,7 +105,8 @@
         <!--主页面-->
         <activity
             android:name=".activity.HomeActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:theme="@style/AppThemeForRedMain" />
 
 
         <!--注册-->
@@ -103,7 +135,14 @@
             android:name="com.yehui.utils.activity.PhotoViewActivity"
             android:launchMode="singleTop" />
 
-        <!--app服务配置-->
+        <!--地图显示-->
+        <activity
+            android:name="com.a.map.activity.LocationSourceActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"/>
+
+
+        <!--后台提醒-->
         <service android:name=".service.MessageService" />
 
     </application>

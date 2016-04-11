@@ -8,8 +8,8 @@ android {
         applicationId "com.yehui.easemob"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 3
-        versionName "1.03"
+        versionCode 4
+        versionName "1.04"
     }
     buildTypes {
         release {
@@ -24,5 +24,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':base-frame-work')
     compile project(':cropper')
+    compile project(':a-map')
     compile files('libs/easemobchat_2.2.7.jar')
 }

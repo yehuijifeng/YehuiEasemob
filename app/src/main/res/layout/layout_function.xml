@@ -43,20 +43,21 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/function_shipin_img"
+                android:id="@+id/function_laction_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_padding_and_margin"
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
-                android:src="@drawable/bg_chat_shipin" />
+                android:src="@drawable/bg_chat_location" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="录像" />
+                android:text="地理位置" />
         </LinearLayout>
+
 
     </LinearLayout>
 
@@ -123,23 +124,25 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/function_laction_img"
+                android:id="@+id/function_tel_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_padding_and_margin"
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
-                android:src="@drawable/bg_chat_location" />
+                android:src="@drawable/bg_chat_tel" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="地理位置" />
+                android:text="畅聊电话" />
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -156,20 +159,21 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/function_tel_img"
+                android:id="@+id/function_shipin_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_padding_and_margin"
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
-                android:src="@drawable/bg_chat_tel" />
+                android:src="@drawable/bg_chat_shipin" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="电话" />
+                android:text="视频通话" />
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout

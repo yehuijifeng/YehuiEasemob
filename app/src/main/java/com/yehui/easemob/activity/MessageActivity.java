@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.a.map.activity.LocationSourceActivity;
+import com.a.map.contant.AMapContant;
 import com.easemob.chat.EMMessage;
 import com.yehui.easemob.R;
 import com.yehui.easemob.activity.base.EasemobListActivity;
@@ -339,18 +341,22 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 PickLocalImageUtils.toAlbum(MessageActivity.this);
                 break;
             case R.id.function_laction_img://发送地理位置
+                startActivityForResult(LocationSourceActivity.class, AMapContant.LOCATION_GO_CODE);
                 break;
             case R.id.function_shipin_img://发送视频
+                PickLocalImageUtils.toVideo(MessageActivity.this);
                 break;
-            case R.id.function_tel_img://请求视频电话
+            case R.id.function_tel_img://请求普通电话
+
                 break;
             case R.id.function_file_img://发送文件
+                PickLocalImageUtils.toFile(MessageActivity.this);
                 break;
             case R.id.function_camera_img://打开相机
                 imageFileName = DateUtil.format(System.currentTimeMillis(), "'" + friendName + "'" + "_yyyyMMddHHmmss") + ".jpg";
                 PickLocalImageUtils.toCamera(MessageActivity.this, imageFileName);
                 break;
-            case R.id.function_video_img://打开录像
+            case R.id.function_video_img://请求视频通话
 
                 break;
         }
@@ -373,10 +379,20 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                     SendMessageHelper.getInstance().getConversationByImage(friendName, imagePath, false, false, null);
                     //PickLocalImageUtils.toCrop(this, imagePath);
                     break;
-                case PickLocalImageUtils.CODE_FOR_CROP ://来自于剪切照片的回调
+                case PickLocalImageUtils.CODE_FOR_CROP://来自于剪切照片的回调
                     imagePath = data.getStringExtra(ImageCroppingActivity.KEY_SAVE_IMAGE_PATH);
                     Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromFile(imagePath, 100, 100);
                     BitmapUtil.saveBitmap(bitmap, imagePath, 100);
+                    break;
+            }
+        } else if (resultCode == AMapContant.LOCATION_BACK_CODE) {
+            switch (requestCode) {
+                case AMapContant.LOCATION_GO_CODE://来自于地图的回调
+                    if (data == null) return;
+                    String location = data.getStringExtra(AMapContant.AMAP_LOCATION);
+                    double lo_long = data.getDoubleExtra(AMapContant.LOCATION_LONG, 0);
+                    double lo_lat = data.getDoubleExtra(AMapContant.LOCATION_LAT, 0);
+                    SendMessageHelper.getInstance().getConversationByLocation(friendName, location, lo_long, lo_lat, false, null);
                     break;
             }
         }

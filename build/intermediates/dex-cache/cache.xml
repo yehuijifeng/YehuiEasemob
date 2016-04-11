@@ -2,11 +2,11 @@
 <items version="2" >
 
     <item
-        jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\YehuiEasemob\base-frame-work\unspecified\jars\classes.jar"
+        jar="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\exploded-aar\YehuiEasemob\a-map\unspecified\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="56a5ee7b4410f7ce7703e59ff92ec175ed970e58">
-        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\classes-a5876916907861f26bc4e55c900031eaa1859932.jar" />
+        sha1="0f2b17c84a315303bb3317abbd4260e349eeee41">
+        <dex dex="D:\AndroidStudioProjects\YehuiEasemob\app\build\intermediates\pre-dexed\debug\classes-103be0c39816a44023d4bf1a5140569ef03265af.jar" />
     </item>
 
 </items>

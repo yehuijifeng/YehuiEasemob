@@ -14,11 +14,27 @@
 
         <!-- 状态栏颜色 -->
         <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="android:windowIsTranslucent">true</item>
         <!-- 底部导航栏颜色 -->
         <!--<item name="navigationBarColor">#4876FF</item>-->
 
     </style>
+    <!--首页集成这个style，目的是为了让第一次进入的画面为透明-->
+    <style name="AppThemeForRedMain" parent="AppTheme">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowAnimationStyle">@style/AnimActivityTheme</item>
+    </style>
 
+    <style name="FeelyouWindowAnimTheme" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/in_from_left</item>
+        <item name="android:activityOpenExitAnimation">@anim/out_from_right</item>
+        <item name="android:activityCloseEnterAnimation">@anim/in_from_right</item>
+        <item name="android:activityCloseExitAnimation">@anim/out_from_left</item>
+    </style>
+
+    <style name="AnimActivityTheme">
+        <item name="android:windowAnimationStyle">@style/FeelyouWindowAnimTheme</item>
+    </style>
     <!--默认横线-->
     <style name="default_hour_view">
         <item name="android:layout_width">match_parent</item>

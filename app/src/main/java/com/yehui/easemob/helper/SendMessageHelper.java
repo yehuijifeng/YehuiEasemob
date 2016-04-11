@@ -251,12 +251,12 @@ public class SendMessageHelper implements SendMessageInterfaces {
      * @param longitude       经度
      */
     @Override
-    public MessageBean getConversationByLocation(String username, String locationAddress, double latitude, double longitude, boolean isReSend, String msgId) {
+    public MessageBean getConversationByLocation(String username, String locationAddress, double longitude, double latitude, boolean isReSend, String msgId) {
         EMConversation conversation = EMChatManager.getInstance().getConversation(username);
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.LOCATION);
         //如果是群聊，设置chattype,默认是单聊
         //message.setChatType(EMMessage.ChatType.GroupChat);
-        LocationMessageBody locBody = new LocationMessageBody(locationAddress, latitude, longitude);
+        LocationMessageBody locBody = new LocationMessageBody(locationAddress, latitude,longitude);
         message.addBody(locBody);
         message.setReceipt(username);
         conversation.addMessage(message);

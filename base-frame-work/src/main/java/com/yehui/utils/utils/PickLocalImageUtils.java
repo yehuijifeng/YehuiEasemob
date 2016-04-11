@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.yehui.utils.activity.ImageCroppingActivity;
 import com.yehui.utils.utils.files.FileContact;
@@ -24,7 +25,7 @@ public class PickLocalImageUtils {
 
     public static final int CODE_FOR_CAMERA = CODE_FOR_ALBUM + 1;
     public static final int CODE_FOR_CROP = CODE_FOR_CAMERA + 1;
-
+    public static final int CODE_FOR_VIDEO = CODE_FOR_CROP + 1;
 
     /**
      * 去相册
@@ -50,9 +51,31 @@ public class PickLocalImageUtils {
         activity.startActivityForResult(intent, CODE_FOR_CAMERA);
     }
 
+    /**
+     * 去视频资源
+     *
+     * @param activity
+     */
+    public static void toVideo(Activity activity) {
+        Toast.makeText(activity, "视频资源，暂未开放", Toast.LENGTH_SHORT).show();
+        //Intent intent = new Intent(activity, VideoGridActivity.class);
+        //activity.startActivityForResult(intent, CODE_FOR_VIDEO);
+    }
+
+    /**
+     * 去本地sd卡找资源
+     *
+     * @param activity
+     */
+    public static void toFile(Activity activity) {
+        Toast.makeText(activity, "文件资源，暂未开放", Toast.LENGTH_SHORT).show();
+        //Intent intent = new Intent(activity, FileListActivity.class);
+        //activity.startActivityForResult(intent, CODE_FOR_VIDEO);
+    }
 
     /**
      * 获得照片存放路径
+     *
      * @param uri
      * @param resolver
      * @return

@@ -1,1 +1,1 @@
-include ':app', ':base-frame-work',':cropper'
+include ':app', ':base-frame-work', ':cropper', ':a-map'

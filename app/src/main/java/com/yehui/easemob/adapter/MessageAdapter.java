@@ -19,8 +19,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.a.map.activity.LocationSourceActivity;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.ImageMessageBody;
+import com.easemob.chat.LocationMessageBody;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.chat.VoiceMessageBody;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -280,6 +282,19 @@ public class MessageAdapter extends BaseAdapter {
                 }
                 break;
             case LOCATION://地理位置
+                LocationMessageBody locationMessageBody = (LocationMessageBody) emMessage.getBody();
+                String address = locationMessageBody.getAddress();
+                double loc_long = locationMessageBody.getLongitude();
+                double loc_lat = locationMessageBody.getLatitude();
+                if (emMessage.direct == EMMessage.Direct.SEND) {
+                    SendLocationViewHolder sendLocationViewHolder = (SendLocationViewHolder) holder;
+                    sendLocationViewHolder.set_msg_img.setOnClickListener(new OnShowLocationClick(address, loc_long, loc_lat));
+                    sendLocationViewHolder.set_msg_text.setText(address);
+                } else {
+                    ReceiveLocationViewHolder receiveLocationViewHolder = (ReceiveLocationViewHolder) holder;
+                    receiveLocationViewHolder.get_msg_img.setOnClickListener(new OnShowLocationClick(address, loc_long, loc_lat));
+                    receiveLocationViewHolder.get_msg_text.setText(address);
+                }
                 break;
             case FILE://文件
                 break;
@@ -317,6 +332,8 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder = new SendImageViewHolder(convertView);
                 break;
             case MessageContant.sendMsgByLocation:
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_send_msg_location, parent, false);
+                viewHolder = new SendLocationViewHolder(convertView);
                 break;
             case MessageContant.sendMsgByFile:
                 break;
@@ -333,6 +350,8 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder = new ReceiveImageViewHolder(convertView);
                 break;
             case MessageContant.receiveMsgByLocation:
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receive_msg_location, parent, false);
+                viewHolder = new ReceiveLocationViewHolder(convertView);
                 break;
             case MessageContant.receiveMsgByFile:
                 break;
@@ -370,11 +389,17 @@ public class MessageAdapter extends BaseAdapter {
                 else
                     return MessageContant.receiveMsgByImage;
             case LOCATION:
-                break;
+                if (emMessage.direct == EMMessage.Direct.SEND)
+                    return MessageContant.sendMsgByLocation;
+                else
+                    return MessageContant.receiveMsgByLocation;
             case FILE:
-                break;
+                if (emMessage.direct == EMMessage.Direct.SEND)
+                    return MessageContant.sendMsgByFile;
+                else
+                    return MessageContant.receiveMsgByFile;
             case CMD:
-                break;
+                return MessageContant.sendMsgByText;
         }
         return MessageContant.sendMsgByText;
     }
@@ -395,17 +420,6 @@ public class MessageAdapter extends BaseAdapter {
         return thisWidth;
     }
 
-    /**
-     * 监听下载进度
-     */
-    class OnChangeLoadUrlListener {
-        private TextView textView;
-
-        private OnChangeLoadUrlListener(TextView textView) {
-
-        }
-
-    }
 
     /**
      * 点击查看大图
@@ -506,6 +520,31 @@ public class MessageAdapter extends BaseAdapter {
                 addMessageRecord();
                 msg_progress_bar.setVisibility(View.VISIBLE);
             }
+        }
+    }
+
+    /**
+     * 点击查看地理位置
+     */
+    class OnShowLocationClick implements View.OnClickListener {
+        private double loc_long, loc_lat;
+        private String loc_str;
+
+        private OnShowLocationClick(String loc_str, double loc_long, double loc_lat) {
+            this.loc_long = loc_long;
+            this.loc_lat = loc_lat;
+            this.loc_str = loc_str;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(context, LocationSourceActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(LocationSourceActivity.LOC_STR, loc_str);
+            bundle.putDouble(LocationSourceActivity.LOC_LONG, loc_long);
+            bundle.putDouble(LocationSourceActivity.LOC_LAT, loc_lat);
+            intent.putExtras(bundle);
+            context.startActivity(intent);
         }
     }
 
@@ -744,6 +783,66 @@ public class MessageAdapter extends BaseAdapter {
             msg_load_text = (TextView) itemView.findViewById(R.id.msg_load_text);
             msg_status_img.setVisibility(View.GONE);
             msg_load_text.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 接收地理位置
+     */
+    private class ReceiveLocationViewHolder extends BaseViewHolder {
+
+        private CircularImageView get_msg_image;
+        private ImageView msg_status_img, get_msg_img;
+        private ProgressBar msg_progress_bar;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text, get_msg_text;
+
+        public ReceiveLocationViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void initItemView(View itemView) {
+            get_msg_image = (CircularImageView) itemView.findViewById(R.id.get_msg_image);
+            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
+            get_msg_img = (ImageView) itemView.findViewById(R.id.get_msg_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
+            get_msg_text = (TextView) itemView.findViewById(R.id.get_msg_text);
+            msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
+
+            msg_status_img.setVisibility(View.GONE);
+            msg_progress_bar.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 发送地理位置
+     */
+    private class SendLocationViewHolder extends BaseViewHolder {
+
+        private CircularImageView set_msg_image;
+        private ImageView msg_status_img, set_msg_img;
+        private ProgressBar msg_progress_bar;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text, set_msg_text;
+
+        public SendLocationViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void initItemView(View itemView) {
+            set_msg_image = (CircularImageView) itemView.findViewById(R.id.set_msg_image);
+            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
+            set_msg_img = (ImageView) itemView.findViewById(R.id.set_msg_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
+            set_msg_text = (TextView) itemView.findViewById(R.id.set_msg_text);
+            msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
+
+            msg_status_img.setVisibility(View.INVISIBLE);
+            msg_progress_bar.setVisibility(View.INVISIBLE);
         }
     }
 }

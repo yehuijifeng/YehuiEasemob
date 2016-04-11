@@ -13,7 +13,7 @@ import com.yehui.utils.application.YehuiApplication;
 public class EasemobAppliaction extends YehuiApplication {
 
     public static UserInfoBean user;
-
+    public final static boolean DEBUG = true;
     @Override
     public void initAppliaction() {
         //全局捕获异常的代理类
