@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.yehui.easemob.R;
 import com.yehui.easemob.activity.RegisteredActivity;
+import com.yehui.easemob.activity.SettingsActivity;
 import com.yehui.easemob.activity.UserCenterActivity;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.FriendBean;
@@ -40,7 +41,8 @@ public class SquareFragment extends EasemobFragment implements View.OnClickListe
             user_exit_rl,
             user_close_cache_rl,
             add_friend_rl,
-            ic_register_user_rl;
+            ic_register_user_rl,
+            user_settings_rl;
     private PromptDialog promptDialog;
     private CustomDialog customDialog;
 
@@ -62,20 +64,22 @@ public class SquareFragment extends EasemobFragment implements View.OnClickListe
         user_close_cache_rl = (RelativeLayout) parentView.findViewById(R.id.user_close_cache_rl);
         ic_register_user_rl = (RelativeLayout) parentView.findViewById(R.id.ic_register_user_rl);
         add_friend_rl = (RelativeLayout) parentView.findViewById(R.id.add_friend_rl);
+        user_settings_rl = (RelativeLayout) parentView.findViewById(R.id.user_settings_rl);
+
         cache_size_text = (TextView) parentView.findViewById(R.id.cache_size_text);
         user_image_square.setOnClickListener(this);
         user_exit_rl.setOnClickListener(this);
         user_close_cache_rl.setOnClickListener(this);
         ic_register_user_rl.setOnClickListener(this);
         add_friend_rl.setOnClickListener(this);
-
+        user_settings_rl.setOnClickListener(this);
     }
 
     @Override
     protected void initData() {
         if (EasemobAppliaction.user != null) {
             user_name_square.setText(TextUtils.isEmpty(EasemobAppliaction.user.getUserNickname()) ? EasemobAppliaction.user.getUserName() : EasemobAppliaction.user.getUserNickname());
-            imageLoader.displayImage( EasemobAppliaction.user.getUserIconPath(), user_image_square, EasemobAppliaction.defaultOptions);
+            imageLoader.displayImage(EasemobAppliaction.user.getUserIconPath(), user_image_square, EasemobAppliaction.defaultOptions);
         }
         promptDialog = new PromptDialog(parentActivity);//提示框
         loadingDialog = new LoadingDialog(parentActivity);//加载框
@@ -173,6 +177,9 @@ public class SquareFragment extends EasemobFragment implements View.OnClickListe
 
                     }
                 });
+                break;
+            case R.id.user_settings_rl:
+                startActivity(SettingsActivity.class);
                 break;
         }
     }

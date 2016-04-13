@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import com.yehui.easemob.model.EaseChatRowVoicePlayClickListener;
 import com.yehui.easemob.utils.BiaoqingUtil;
 import com.yehui.easemob.utils.BitmapUtil;
 import com.yehui.easemob.utils.DateUtil;
+import com.yehui.easemob.window.EasemobWindow;
 import com.yehui.utils.activity.PhotoViewActivity;
 import com.yehui.utils.adapter.base.BaseAdapter;
 import com.yehui.utils.adapter.base.BaseViewHolder;
@@ -66,6 +68,7 @@ public class MessageAdapter extends BaseAdapter {
     private int pageSize = 20;
     private ImageLoader imageLoader;
     private int reqWidth = 400, reqHeight = 500;
+    private EasemobWindow easemobWindow;
 
     public MessageAdapter(Activity context, List<MessageBean> messageList, String friendName, LinearLayout speaker_ly, TextView speaker_text, RecyclerView recyclerView) {
         super(messageList);
@@ -75,6 +78,7 @@ public class MessageAdapter extends BaseAdapter {
         this.speaker_text = speaker_text;//切换扬声器和听筒的文字提示
         this.recyclerView = recyclerView;//当前使用的recyclerview
         imageLoader = ImageLoader.getInstance();
+        easemobWindow = new EasemobWindow(context);
         data.add(0, getLoadMoreItem());
 
     }
@@ -152,8 +156,11 @@ public class MessageAdapter extends BaseAdapter {
         switch (emMessage.getType()) {
             case TXT://文本消息，带表情
                 TextMessageBody textMessageBody = (TextMessageBody) emMessage.getBody();
+                if (TextUtils.isEmpty(messageBean.getContent()))
+                    messageBean.setContent(textMessageBody.getMessage());
                 if (emMessage.direct == EMMessage.Direct.SEND) {//判断这条消息是否是发送消息
                     SendTextViewHolder sendTextViewHolder = (SendTextViewHolder) holder;
+                    sendTextViewHolder.set_msg_text.setOnLongClickListener(new OnEaseLongClick(sendTextViewHolder.set_msg_text, messageBean));
                     if (isOutTime) {
                         sendTextViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
                         sendTextViewHolder.msg_time_text.setText(outTimeStr);
@@ -176,6 +183,7 @@ public class MessageAdapter extends BaseAdapter {
                     }
                 } else {
                     ReceiveTextViewHolder receiveTextViewHolder = (ReceiveTextViewHolder) holder;
+                    receiveTextViewHolder.get_msg_text.setOnLongClickListener(new OnEaseLongClick(receiveTextViewHolder.get_msg_text, messageBean));
                     if (isOutTime) {
                         receiveTextViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
                         receiveTextViewHolder.msg_time_text.setText(outTimeStr);
@@ -193,6 +201,8 @@ public class MessageAdapter extends BaseAdapter {
                 int length = voiceMessageBody.getLength();
                 if (emMessage.direct == EMMessage.Direct.SEND) {
                     SendVoiceViewHolder sendVoiceViewHolder = (SendVoiceViewHolder) holder;
+                    sendVoiceViewHolder.set_msg_text.setOnLongClickListener(new OnEaseLongClick(sendVoiceViewHolder.set_msg_text, messageBean));
+
                     if (isOutTime) {
                         sendVoiceViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
                         sendVoiceViewHolder.msg_time_text.setText(outTimeStr);
@@ -216,6 +226,7 @@ public class MessageAdapter extends BaseAdapter {
                     }
                 } else {
                     ReceiveVoiceViewHolder receiveVoiceViewHolder = (ReceiveVoiceViewHolder) holder;
+                    receiveVoiceViewHolder.get_msg_text.setOnLongClickListener(new OnEaseLongClick(receiveVoiceViewHolder.get_msg_text, messageBean));
                     if (isOutTime) {
                         receiveVoiceViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
                         receiveVoiceViewHolder.msg_time_text.setText(outTimeStr);
@@ -242,6 +253,7 @@ public class MessageAdapter extends BaseAdapter {
                 //imageMessageBody.isSendOriginalImage();//是否是发送的原图
                 if (emMessage.direct == EMMessage.Direct.SEND) {
                     SendImageViewHolder sendImageViewHolder = (SendImageViewHolder) holder;
+                    sendImageViewHolder.set_msg_img_fy.setOnLongClickListener(new OnEaseLongClick(sendImageViewHolder.set_msg_img_fy, messageBean));
                     String url = imageMessageBody.getLocalUrl();
                     if (FileOperationUtil.isHaveFile(url)) {
                         if (BitmapCacheFunction.getInstance().isBitmapByLruCache(url)) {
@@ -274,6 +286,7 @@ public class MessageAdapter extends BaseAdapter {
 
                 } else {
                     ReceiveImageViewHolder receiveImageViewHolder = (ReceiveImageViewHolder) holder;
+                    receiveImageViewHolder.get_msg_img_fy.setOnLongClickListener(new OnEaseLongClick(receiveImageViewHolder.get_msg_img_fy, messageBean));
                     receiveImageViewHolder.get_msg_dialog.setVisibility(View.VISIBLE);
                     imageLoader.displayImage(imageMessageBody.getThumbnailUrl(), receiveImageViewHolder.get_msg_img, EasemobAppliaction.defaultOptions);
                     receiveImageViewHolder.get_msg_dialog.setVisibility(View.GONE);
@@ -288,10 +301,12 @@ public class MessageAdapter extends BaseAdapter {
                 double loc_lat = locationMessageBody.getLatitude();
                 if (emMessage.direct == EMMessage.Direct.SEND) {
                     SendLocationViewHolder sendLocationViewHolder = (SendLocationViewHolder) holder;
+                    sendLocationViewHolder.set_msg_img.setOnLongClickListener(new OnEaseLongClick(sendLocationViewHolder.set_msg_img, messageBean));
                     sendLocationViewHolder.set_msg_img.setOnClickListener(new OnShowLocationClick(address, loc_long, loc_lat));
                     sendLocationViewHolder.set_msg_text.setText(address);
                 } else {
                     ReceiveLocationViewHolder receiveLocationViewHolder = (ReceiveLocationViewHolder) holder;
+                    receiveLocationViewHolder.get_msg_img.setOnLongClickListener(new OnEaseLongClick(receiveLocationViewHolder.get_msg_img, messageBean));
                     receiveLocationViewHolder.get_msg_img.setOnClickListener(new OnShowLocationClick(address, loc_long, loc_lat));
                     receiveLocationViewHolder.get_msg_text.setText(address);
                 }
@@ -420,6 +435,24 @@ public class MessageAdapter extends BaseAdapter {
         return thisWidth;
     }
 
+    /**
+     * 聊天长按事件
+     */
+    class OnEaseLongClick implements View.OnLongClickListener {
+        private View popView;
+        private MessageBean messageBean;
+
+        private OnEaseLongClick(View popView, MessageBean messageBean) {
+            this.popView = popView;
+            this.messageBean = messageBean;
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            easemobWindow.showAtLocation(popView, messageBean, MessageAdapter.this);
+            return true;//返回true时会使手机的振动一下。而返回false时则不会有这种效果。
+        }
+    }
 
     /**
      * 点击查看大图

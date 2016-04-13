@@ -9,7 +9,6 @@ import com.easemob.chat.EMConversation;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.TextMessageBody;
 import com.yehui.easemob.R;
-import com.yehui.easemob.activity.HomeActivity;
 import com.yehui.easemob.activity.MessageActivity;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.MessageBean;
@@ -17,13 +16,13 @@ import com.yehui.easemob.bean.UserInfoBean;
 import com.yehui.easemob.contants.MapContant;
 import com.yehui.easemob.db.UserInfoDao;
 import com.yehui.easemob.fragment.base.EasemobListFragment;
-import com.yehui.easemob.helper.ReceiveMessageHelper;
 import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.utils.BiaoqingUtil;
 import com.yehui.easemob.utils.DateUtil;
 import com.yehui.utils.adapter.base.BaseViewHolder;
 import com.yehui.utils.view.CircularImageView;
 import com.yehui.utils.view.dialog.PromptDialog;
+import com.yehui.utils.view.popupwindow.PopupWindowAll;
 import com.yehui.utils.view.titleview.MyTitleView;
 
 /**
@@ -39,7 +38,7 @@ public class MessageFragment extends EasemobListFragment {
     private PromptDialog promptDialog;//提示框
 
     @Override
-    protected void initView(View parentView) {
+    protected void initView(final View parentView) {
         super.initView(parentView);
         titleView = (MyTitleView) parentView.findViewById(R.id.my_title_view);
         titleView.setTitleText("消息");
@@ -47,23 +46,25 @@ public class MessageFragment extends EasemobListFragment {
         titleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //EasemobWindow easemobWindow = new EasemobWindow(parentActivity);
+                //easemobWindow.showAtLocation(titleView, Gravity.BOTTOM, null);
                 //清楚所有未读消息
-                promptDialog.showPromptDialog("确定清除所有未读消息？", new PromptDialog.PromptOnClickListener() {
-                    @Override
-                    public void onDetermine() {
-                        ReceiveMessageHelper.getInstance().markAllConversationsAsRead();
-                        reLoad();
-                        if (((HomeActivity) parentActivity).message_number_text != null) {
-                            ((HomeActivity) parentActivity).message_number_text.setText("0");
-                            ((HomeActivity) parentActivity).message_number_text.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onCancel() {
-
-                    }
-                });
+//                promptDialog.showPromptDialog("确定清除所有未读消息？", new PromptDialog.PromptOnClickListener() {
+//                    @Override
+//                    public void onDetermine() {
+//                        ReceiveMessageHelper.getInstance().markAllConversationsAsRead();
+//                        reLoad();
+//                        if (((HomeActivity) parentActivity).message_number_text != null) {
+//                            ((HomeActivity) parentActivity).message_number_text.setText("0");
+//                            ((HomeActivity) parentActivity).message_number_text.setVisibility(View.GONE);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancel() {
+//
+//                    }
+//                });
             }
         });
         promptDialog = new PromptDialog(parentActivity);

@@ -41,7 +41,12 @@
         <item name="android:layout_height">@dimen/default_hour_height</item>
         <item name="android:background">@color/default_gray</item>
     </style>
-
+    <!--默认竖线-->
+    <style name="default_vertical_view">
+        <item name="android:layout_width">@dimen/default_hour_height</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/default_gray</item>
+    </style>
     <!--默认button设置-->
     <style name="default_button_style">
         <item name="android:textAllCaps">false</item>

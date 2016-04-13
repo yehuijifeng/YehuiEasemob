@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/transparent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:background="@drawable/bg_settings_view"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/default_padding_and_margin">
+
+            <TextView
+                android:id="@+id/window_delete_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_default_view"
+                android:padding="@dimen/default_padding_and_margin"
+                android:text="删除"
+                android:textColor="@color/black"
+                android:textSize="@dimen/default_x_text_size" />
+
+            <View style="@style/default_vertical_view" />
+
+
+            <TextView
+                android:id="@+id/window_copy_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_default_view"
+                android:padding="@dimen/default_padding_and_margin"
+                android:text="复制"
+                android:textColor="@color/black"
+                android:textSize="@dimen/default_x_text_size" />
+
+            <View style="@style/default_vertical_view" />
+
+
+            <TextView
+                android:id="@+id/window_exit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_default_view"
+                android:padding="@dimen/default_padding_and_margin"
+                android:text="撤回"
+                android:textColor="@color/black"
+                android:textSize="@dimen/default_x_text_size" />
+
+            <View style="@style/default_vertical_view" />
+
+
+            <TextView
+                android:id="@+id/window_send_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_default_view"
+                android:padding="@dimen/default_padding_and_margin"
+                android:text="转发"
+                android:textColor="@color/black"
+                android:textSize="@dimen/default_x_text_size" />
+
+            <View style="@style/default_vertical_view" />
+
+
+            <TextView
+                android:id="@+id/window_collect_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_default_view"
+                android:padding="@dimen/default_padding_and_margin"
+                android:text="收藏"
+                android:textColor="@color/black"
+                android:textSize="@dimen/default_x_text_size" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/drop_top_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_drop_top" />
+
+    </FrameLayout>
+</LinearLayout>

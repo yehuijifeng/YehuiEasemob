@@ -27,7 +27,7 @@ public class PopupWindowAll extends View {
      * 是否让焦点落在popupwindow上，而父view无焦点
      */
     public boolean setFocusable() {
-        return false;
+        return true;
     }
 
     /**
@@ -58,10 +58,11 @@ public class PopupWindowAll extends View {
     /**
      * 关闭popupwindow
      */
-    public void dismissWindow(){
-        if(popupWindow!=null)
+    public void dismissWindow() {
+        if (popupWindow != null)
             popupWindow.dismiss();
     }
+
     /**
      * 全屏幕显示
      */
@@ -75,12 +76,15 @@ public class PopupWindowAll extends View {
     /**
      * 显示在指定控件的下面
      *
-     * @param root
-     * @param parent
+     * @param root   依附的视图
+     * @param parent 显示的视图
      */
     public void showAtLocationByBottom(View root, View parent) {
 
         popupWindow = new PopupWindow(parent, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        //setContentView(popView);
+        //setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        // setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         initSettings();
         int parentWidth = parent.getWidth();
         int parentHeight = parent.getHeight();
@@ -90,10 +94,35 @@ public class PopupWindowAll extends View {
         // 获得位置
         root.getLocationOnScreen(location);
         popupWindow.setAnimationStyle(R.anim.activity_start_anim);
-        popupWindow.showAtLocation(root,Gravity.NO_GRAVITY, (location[0] + rootWidth / 2) - parentWidth / 2, location[1] + rootHeight);
+
+        popupWindow.showAtLocation(root, Gravity.NO_GRAVITY, (location[0] + rootWidth / 2) - parentWidth / 2, location[1] + rootHeight);
+        popupWindow.showAsDropDown(root);
     }
+    /**
+     * 显示在指定控件的下面
+     *
+     * @param root   依附的视图
+     * @param parent 显示的视图
+     */
+    public void showAtLocationByTop(View root, View parent) {
+
+        popupWindow = new PopupWindow(parent, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        //setContentView(popView);
+        //setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        // setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        initSettings();
+        int rootWidth = root.getWidth();
+        int parentWidth = parent.getWidth();
+        int rootHeight = root.getHeight();
+        int[] location = new int[2];
+        // 获得位置
+        root.getLocationOnScreen(location);
+        popupWindow.setAnimationStyle(R.anim.activity_start_anim);
+        //popupWindow.showAtLocation(root, Gravity.NO_GRAVITY, location[0], location[1]-popupWindow.getHeight());
+        popupWindow.showAtLocation(root, Gravity.NO_GRAVITY,  location[0], location[1] + rootHeight);
 
 
+    }
     /**
      * api19以后才可使用该方法
      * 根据手指的点击而出现

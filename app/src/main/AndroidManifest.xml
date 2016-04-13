@@ -75,7 +75,7 @@
             android:name="com.amap.api.v2.apikey"
             android:value="5ba99df032e6cd98bbf0f5184d6cdcff" />
         <!-- 定位需要的服务 使用2.0的定位需要加上这个 -->
-        <service android:name="com.amap.api.location.APSService"/>
+        <service android:name="com.amap.api.location.APSService" />
 
         <!-- 设置环信应用的appkey -->
         <meta-data
@@ -139,7 +139,11 @@
         <activity
             android:name="com.a.map.activity.LocationSourceActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <!--地图显示-->
+        <activity
+            android:name="com.yehui.easemob.activity.SettingsActivity"
+            android:launchMode="singleTop" />
 
 
         <!--后台提醒-->
