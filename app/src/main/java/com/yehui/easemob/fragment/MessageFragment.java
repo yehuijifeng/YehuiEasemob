@@ -30,6 +30,8 @@ import com.yehui.utils.view.CircularImageView;
 import com.yehui.utils.view.dialog.PromptDialog;
 import com.yehui.utils.view.titleview.MyTitleView;
 
+import java.util.List;
+
 /**
  * Created by Luhao
  * on 2016/2/20.
@@ -99,8 +101,10 @@ public class MessageFragment extends EasemobListFragment {
         if (a.equals(MessageContant.sendRevokeMessage)) {
             try {
                 String receiveStr = messageBean.getEmMessage().getStringAttribute(MessageContant.sendRevokeMessageById);
+                String thisStr;
                 for (int i = 0; i < data.size(); i++) {
-                    String thisStr = ((EMConversation) (data.get(i))).getLastMessage().getMsgId();
+                    //先搜索最后一条消息，若不是撤回的最后一条消息则在进入下个循环
+                    thisStr = ((EMConversation) (data.get(i))).getLastMessage().getMsgId();
                     if (thisStr.equals(receiveStr)) {
                         if (messageBean.getContent() == null)
                             messageBean.setContent(MessageContant.revokeStr);
@@ -109,6 +113,21 @@ public class MessageFragment extends EasemobListFragment {
                         mAdapter.notifyDataSetChanged();
                         showMessageNumberIcon();
                         return;
+                    }
+                }
+                for (int i = 0; i < data.size(); i++) {
+                    List<EMMessage> list = ((EMConversation) (data.get(i))).getAllMessages();
+                    for (int j = 0; j < list.size(); j++) {
+                        thisStr = list.get(j).getMsgId();
+                        if (thisStr.equals(receiveStr)) {
+                            if (messageBean.getContent() == null)
+                                messageBean.setContent(MessageContant.revokeStr);
+                            EMConversation emConversation = SendMessageHelper.getInstance().receiveRevokeMessage(messageBean);
+                            data.set(i, emConversation);
+                            mAdapter.notifyDataSetChanged();
+                            showMessageNumberIcon();
+                            return;
+                        }
                     }
                 }
             } catch (EaseMobException e) {
