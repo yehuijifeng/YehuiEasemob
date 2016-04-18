@@ -277,7 +277,6 @@ public class BaseHelper {
 
     /**
      * 显式跳转Activity的方法(带Bundle)
-     *
      * @param cls    要跳转的Activity的类
      * @param bundle 装载了各种参数的Bundle
      */

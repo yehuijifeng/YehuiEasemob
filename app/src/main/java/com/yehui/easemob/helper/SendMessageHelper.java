@@ -1,9 +1,12 @@
 package com.yehui.easemob.helper;
 
+import android.content.Context;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.easemob.EMCallBack;
+import com.easemob.chat.CmdMessageBody;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMConversation;
 import com.easemob.chat.EMMessage;
@@ -63,7 +66,6 @@ public class SendMessageHelper implements SendMessageInterfaces {
     private void initSendMsg() {
         messageBean = new MessageBean();
     }
-
 
     @Override
     public MessageBean sendConversationByText(String username, String content, boolean isReSend, String msgId) {
@@ -187,7 +189,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
      *                 聊天id
      */
     @Override
-    public MessageBean getConversationByImage(String username, String filePath, boolean isSendOriginalImage, boolean isReSend, String msgId) {
+    public MessageBean sendConversationByImage(String username, String filePath, boolean isSendOriginalImage, boolean isReSend, String msgId) {
         EMConversation conversation = EMChatManager.getInstance().getConversation(username);
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.IMAGE);
         //如果是群聊，设置chattype,默认是单聊
@@ -220,6 +222,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
             @Override
             public void onSuccess() {
                 messageBean.setBackStatus(1);
+
                 eventBus.post(messageBean);
             }
 
@@ -228,6 +231,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
                 messageBean.setGetMsgErrorInt(i);
                 messageBean.setGetMsgErrorStr(s);
                 messageBean.setBackStatus(-1);
+
                 eventBus.post(messageBean);
             }
 
@@ -251,12 +255,12 @@ public class SendMessageHelper implements SendMessageInterfaces {
      * @param longitude       经度
      */
     @Override
-    public MessageBean getConversationByLocation(String username, String locationAddress, double longitude, double latitude, boolean isReSend, String msgId) {
+    public MessageBean sendConversationByLocation(String username, String locationAddress, double longitude, double latitude, boolean isReSend, String msgId) {
         EMConversation conversation = EMChatManager.getInstance().getConversation(username);
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.LOCATION);
         //如果是群聊，设置chattype,默认是单聊
         //message.setChatType(EMMessage.ChatType.GroupChat);
-        LocationMessageBody locBody = new LocationMessageBody(locationAddress, latitude,longitude);
+        LocationMessageBody locBody = new LocationMessageBody(locationAddress, latitude, longitude);
         message.addBody(locBody);
         message.setReceipt(username);
         conversation.addMessage(message);
@@ -299,7 +303,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
      * @param filePath 图片文件路径
      */
     @Override
-    public MessageBean getConversationByFile(String username, String filePath, boolean isReSend, String msgId) {
+    public MessageBean sendConversationByFile(String username, String filePath, boolean isReSend, String msgId) {
         EMConversation conversation = EMChatManager.getInstance().getConversation(username);
         // 创建一个文件消息
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.FILE);
@@ -323,6 +327,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
             @Override
             public void onSuccess() {
                 messageBean.setBackStatus(1);
+
                 eventBus.post(messageBean);
             }
 
@@ -331,6 +336,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
                 messageBean.setGetMsgErrorInt(i);
                 messageBean.setGetMsgErrorStr(s);
                 messageBean.setBackStatus(-1);
+
                 eventBus.post(messageBean);
             }
 
@@ -339,6 +345,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
                 messageBean.setGetMsgErrorInt(i);
                 messageBean.setGetMsgErrorStr(s);
                 messageBean.setBackStatus(0);
+
                 eventBus.post(messageBean);
             }
         });
@@ -346,7 +353,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
     }
 
     @Override
-    public MessageBean getConversationByVideo(String username, String filePath, boolean isReSend, String msgId) {
+    public MessageBean sendConversationByVideo(String username, String filePath, boolean isReSend, String msgId) {
         return messageBean;
     }
 
@@ -478,4 +485,113 @@ public class SendMessageHelper implements SendMessageInterfaces {
         conversation.getMessage(message.getMsgId(), markAsRead);
     }
 
+    /**
+     * 发送一条撤回消息的透传，这里需要和接收方协商定义，通过一个透传，并加上扩展去实现消息的撤回
+     *
+     * @param message 需要撤回的消息
+     */
+    public void sendRevokeMessage(Context context, final EMMessage message) {
+        //初始化发送信息
+        initSendMsg();
+        messageBean.setUserName(message.getFrom());
+        messageBean.setContent("撤回消息");
+        if (message.status != EMMessage.Status.SUCCESS) {
+            messageBean.setGetMsgCode(MessageContant.sendRevokeMessageByFinal);
+            messageBean.setContent("消息未发送成功，撤回失败");
+            Toast.makeText(context, "消息未发送成功，撤回失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // 获取当前时间，用来判断后边撤回消息的时间点是否合法，这个判断不需要在接收方做，
+        // 因为如果接收方之前不在线，很久之后才收到消息，将导致撤回失败
+        long currTime = System.currentTimeMillis();
+        long msgTime = message.getMsgTime();
+        if (currTime < msgTime || (currTime - msgTime) > 120000) {
+            messageBean.setContent("消息超过2分钟，无法撤回");
+            Toast.makeText(context, "消息超过2分钟，无法撤回", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String msgId = message.getMsgId();
+        EMMessage cmdMessage = EMMessage.createSendMessage(EMMessage.Type.CMD);//cmd属于透传消息
+        if (message.getChatType() == EMMessage.ChatType.GroupChat) {
+            cmdMessage.setChatType(EMMessage.ChatType.GroupChat);
+        }
+        cmdMessage.setReceipt(message.getTo());
+        // 创建CMD 消息的消息体 并设置 action 为 revoke
+        CmdMessageBody body = new CmdMessageBody(MessageContant.sendRevokeMessage);
+        cmdMessage.addBody(body);
+        cmdMessage.setAttribute(MessageContant.sendRevokeMessageById, msgId);
+
+        // 确认无误，开始发送撤回消息的透传
+        EMChatManager.getInstance().sendMessage(cmdMessage, new EMCallBack() {
+            @Override
+            public void onSuccess() {
+                // 更改要撤销的消息的内容，替换为消息已经撤销的提示内容
+                TextMessageBody body = new TextMessageBody(MessageContant.revokeStr);
+                message.addBody(body);
+                // 这里需要把消息类型改为 TXT 类型
+                message.setType(EMMessage.Type.TXT);
+                // 设置扩展为撤回消息类型，是为了区分消息的显示
+                message.setAttribute(MessageContant.sendRevokeMessage, true);
+                // 返回修改消息结果
+                EMChatManager.getInstance().updateMessageBody(message);
+                messageBean.setContent(MessageContant.revokeStr);
+                messageBean.setEmMessage(message);
+                messageBean.setBackStatus(1);
+                eventBus.post(messageBean);
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                messageBean.setGetMsgErrorInt(i);
+                messageBean.setGetMsgErrorStr(s);
+                messageBean.setBackStatus(-1);
+                eventBus.post(messageBean);
+            }
+
+            @Override
+            public void onProgress(int i, String s) {
+                messageBean.setGetMsgErrorInt(i);
+                messageBean.setGetMsgErrorStr(s);
+                messageBean.setBackStatus(0);
+                eventBus.post(messageBean);
+            }
+        });
+    }
+
+    /**
+     * 收到撤回消息，这里需要和发送方协商定义，通过一个透传，并加上扩展去实现消息的撤回
+     *
+     * @param messageBean 收到的透传消息，包含需要撤回的消息的 msgId
+     * @return 返回撤回结果是否成功
+     */
+    public EMConversation receiveRevokeMessage(MessageBean messageBean) {
+        EMMessage revokeMsg = messageBean.getEmMessage();
+        EMConversation conversation = EMChatManager.getInstance().getConversation(revokeMsg.getFrom());
+        boolean result = false;
+        // 从cmd扩展中获取要撤回消息的id
+        String msgId = revokeMsg.getStringAttribute(MessageContant.sendRevokeMessageById, null);
+        if (msgId == null) {
+            return null;
+        }
+        // 根据得到的msgId 去本地查找这条消息，如果本地已经没有这条消息了，就不用撤回
+        // 这里为了防止消息没有加载到内存中，使用Conversation的loadMessage方法加载消息
+        EMMessage message = EMChatManager.getInstance().getMessage(msgId);
+        if (message == null) {
+            message = conversation.loadMessage(msgId);
+        }
+        // 更改要撤销的消息的内容，替换为消息已经撤销的提示内容
+        TextMessageBody body = new TextMessageBody(messageBean.getContent());
+        message.addBody(body);
+        // 这里需要把消息类型改为 TXT 类型
+        message.setType(EMMessage.Type.TXT);
+        // 设置扩展为撤回消息类型，是为了区分消息的显示
+        message.setAttribute(MessageContant.sendRevokeMessage, true);
+        // 返回修改消息结果
+        result = EMChatManager.getInstance().updateMessageBody(message);
+        if (!result) return null;
+        // 因为Android这边没有修改消息未读数的方法，这里只能通过conversation的getMessage方法来实现未读数减一
+        conversation.getMessage(msgId);
+        message.isAcked = true;
+        return conversation;
+    }
 }

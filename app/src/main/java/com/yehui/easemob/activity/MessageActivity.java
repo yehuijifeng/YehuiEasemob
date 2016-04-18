@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 import com.a.map.activity.LocationSourceActivity;
 import com.a.map.contant.AMapContant;
+import com.easemob.chat.CmdMessageBody;
+import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMMessage;
 import com.yehui.easemob.R;
 import com.yehui.easemob.activity.base.EasemobListActivity;
@@ -30,10 +32,9 @@ import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.function.BitmapCacheFunction;
 import com.yehui.easemob.helper.ReceiveMessageHelper;
 import com.yehui.easemob.helper.SendMessageHelper;
+import com.yehui.easemob.service.MessageService;
 import com.yehui.easemob.utils.BiaoqingUtil;
 import com.yehui.easemob.utils.BitmapUtil;
-import com.yehui.easemob.utils.MusicUtil;
-import com.yehui.easemob.utils.VibratorUtil;
 import com.yehui.easemob.view.BiaoqingView;
 import com.yehui.easemob.view.EditTexts;
 import com.yehui.easemob.view.VoiceView;
@@ -70,7 +71,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
             function_video_img;
     private LinearLayout function_layout, speaker_ly;
     private Button fasong_msg_btn;
-    private String friendName, imageFileName;
+    protected String friendName, imageFileName;
     private int pageSize = 20;
     private List<MessageBean> msgList;
     private BiaoqingView biaoqing_layout;
@@ -78,6 +79,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     private VoiceView voiceView;
     private MessageAdapter messageAdapter;
     private Handler handler = new Handler();
+
 
     @Override
     protected void initView() {
@@ -179,6 +181,9 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
 
     @Override
     protected void onResume() {
+        //注册消息监听
+        EMChatManager.getInstance().registerEventListener(this);
+        stopService(new Intent(this, MessageService.class));
         super.onResume();
         if (messageAdapter != null && messageAdapter.data != null && messageAdapter.data.size() > 0)
             messageAdapter.notifyDataSetChanged();
@@ -186,6 +191,8 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
 
     @Override
     protected void onStop() {
+        //无效的关闭
+        EMChatManager.getInstance().unregisterEventListener(this);//注销消息监听
         super.onStop();
         messageAdapter.stopVoicePlay();
         BitmapCacheFunction.getInstance().closeLruCache();
@@ -243,18 +250,26 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
     }
 
     @Override
+    public void getNewCMDMessage(MessageBean messageBean) {
+        //对方撤回的一条消息
+        String a = ((CmdMessageBody) messageBean.getEmMessage().getBody()).action;
+        if (a.equals(MessageContant.sendRevokeMessage)) {
+            messageAdapter.setRevokeMessage(messageBean);
+        }
+    }
+
+    @Override
     public void getNewMessage(MessageBean messageBean) {
+        //super.getNewMessage(messageBean);
         EMMessage emMessage = messageBean.getEmMessage();
         if (TextUtils.isEmpty(friendName)) return;
         if (emMessage.getFrom().equals(friendName)) {
             messageAdapter.data.add(messageBean);
             SendMessageHelper.getInstance().getMarkAsRead(friendName, emMessage, true);
             messageAdapter.getLastHour();
-            MusicUtil.getInstance().stopMusic();
-            VibratorUtil.vibrate(this, 0);//新消息震动1s
+            setPlayMusic(false);
         } else {
-            MusicUtil.getInstance().playMusic(this);
-            VibratorUtil.vibrate(this, 1000);//新消息震动1s
+            setPlayMusic(true);
         }
 
     }
@@ -344,7 +359,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 startActivityForResult(LocationSourceActivity.class, AMapContant.LOCATION_GO_CODE);
                 break;
             case R.id.function_shipin_img://发送视频
-                PickLocalImageUtils.toVideo(MessageActivity.this);
+                PickLocalImageUtils.toVideo(MessageActivity.this, VideoActivity.class);
                 break;
             case R.id.function_tel_img://请求普通电话
 
@@ -367,22 +382,29 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             String imagePath;
+            String videoPath;
             switch (requestCode) {
                 case PickLocalImageUtils.CODE_FOR_ALBUM://来自于系统相册的回调
                     if (data == null) return;
                     Uri uri = data.getData();
                     imagePath = PickLocalImageUtils.getPath(uri, getContentResolver());
-                    SendMessageHelper.getInstance().getConversationByImage(friendName, imagePath, false, false, null);
+                    SendMessageHelper.getInstance().sendConversationByImage(friendName, imagePath, false, false, null);
                     break;
                 case PickLocalImageUtils.CODE_FOR_CAMERA://来自于系统相机的回调
                     imagePath = FileContact.YEHUI_SAVE_IMG_PATH + imageFileName;
-                    SendMessageHelper.getInstance().getConversationByImage(friendName, imagePath, false, false, null);
+                    SendMessageHelper.getInstance().sendConversationByImage(friendName, imagePath, false, false, null);
                     //PickLocalImageUtils.toCrop(this, imagePath);
                     break;
                 case PickLocalImageUtils.CODE_FOR_CROP://来自于剪切照片的回调
+                    if (data == null) return;
                     imagePath = data.getStringExtra(ImageCroppingActivity.KEY_SAVE_IMAGE_PATH);
                     Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromFile(imagePath, 100, 100);
                     BitmapUtil.saveBitmap(bitmap, imagePath, 100);
+                    break;
+                case PickLocalImageUtils.CODE_FOR_VIDEO://选择视频的回调
+                    if (data == null) return;
+                    videoPath = data.getStringExtra(VideoActivity.KEY_SAVE_VIDEO_PATH);
+                    SendMessageHelper.getInstance().sendConversationByVideo(friendName, videoPath, false, null);
                     break;
             }
         } else if (resultCode == AMapContant.LOCATION_BACK_CODE) {
@@ -392,7 +414,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                     String location = data.getStringExtra(AMapContant.AMAP_LOCATION);
                     double lo_long = data.getDoubleExtra(AMapContant.LOCATION_LONG, 0);
                     double lo_lat = data.getDoubleExtra(AMapContant.LOCATION_LAT, 0);
-                    SendMessageHelper.getInstance().getConversationByLocation(friendName, location, lo_long, lo_lat, false, null);
+                    SendMessageHelper.getInstance().sendConversationByLocation(friendName, location, lo_long, lo_lat, false, null);
                     break;
             }
         }

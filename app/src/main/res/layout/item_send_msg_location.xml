@@ -33,7 +33,7 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.15"
+            android:layout_weight="0.45"
             android:minWidth="@dimen/default_msg_height_and_width">
 
         </RelativeLayout>
@@ -41,7 +41,7 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.85"
+            android:layout_weight="0.55"
             android:gravity="center_vertical">
 
             <com.yehui.utils.view.CircularImageView

@@ -56,10 +56,9 @@ public class PickLocalImageUtils {
      *
      * @param activity
      */
-    public static void toVideo(Activity activity) {
-        Toast.makeText(activity, "视频资源，暂未开放", Toast.LENGTH_SHORT).show();
-        //Intent intent = new Intent(activity, VideoGridActivity.class);
-        //activity.startActivityForResult(intent, CODE_FOR_VIDEO);
+    public static void toVideo(Activity activity,Class cla) {
+        Intent intent = new Intent(activity, cla);
+        activity.startActivityForResult(intent, CODE_FOR_VIDEO);
     }
 
     /**

@@ -5,24 +5,29 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.easemob.chat.CmdMessageBody;
+import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMConversation;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.TextMessageBody;
+import com.easemob.exceptions.EaseMobException;
 import com.yehui.easemob.R;
+import com.yehui.easemob.activity.HomeActivity;
 import com.yehui.easemob.activity.MessageActivity;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.bean.UserInfoBean;
 import com.yehui.easemob.contants.MapContant;
+import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.db.UserInfoDao;
 import com.yehui.easemob.fragment.base.EasemobListFragment;
+import com.yehui.easemob.helper.ReceiveMessageHelper;
 import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.utils.BiaoqingUtil;
 import com.yehui.easemob.utils.DateUtil;
 import com.yehui.utils.adapter.base.BaseViewHolder;
 import com.yehui.utils.view.CircularImageView;
 import com.yehui.utils.view.dialog.PromptDialog;
-import com.yehui.utils.view.popupwindow.PopupWindowAll;
 import com.yehui.utils.view.titleview.MyTitleView;
 
 /**
@@ -46,25 +51,23 @@ public class MessageFragment extends EasemobListFragment {
         titleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //EasemobWindow easemobWindow = new EasemobWindow(parentActivity);
-                //easemobWindow.showAtLocation(titleView, Gravity.BOTTOM, null);
                 //清楚所有未读消息
-//                promptDialog.showPromptDialog("确定清除所有未读消息？", new PromptDialog.PromptOnClickListener() {
-//                    @Override
-//                    public void onDetermine() {
-//                        ReceiveMessageHelper.getInstance().markAllConversationsAsRead();
-//                        reLoad();
-//                        if (((HomeActivity) parentActivity).message_number_text != null) {
-//                            ((HomeActivity) parentActivity).message_number_text.setText("0");
-//                            ((HomeActivity) parentActivity).message_number_text.setVisibility(View.GONE);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancel() {
-//
-//                    }
-//                });
+                promptDialog.showPromptDialog("确定清除所有未读消息？", new PromptDialog.PromptOnClickListener() {
+                    @Override
+                    public void onDetermine() {
+                        ReceiveMessageHelper.getInstance().markAllConversationsAsRead();
+                        reLoad();
+                        if (((HomeActivity) parentActivity).message_number_text != null) {
+                            ((HomeActivity) parentActivity).message_number_text.setText("0");
+                            ((HomeActivity) parentActivity).message_number_text.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
             }
         });
         promptDialog = new PromptDialog(parentActivity);
@@ -89,6 +92,30 @@ public class MessageFragment extends EasemobListFragment {
         showMessageNumberIcon();
     }
 
+    @Override
+    public void getNewCMDMessage(MessageBean messageBean) {
+        //对方撤回的一条消息
+        String a = ((CmdMessageBody) messageBean.getEmMessage().getBody()).action;
+        if (a.equals(MessageContant.sendRevokeMessage)) {
+            try {
+                String receiveStr = messageBean.getEmMessage().getStringAttribute(MessageContant.sendRevokeMessageById);
+                for (int i = 0; i < data.size(); i++) {
+                    String thisStr = ((EMConversation) (data.get(i))).getLastMessage().getMsgId();
+                    if (thisStr.equals(receiveStr)) {
+                        if (messageBean.getContent() == null)
+                            messageBean.setContent(MessageContant.revokeStr);
+                        EMConversation emConversation = SendMessageHelper.getInstance().receiveRevokeMessage(messageBean);
+                        data.set(i, emConversation);
+                        mAdapter.notifyDataSetChanged();
+                        showMessageNumberIcon();
+                        return;
+                    }
+                }
+            } catch (EaseMobException e) {
+                return;
+            }
+        }
+    }
 
     private void loadData() {
         clearAll();
@@ -149,6 +176,7 @@ public class MessageFragment extends EasemobListFragment {
         EMMessage emMessage = emConversation.getLastMessage();
         if (emMessage.getType() == EMMessage.Type.TXT) {
             TextMessageBody textMessageBody = (TextMessageBody) emMessage.getBody();
+            if (textMessageBody.getMessage() == null) return;
             textView.setText(BiaoqingUtil.getInstance().showBiaoqing(parentActivity, textMessageBody.getMessage()));
         } else if (emMessage.getType() == EMMessage.Type.VOICE) {
             textView.setText(emConversation.getUnreadMsgCount() == 0 ? "[语音消息]" : emConversation.getUnreadMsgCount() + "条语音消息");
@@ -161,7 +189,7 @@ public class MessageFragment extends EasemobListFragment {
         } else if (emMessage.getType() == EMMessage.Type.LOCATION) {
             textView.setText("地理位置：我在这里");
         } else if (emMessage.getType() == EMMessage.Type.CMD) {
-            textView.setText("未知类型消息");
+
         }
     }
 
@@ -181,6 +209,8 @@ public class MessageFragment extends EasemobListFragment {
         Bundle bundle = new Bundle();
         bundle.putString(MapContant.MESSAGE_USER_NAME, emMessage.getUserName());
         startActivity(MessageActivity.class, bundle);
+        //注销消息监听
+        EMChatManager.getInstance().unregisterEventListener((HomeActivity) parentActivity);
     }
 
     @Override

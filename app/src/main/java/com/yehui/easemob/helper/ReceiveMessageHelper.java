@@ -2,7 +2,6 @@ package com.yehui.easemob.helper;
 
 import com.easemob.EMEventListener;
 import com.easemob.EMNotifierEvent;
-import com.easemob.chat.CmdMessageBody;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMConversation;
 import com.easemob.chat.EMMessage;
@@ -10,8 +9,6 @@ import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.interfaces.ReceiveMessageInterfaces;
 import com.yehui.utils.utils.LogUtil;
-
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -66,50 +63,50 @@ public class ReceiveMessageHelper implements ReceiveMessageInterfaces {
      */
     @Override
     public void allEvent() {
-        EMChatManager.getInstance().registerEventListener(new EMEventListener() {
-            @Override
-            public void onEvent(EMNotifierEvent event) {
-                EMMessage message;
-                if (event.getData() instanceof EMMessage) {
-                    message = (EMMessage) event.getData();
-                    initSerMsg();
-                    LogUtil.d("receive the event : " + event.getEvent() + ",id : " + message.getMsgId());
-                } else if (event.getData() instanceof List) {
-                    LogUtil.d("received offline messages");
-                    List<EMMessage> messages = (List<EMMessage>) event.getData();
-                    messageBean.setGetMsgCode(MessageContant.receiveMsgByOffline);
-                    messageBean.setMessageList(messages);
-                    eventBus.post(messageBean);
-                    return;
-                } else return;
-                switch (event.getEvent()) {
-                    case EventNewMessage://接收新消息event注册
-                        messageBean.setGetMsgCode(MessageContant.receiveMsgByNew);
-                        break;
-                    case EventNewCMDMessage://接收透传event注册
-                        LogUtil.d("收到透传消息");
-                        messageBean.setEmMessage(message);
-                        messageBean.setGetMsgCode(MessageContant.receiveMsgByNewCMDM);
-                        // 获取消息body
-                        CmdMessageBody cmdMsgBody = (CmdMessageBody) message.getBody();
-                        final String action = cmdMsgBody.action;// 获取自定义action
-                        break;
-                    case EventDeliveryAck://已发送回执event注册
-                        message.setDelivered(true);
-                        messageBean.setGetMsgCode(MessageContant.receiveMsgByDeliveryAck);
-                        break;
-                    case EventReadAck://已读回执event注册
-                        message.setAcked(true);
-                        messageBean.setGetMsgCode(MessageContant.receiveMsgByReadAck);
-                        break;
-                    default:
-                        messageBean.setEmMessage(message);
-                        //eventBus.post(messageBean);
-                        break;
-                }
-
-            }
-        });
+//        EMChatManager.getInstance().registerEventListener(new EMEventListener() {
+//            @Override
+//            public void onEvent(EMNotifierEvent event) {
+//                EMMessage message;
+//                if (event.getData() instanceof EMMessage) {
+//                    message = (EMMessage) event.getData();
+//                    initSerMsg();
+//                    LogUtil.d("receive the event : " + event.getEvent() + ",id : " + message.getMsgId());
+//                } else if (event.getData() instanceof List) {
+//                    LogUtil.d("received offline messages");
+//                    List<EMMessage> messages = (List<EMMessage>) event.getData();
+//                    messageBean.setGetMsgCode(MessageContant.receiveMsgByOffline);
+//                    messageBean.setMessageList(messages);
+//                    eventBus.post(messageBean);
+//                    return;
+//                } else return;
+//                switch (event.getEvent()) {
+//                    case EventNewMessage://接收新消息event注册
+//                        messageBean.setGetMsgCode(MessageContant.receiveMsgByNew);
+//                        break;
+//                    case EventNewCMDMessage://接收透传event注册
+//                        LogUtil.d("收到透传消息");
+//                        messageBean.setEmMessage(message);
+//                        messageBean.setGetMsgCode(MessageContant.receiveMsgByNewCMDM);
+//                        // 获取消息body
+//                        CmdMessageBody cmdMsgBody = (CmdMessageBody) message.getBody();
+//                        final String action = cmdMsgBody.action;// 获取自定义action
+//                        break;
+//                    case EventDeliveryAck://已发送回执event注册
+//                        message.setDelivered(true);
+//                        messageBean.setGetMsgCode(MessageContant.receiveMsgByDeliveryAck);
+//                        break;
+//                    case EventReadAck://已读回执event注册
+//                        message.setAcked(true);
+//                        messageBean.setGetMsgCode(MessageContant.receiveMsgByReadAck);
+//                        break;
+//                    default:
+//                        messageBean.setEmMessage(message);
+//                        //eventBus.post(messageBean);
+//                        break;
+//                }
+//
+//            }
+//        });
     }
 
 
@@ -119,14 +116,14 @@ public class ReceiveMessageHelper implements ReceiveMessageInterfaces {
     @Override
     public void eventNewMessage() {
         initSerMsg();
-        EMChatManager.getInstance().registerEventListener(new EMEventListener() {
-
-            @Override
-            public void onEvent(EMNotifierEvent event) {
-                // TODO Auto-generated method stub
-
-            }
-        }, new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewMessage});//接收新消息
+//        EMChatManager.getInstance().registerEventListener(new EMEventListener() {
+//
+//            @Override
+//            public void onEvent(EMNotifierEvent event) {
+//                // TODO Auto-generated method stub
+//
+//            }
+//        }, new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewMessage});//接收新消息
     }
 
     /**
@@ -142,6 +139,7 @@ public class ReceiveMessageHelper implements ReceiveMessageInterfaces {
                 message = (EMMessage) event.getData();
                 messageBean.setGetMsgCode(MessageContant.receiveMsgByListChanged);
                 messageBean.setEmMessage(message);
+
                 eventBus.post(messageBean);
             }
         }, new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventConversationListChanged});//已发送回执

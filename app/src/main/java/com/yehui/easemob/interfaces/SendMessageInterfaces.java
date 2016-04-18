@@ -44,7 +44,7 @@ public interface SendMessageInterfaces {
      * @param isReSend            是否是重新发送
      * @param msgId               重新发送的信息id
      */
-    MessageBean getConversationByImage(String username, String filePath, boolean isSendOriginalImage, boolean isReSend, String msgId);
+    MessageBean sendConversationByImage(String username, String filePath, boolean isSendOriginalImage, boolean isReSend, String msgId);
 
     /**
      * 发送地理位置
@@ -56,7 +56,7 @@ public interface SendMessageInterfaces {
      * @param isReSend        是否是重新发送
      * @param msgId           重新发送的信息id
      */
-    MessageBean getConversationByLocation(String username, String locationAddress, double latitude, double longitude, boolean isReSend, String msgId);
+    MessageBean sendConversationByLocation(String username, String locationAddress, double latitude, double longitude, boolean isReSend, String msgId);
 
     /**
      * 发送文件消息
@@ -66,7 +66,7 @@ public interface SendMessageInterfaces {
      * @param isReSend 是否是重新发送
      * @param msgId    重新发送的信息id
      */
-    MessageBean getConversationByFile(String username, String filePath, boolean isReSend, String msgId);
+    MessageBean sendConversationByFile(String username, String filePath, boolean isReSend, String msgId);
 
     /**
      * 发送视频消息
@@ -76,7 +76,7 @@ public interface SendMessageInterfaces {
      * @param isReSend 是否是重新发送
      * @param msgId    重新发送的信息id
      */
-    MessageBean getConversationByVideo(String username, String filePath, boolean isReSend, String msgId);
+    MessageBean sendConversationByVideo(String username, String filePath, boolean isReSend, String msgId);
 
     /**
      * 获取会话列表

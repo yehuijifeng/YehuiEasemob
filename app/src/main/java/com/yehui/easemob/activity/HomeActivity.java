@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.easemob.chat.EMChatManager;
 import com.yehui.easemob.R;
 import com.yehui.easemob.activity.base.EasemobViewPagerActivity;
 import com.yehui.easemob.fragment.FriendFragment;
@@ -24,6 +25,7 @@ public class HomeActivity extends EasemobViewPagerActivity {
 
     public static TextView message_number_text;
     private NotificationManager nmgr;
+
     @Override
     protected View setTabView(ViewGroup container, int position) {
         View view = inflate(R.layout.item_easemob_viewpager_tab, container, false);
@@ -48,8 +50,23 @@ public class HomeActivity extends EasemobViewPagerActivity {
         return view;
     }
 
-    @Override
 
+    @Override
+    protected void onResume() {
+        //注册消息监听
+        EMChatManager.getInstance().registerEventListener(this);
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onStop() {
+        //注销消息监听
+        EMChatManager.getInstance().unregisterEventListener(this);
+        super.onStop();
+    }
+
+    @Override
     protected void setContentView() {
         setContentView(R.layout.activity_home);
     }

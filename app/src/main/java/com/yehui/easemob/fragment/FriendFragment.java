@@ -5,7 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.easemob.chat.EMChatManager;
 import com.yehui.easemob.R;
+import com.yehui.easemob.activity.HomeActivity;
 import com.yehui.easemob.activity.MessageActivity;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.FriendBean;
@@ -126,6 +128,8 @@ public class FriendFragment extends EasemobListFragment {
         Bundle bundle = new Bundle();
         bundle.putString(MapContant.MESSAGE_USER_NAME, data.get(position).toString());
         startActivity(MessageActivity.class,bundle);
+        //注销消息监听
+        EMChatManager.getInstance().unregisterEventListener((HomeActivity)parentActivity);
     }
 
     @Override

@@ -94,7 +94,6 @@ public class MessageService extends Service implements EMEventListener {
                 contentStr = friendNumber + "个联系人给你发来了" + messageNumber + "条消息";
             }
         } else {
-
             emmessages.add(messageBean.getEmMessage());
             messageNumber = emmessages.size();
             for (int i = 0; i < emmessages.size(); i++) {
@@ -148,9 +147,7 @@ public class MessageService extends Service implements EMEventListener {
             emMessage = (EMMessage) event.getData();
             messageBean = new MessageBean();
             messageBean.setEmMessage(emMessage);
-            LogUtil.d("receive the event : " + event.getEvent() + ",id : " + emMessage.getMsgId());
         } else if (event.getData() instanceof List) {
-            LogUtil.d("received offline messages");
             messageBean = new MessageBean();
             List<EMMessage> messages = (List<EMMessage>) event.getData();
             messageBean.setGetMsgCode(MessageContant.receiveMsgByOffline);

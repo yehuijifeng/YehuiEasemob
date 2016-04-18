@@ -8,7 +8,6 @@ import android.view.View;
 import com.easemob.EMError;
 import com.easemob.EMEventListener;
 import com.easemob.EMNotifierEvent;
-import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMMessage;
 import com.yehui.easemob.activity.HomeActivity;
 import com.yehui.easemob.activity.LoginActivity;
@@ -27,36 +26,43 @@ import com.yehui.easemob.utils.MusicUtil;
 import com.yehui.easemob.utils.VibratorUtil;
 import com.yehui.utils.activity.base.BaseActivity;
 import com.yehui.utils.utils.AppUtil;
-import com.yehui.utils.utils.LogUtil;
 import com.yehui.utils.view.dialog.LoadingDialog;
 import com.yehui.utils.view.dialog.PromptDialog;
 
 import java.util.List;
 
 /**
- * Created by Luhao on 2016/2/28.
+ * Created by Luhao
+ * on 2016/2/28.
  */
 public abstract class EasemobActivity extends BaseActivity implements EMEventListener {
 
     protected PromptDialog promptDialog;
     protected LoadingDialog loadingDialog;
+    protected boolean isPlayMusic = true;
 
-    @Override
-    protected void onResume() {
-        //注册消息监听
-        //EMChatManager.getInstance().registerEventListener(this,
-        //new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewMessage, EMNotifierEvent.Event.EventOfflineMessage, EMNotifierEvent.Event.EventConversationListChanged});
-        EMChatManager.getInstance().registerEventListener(this);
-        stopService(new Intent(this, MessageService.class));
-        super.onResume();
+    public boolean isPlayMusic() {
+        return isPlayMusic;
     }
 
-    @Override
-    protected void onStop() {
-        EMChatManager.getInstance().unregisterEventListener(this);//注销消息监听
-        super.onStop();
+    public void setPlayMusic(boolean playMusic) {
+        isPlayMusic = playMusic;
     }
 
+//    @Override
+//    protected void onResume() {
+//        //注册消息监听
+//        EMChatManager.getInstance().registerEventListener(this);
+//        super.onResume();
+//
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        //注销消息监听
+//        EMChatManager.getInstance().unregisterEventListener(this);
+//        super.onStop();
+//    }
 
     @Override
     protected void initData() {
@@ -197,9 +203,6 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
                     showLongToast(serverBean.getStatusMsg());
                 }
                 break;
-//            default:
-//                showLongToast(serverBean.getStatusMsg());
-//                break;
         }
     }
 
@@ -209,8 +212,13 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
      * @param messageBean
      */
     public void getNewMessage(MessageBean messageBean) {
-        VibratorUtil.vibrate(this, 1000);//新消息震动1s
-        MusicUtil.getInstance().playMusic(this);
+        if (isPlayMusic()) {
+            VibratorUtil.vibrate(EasemobActivity.this, 1000);//新消息震动1s
+            MusicUtil.getInstance().playMusic(EasemobActivity.this);
+        } else {
+            VibratorUtil.vibrate(EasemobActivity.this, 0);//新消息震动0s
+            MusicUtil.getInstance().stopMusic();
+        }
     }
 
     /**
@@ -235,9 +243,7 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
             message = (EMMessage) event.getData();
             messageBean = new MessageBean();
             messageBean.setEmMessage(message);
-            LogUtil.d("receive the event : " + event.getEvent() + ",id : " + message.getMsgId());
         } else if (event.getData() instanceof List) {
-            LogUtil.d("received offline messages");
             messageBean = new MessageBean();
             List<EMMessage> messages = (List<EMMessage>) event.getData();
             messageBean.setGetMsgCode(MessageContant.receiveMsgByOffline);
@@ -254,12 +260,12 @@ public abstract class EasemobActivity extends BaseActivity implements EMEventLis
                 //getNewMessage(messageBean);
                 break;
             case EventNewCMDMessage://接收透传event注册
-                LogUtil.d("收到透传消息");
                 messageBean.setGetMsgCode(MessageContant.receiveMsgByNewCMDM);
                 // 获取消息body
                 //CmdMessageBody cmdMsgBody = (CmdMessageBody) message.getBody();
                 //final String action = cmdMsgBody.action;// 获取自定义action
                 //getNewCMDMessage(messageBean);
+                eventBus.post(messageBean);
                 break;
             case EventDeliveryAck://已发送回执event注册
                 message.setDelivered(true);

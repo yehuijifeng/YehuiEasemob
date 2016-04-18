@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +20,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.a.map.activity.LocationSourceActivity;
+import com.easemob.chat.CmdMessageBody;
 import com.easemob.chat.EMMessage;
 import com.easemob.chat.ImageMessageBody;
 import com.easemob.chat.LocationMessageBody;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.chat.VoiceMessageBody;
+import com.easemob.exceptions.EaseMobException;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yehui.easemob.R;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
@@ -88,6 +89,27 @@ public class MessageAdapter extends BaseAdapter {
      */
     public MessageAdapter(List<MessageBean> messageList) {
         super(messageList);
+    }
+
+    /**
+     * 接收到了透传消息中对方撤回消息的通知
+     *
+     * @param messageBean
+     */
+    public void setRevokeMessage(MessageBean messageBean) {
+        try {
+            for (int i = data.size() - 1; i >= 0; i--) {
+                String a = ((MessageBean) (data.get(i))).getEmMessage().getMsgId();
+                String b = messageBean.getEmMessage().getStringAttribute(MessageContant.sendRevokeMessageById);
+                if (a.equals(b)) {
+                    data.set(i, messageBean);
+                    notifyDataSetChanged();
+                    return;
+                }
+            }
+        } catch (EaseMobException e) {
+            return;
+        }
     }
 
     /**
@@ -154,12 +176,34 @@ public class MessageAdapter extends BaseAdapter {
             }
         }
         switch (emMessage.getType()) {
+            case CMD://透传类型
+                CmdMessageBody cmdMessageBody = (CmdMessageBody) emMessage.getBody();
+                ReceiveTextViewHolder receiveCmdViewHolder = (ReceiveTextViewHolder) holder;
+                if (cmdMessageBody.action.equals(MessageContant.sendRevokeMessage)) {
+                    receiveCmdViewHolder.revoke_msg_ly.setVisibility(View.VISIBLE);
+                    receiveCmdViewHolder.revoke_msg_text.setText(MessageContant.revokeStrSend);
+                    receiveCmdViewHolder.get_msg_ly.setVisibility(View.GONE);
+                    if(messageBean.getContent()==null){messageBean.setContent(MessageContant.revokeStr);}
+                    SendMessageHelper.getInstance().receiveRevokeMessage(messageBean);
+                    return;
+                } else {
+                    receiveCmdViewHolder.get_msg_ly.setVisibility(View.VISIBLE);
+                    receiveCmdViewHolder.revoke_msg_ly.setVisibility(View.GONE);
+                }
+                break;
             case TXT://文本消息，带表情
                 TextMessageBody textMessageBody = (TextMessageBody) emMessage.getBody();
-                if (TextUtils.isEmpty(messageBean.getContent()))
-                    messageBean.setContent(textMessageBody.getMessage());
                 if (emMessage.direct == EMMessage.Direct.SEND) {//判断这条消息是否是发送消息
                     SendTextViewHolder sendTextViewHolder = (SendTextViewHolder) holder;
+                    if (textMessageBody.getMessage().equals(MessageContant.revokeStr)) {
+                        sendTextViewHolder.revoke_msg_ly.setVisibility(View.VISIBLE);
+                        sendTextViewHolder.revoke_msg_text.setText(MessageContant.revokeStrSuccess);
+                        sendTextViewHolder.set_msg_ly.setVisibility(View.GONE);
+                        return;
+                    } else {
+                        sendTextViewHolder.set_msg_ly.setVisibility(View.VISIBLE);
+                        sendTextViewHolder.revoke_msg_ly.setVisibility(View.GONE);
+                    }
                     sendTextViewHolder.set_msg_text.setOnLongClickListener(new OnEaseLongClick(sendTextViewHolder.set_msg_text, messageBean));
                     if (isOutTime) {
                         sendTextViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
@@ -182,7 +226,21 @@ public class MessageAdapter extends BaseAdapter {
                         sendTextViewHolder.msg_status_img.setOnClickListener(new OnReSendByTextClick(textMessageBody.getMessage(), messageBean.getEmMessage()));
                     }
                 } else {
+                    if(textMessageBody.getMessage()==null){
+                        data.remove(position);
+                        return;
+                    }
                     ReceiveTextViewHolder receiveTextViewHolder = (ReceiveTextViewHolder) holder;
+                    if (textMessageBody.getMessage().equals(MessageContant.revokeStr)) {
+                        receiveTextViewHolder.revoke_msg_ly.setVisibility(View.VISIBLE);
+                        receiveTextViewHolder.revoke_msg_text.setText(MessageContant.revokeStrSend);
+                        receiveTextViewHolder.get_msg_ly.setVisibility(View.GONE);
+                        SendMessageHelper.getInstance().receiveRevokeMessage(messageBean);
+                        return;
+                    } else {
+                        receiveTextViewHolder.get_msg_ly.setVisibility(View.VISIBLE);
+                        receiveTextViewHolder.revoke_msg_ly.setVisibility(View.GONE);
+                    }
                     receiveTextViewHolder.get_msg_text.setOnLongClickListener(new OnEaseLongClick(receiveTextViewHolder.get_msg_text, messageBean));
                     if (isOutTime) {
                         receiveTextViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
@@ -313,8 +371,7 @@ public class MessageAdapter extends BaseAdapter {
                 break;
             case FILE://文件
                 break;
-            case CMD://未知类型
-                break;
+
         }
     }
 
@@ -414,7 +471,7 @@ public class MessageAdapter extends BaseAdapter {
                 else
                     return MessageContant.receiveMsgByFile;
             case CMD:
-                return MessageContant.sendMsgByText;
+                return MessageContant.receiveMsgByText;
         }
         return MessageContant.sendMsgByText;
     }
@@ -643,8 +700,8 @@ public class MessageAdapter extends BaseAdapter {
         private TextView get_msg_text;
         private ProgressBar msg_progress_bar;
         private ImageView msg_status_img;
-        private LinearLayout msg_time_ly;
-        private TextView msg_time_text;
+        private LinearLayout msg_time_ly, revoke_msg_ly, get_msg_ly;
+        private TextView msg_time_text, revoke_msg_text;
 
         public ReceiveTextViewHolder(View itemView) {
             super(itemView);
@@ -658,6 +715,9 @@ public class MessageAdapter extends BaseAdapter {
             msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
             msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
             msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            revoke_msg_ly = (LinearLayout) itemView.findViewById(R.id.revoke_msg_ly);
+            get_msg_ly = (LinearLayout) itemView.findViewById(R.id.get_msg_ly);
+            revoke_msg_text = (TextView) itemView.findViewById(R.id.revoke_msg_text);
             msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
             msg_progress_bar.setVisibility(View.GONE);
             msg_status_img.setVisibility(View.GONE);
@@ -672,8 +732,8 @@ public class MessageAdapter extends BaseAdapter {
         private TextView set_msg_text;
         private ProgressBar msg_progress_bar;
         private ImageView msg_status_img;
-        private LinearLayout msg_time_ly;
-        private TextView msg_time_text;
+        private LinearLayout msg_time_ly, revoke_msg_ly, set_msg_ly;
+        private TextView msg_time_text, revoke_msg_text;
 
         public SendTextViewHolder(View itemView) {
             super(itemView);
@@ -687,6 +747,9 @@ public class MessageAdapter extends BaseAdapter {
             msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
             msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
             msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            revoke_msg_ly = (LinearLayout) itemView.findViewById(R.id.revoke_msg_ly);
+            set_msg_ly = (LinearLayout) itemView.findViewById(R.id.set_msg_ly);
+            revoke_msg_text = (TextView) itemView.findViewById(R.id.revoke_msg_text);
             msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
             msg_progress_bar.setVisibility(View.GONE);
             msg_status_img.setVisibility(View.GONE);

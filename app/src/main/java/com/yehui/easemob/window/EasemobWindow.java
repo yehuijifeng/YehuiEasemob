@@ -5,10 +5,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.easemob.chat.EMMessage;
 import com.easemob.chat.TextMessageBody;
 import com.yehui.easemob.R;
 import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.helper.ReceiveMessageHelper;
+import com.yehui.easemob.helper.SendMessageHelper;
 import com.yehui.easemob.utils.TextUtil;
 import com.yehui.utils.adapter.base.BaseAdapter;
 import com.yehui.utils.view.popupwindow.PopupWindowAll;
@@ -55,6 +57,11 @@ public class EasemobWindow implements View.OnClickListener {
         } else {
             window_copy_text.setVisibility(View.GONE);
         }
+        if (messageBean.getEmMessage().direct == EMMessage.Direct.SEND) {
+            window_exit_text.setVisibility(View.VISIBLE);
+        } else {
+            window_exit_text.setVisibility(View.GONE);
+        }
         popupWindowAll.showAtLocationByTop(parent, popView);
     }
 
@@ -73,10 +80,14 @@ public class EasemobWindow implements View.OnClickListener {
                 popupWindowAll.dismissWindow();
                 break;
             case R.id.window_send_text://转发消息
+                Toast.makeText(context, "暂未开放", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.window_exit_text://撤回消息
+                SendMessageHelper.getInstance().sendRevokeMessage(context,messageBean.getEmMessage());
+                popupWindowAll.dismissWindow();
                 break;
-            case R.id.window_collect_text://
+            case R.id.window_collect_text://收藏
+                Toast.makeText(context, "暂未开放", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

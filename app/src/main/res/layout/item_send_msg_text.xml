@@ -25,7 +25,8 @@
             android:textColor="@color/white" />
     </LinearLayout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
+        android:id="@+id/set_msg_ly"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -85,5 +86,25 @@
                 android:layout_toStartOf="@+id/msg_progress_bar"
                 android:src="@drawable/ease_msg_state_fail_resend_pressed" />
         </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/revoke_msg_ly"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/revoke_msg_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_msg_tiem"
+            android:padding="@dimen/default_padding_and_margin"
+            android:text=""
+            android:textSize="@dimen/default_x_text_size"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>
