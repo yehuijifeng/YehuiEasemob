@@ -407,7 +407,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 case PickLocalImageUtils.CODE_FOR_VIDEO://选择视频的回调
                     if (data == null) return;
                     VideoEntityBean videoEntityBean = data.getParcelableExtra(VideoActivity.KEY_SAVE_VIDEO_BEAN);
-                    SendMessageHelper.getInstance().sendConversationByVideo(friendName, videoEntityBean.getFilePath(), videoEntityBean.getSize(), videoEntityBean.getDuration(), false, null);
+                    SendMessageHelper.getInstance().sendConversationByVideo(friendName, videoEntityBean.getFilePath(), videoEntityBean.getSize(), videoEntityBean.getDuration(),videoEntityBean.getImgPath(), false, null);
                     break;
             }
         } else if (resultCode == AMapContant.LOCATION_BACK_CODE) {

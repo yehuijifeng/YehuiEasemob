@@ -52,8 +52,9 @@ public abstract class YehuiApplication extends Application {
         FileContact.createFiles();//存放文件
         FileContact.createLog();//存放日志
         FileContact.createCacheImage();//存放缓存图片
-        FileContact.createCacheVOice();//存放缓存语音
+        FileContact.createCacheVoice();//存放缓存语音
         FileContact.createSettigns();//存放设置信息
+        FileContact.createCacheVideo();//存放视频
         /**
          * 初始化imageloader
          */

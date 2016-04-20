@@ -76,7 +76,7 @@ public interface SendMessageInterfaces {
      * @param isReSend 是否是重新发送
      * @param msgId    重新发送的信息id
      */
-    MessageBean sendConversationByVideo(String username, String filePath,long fileSize, int fileLength, boolean isReSend, String msgId);
+    MessageBean sendConversationByVideo(String username, String filePath,long fileSize, int fileLength,String imgPath, boolean isReSend, String msgId);
 
         /**
          * 获取会话列表

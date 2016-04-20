@@ -1,10 +1,12 @@
 package com.yehui.easemob.activity;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -20,6 +22,7 @@ import com.yehui.easemob.utils.BitmapUtil;
 import com.yehui.utils.activity.base.BaseGridActivity;
 import com.yehui.utils.adapter.base.BaseViewHolder;
 import com.yehui.utils.utils.DateUtil;
+import com.yehui.utils.utils.LogUtil;
 import com.yehui.utils.utils.files.FileContact;
 import com.yehui.utils.utils.files.FileSizeUtil;
 
@@ -49,6 +52,7 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
     public static class AsyncImageLoader {
 
         private HashMap<String, SoftReference<Bitmap>> imageCacheMap;
+        private String imagePath;
 
         public AsyncImageLoader() {
             //软引用
@@ -70,9 +74,8 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
             final Handler handler = new Handler() {
                 //定义的回收图片接口，实现其中的方法
                 public void handleMessage(Message message) {
-                    imageCallback.imageLoaded((Bitmap) message.obj, imageUrl);
+                    imageCallback.imageLoaded((Bitmap) message.obj, imagePath);
                 }
-
             };
 
             new Thread(new Runnable() {
@@ -80,7 +83,7 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
                 public void run() {
                     //将加载过的图片先存在hashmap中
                     Bitmap bitmap = loadImageFromUrl(imageUrl);
-                    String imagePath = FileContact.YEHUI_CACHE_IMG_PATH + DateUtil.getDatePattern() + "_video_cache" + ".png";
+                    imagePath = FileContact.YEHUI_CACHE_IMG_PATH + DateUtil.getDatePattern() + "_video_cache" + ".png";
                     imageCacheMap.put(imageUrl, new SoftReference<>(bitmap));
                     Message message = new Message();
                     message.what = 1;
@@ -138,9 +141,9 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
     }
 
     @Override
-    protected void initItemData(BaseViewHolder holder, int position) {
+    protected void initItemData(BaseViewHolder holder, final int position) {
         final VideoViewHolder videoViewHolder = (VideoViewHolder) holder;
-        VideoEntityBean videoEntityBean = (VideoEntityBean) data.get(position);
+        final VideoEntityBean videoEntityBean = (VideoEntityBean) data.get(position);
 
         videoViewHolder.video_size_text.setText(FileSizeUtil.getFileSize(videoEntityBean.getSize()));
         videoViewHolder.video_time_text.setText(getDateSize(videoEntityBean.getDuration()));
@@ -152,6 +155,8 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
                  * 如果imageview中加入了url后不为null则将这个url缓存的图片取出来，直接放在最外层的listview的image视图中
                  * 判断，listview中是否有
                  */
+                videoEntityBean.setImgPath(imageUrl);
+                data.set(position, videoEntityBean);
                 videoViewHolder.video_img.setImageBitmap(imageBitmap);
             }
         });
@@ -186,7 +191,12 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
 
     @Override
     protected void onItemClick(RecyclerView parent, View itemView, int position) {
+
         VideoEntityBean videoEntityBean = (VideoEntityBean) data.get(position);
+        if (videoEntityBean.getSize() > 1024 * 1024 * 10) {
+            showShortToast("文件大小超过10M");
+            return;
+        }
         //点击之后的回调
         Intent intent = new Intent();
         intent.putExtra(KEY_SAVE_VIDEO_BEAN, videoEntityBean);
@@ -214,8 +224,79 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.video_fl_handler://点击后调用系统相机录像
-                showLongToast("调用系统相机录像");
+                startActivityForResult(RecorderVideoActivity.class, RecorderVideoActivity.RECORDER_BACK);
                 break;
+        }
+    }
+
+    private Handler handler = new Handler() {
+        //定义的回收图片接口，实现其中的方法
+        public void handleMessage(Message message) {
+            if (message.what == 1) {
+                VideoEntityBean videoEntityBean= (VideoEntityBean) message.obj;
+                //点击之后的回调
+                Intent intent = new Intent();
+                intent.putExtra(KEY_SAVE_VIDEO_BEAN, videoEntityBean);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == RecorderVideoActivity.RECORDER_BACK) {
+                if (data == null) {
+                    return;
+                }
+                Uri uri = data.getParcelableExtra("uri");
+                String[] projects = new String[]{MediaStore.Video.Media.DATA,
+                        MediaStore.Video.Media.DURATION};
+                Cursor cursor = this.getContentResolver().query(
+                        uri, projects, null,
+                        null, null);
+                final VideoEntityBean videoEntityBean = new VideoEntityBean();
+                if (cursor.moveToFirst()) {
+
+//                    int size = (int) cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));
+//                    if (size > 1024 * 1024 * 10) {
+//                        showShortToast("文件大小超过10M");
+//                        return;
+//                    }
+//
+//                    videoEntityBean.setSize(size);
+                    // 路径：MediaStore.Audio.Media.DATA
+                    final String filePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
+                    final int duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String imagePath = FileContact.YEHUI_CACHE_IMG_PATH + DateUtil.getNow(DateUtil.FORMAT_FULL_NO) + "_video_cache" + ".png";
+                            BitmapUtil.saveBitmapByFile(ThumbnailUtils.createVideoThumbnail(filePath, 3), imagePath);
+                            videoEntityBean.setImgPath(imagePath);
+                            videoEntityBean.setFilePath(filePath);
+                            // 总播放时长：MediaStore.Audio.Media.DURATION
+                            videoEntityBean.setDuration(duration);
+                            //videoEntityBean.setID((int) com.yehui.easemob.utils.DateUtil.timeToStamp(DateUtil.getDatePattern()));
+                            // 名称：MediaStore.Audio.Media.TITLE
+                            //String title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE));
+                            //videoEntityBean.setTitle(title);
+                            // 大小：MediaStore.Audio.Media.SIZE
+                            Message message = new Message();
+                            message.what = 1;
+                            message.obj = videoEntityBean;
+                            handler.sendMessage(message);
+                        }
+                    }).start();
+                    LogUtil.d("duration:" + duration);
+                }
+                if (cursor != null) {
+                    cursor.close();
+                    cursor = null;
+                }
+
+            }
         }
     }
 
@@ -238,7 +319,7 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
     }
 
     private void getVideoFile() {
-        videoList=new ArrayList<>();
+        videoList = new ArrayList<>();
         ContentResolver mContentResolver = this.getContentResolver();
         Cursor cursor = mContentResolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null, null, null, MediaStore.Video.DEFAULT_SORT_ORDER);
         if (cursor != null && cursor.moveToFirst()) {
@@ -253,7 +334,6 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
                 int duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));
                 // 大小：MediaStore.Audio.Media.SIZE
                 int size = (int) cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));
-
                 VideoEntityBean entty = new VideoEntityBean();
                 entty.setID(id);
                 entty.setTitle(title);

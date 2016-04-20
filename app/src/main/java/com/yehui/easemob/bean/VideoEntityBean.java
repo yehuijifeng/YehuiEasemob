@@ -17,6 +17,15 @@ public class VideoEntityBean implements Parcelable {
     private String filePath;//路径
     private int duration;//时长
     private int size;//大小
+    private String imgPath;//缩略图地址
+
+    public String getImgPath() {
+        return imgPath;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
 
     public int getID() {
         return id;
@@ -59,6 +68,10 @@ public class VideoEntityBean implements Parcelable {
     }
 
 
+    public VideoEntityBean() {
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -71,9 +84,7 @@ public class VideoEntityBean implements Parcelable {
         dest.writeString(this.filePath);
         dest.writeInt(this.duration);
         dest.writeInt(this.size);
-    }
-
-    public VideoEntityBean() {
+        dest.writeString(this.imgPath);
     }
 
     private VideoEntityBean(Parcel in) {
@@ -82,6 +93,7 @@ public class VideoEntityBean implements Parcelable {
         this.filePath = in.readString();
         this.duration = in.readInt();
         this.size = in.readInt();
+        this.imgPath = in.readString();
     }
 
     public static final Creator<VideoEntityBean> CREATOR = new Creator<VideoEntityBean>() {

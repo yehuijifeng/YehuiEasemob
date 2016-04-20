@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.easemob.chat.VoiceMessageBody;
 import com.easemob.exceptions.EaseMobException;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yehui.easemob.R;
+import com.yehui.easemob.activity.PlayVideoActivity;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.contants.MessageContant;
@@ -45,6 +47,7 @@ import com.yehui.utils.adapter.base.BaseAdapter;
 import com.yehui.utils.adapter.base.BaseViewHolder;
 import com.yehui.utils.contacts.SettingContact;
 import com.yehui.utils.utils.DisplayUtil;
+import com.yehui.utils.utils.files.DakaiFangshi;
 import com.yehui.utils.utils.files.FileOperationUtil;
 import com.yehui.utils.view.CircularImageView;
 
@@ -344,6 +347,12 @@ public class MessageAdapter extends BaseAdapter {
                         sendImageViewHolder.msg_load_text.setVisibility(View.GONE);
                         sendImageViewHolder.msg_status_img.setVisibility(View.VISIBLE);
                     }
+                    if (isOutTime) {
+                        sendImageViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
+                        sendImageViewHolder.msg_time_text.setText(outTimeStr);
+                    } else {
+                        sendImageViewHolder.msg_time_ly.setVisibility(View.GONE);
+                    }
 
                 } else {
                     ReceiveImageViewHolder receiveImageViewHolder = (ReceiveImageViewHolder) holder;
@@ -353,6 +362,12 @@ public class MessageAdapter extends BaseAdapter {
                     receiveImageViewHolder.get_msg_dialog.setVisibility(View.GONE);
                     receiveImageViewHolder.msg_load_text.setVisibility(View.GONE);
                     receiveImageViewHolder.get_msg_img_fy.setOnClickListener(new OnShowOhotoViewClick(imageMessageBody.getThumbnailUrl()));
+                    if (isOutTime) {
+                        receiveImageViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
+                        receiveImageViewHolder.msg_time_text.setText(outTimeStr);
+                    } else {
+                        receiveImageViewHolder.msg_time_ly.setVisibility(View.GONE);
+                    }
                 }
                 break;
             case LOCATION://地理位置
@@ -371,26 +386,31 @@ public class MessageAdapter extends BaseAdapter {
                     receiveLocationViewHolder.get_msg_img.setOnClickListener(new OnShowLocationClick(address, loc_long, loc_lat));
                     receiveLocationViewHolder.get_msg_text.setText(address);
                 }
+//                if (isOutTime) {
+//                    receiveLocationViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
+//                    receiveLocationViewHolder.msg_time_text.setText(outTimeStr);
+//                } else {
+//                    receiveLocationViewHolder.msg_time_ly.setVisibility(View.GONE);
+//                }
                 break;
             case VIDEO://视频
                 VideoMessageBody videoMessageBody = (VideoMessageBody) emMessage.getBody();
                 if (emMessage.direct == EMMessage.Direct.SEND) {
                     SendVideoViewHolder sendVideoViewHolder = (SendVideoViewHolder) holder;
                     sendVideoViewHolder.set_msg_img_fy.setOnLongClickListener(new OnEaseLongClick(sendVideoViewHolder.set_msg_img_fy, messageBean));
-                    String url = videoMessageBody.getLocalUrl();
-                    if (FileOperationUtil.isHaveFile(url)) {
-                        if (BitmapCacheFunction.getInstance().isBitmapByLruCache(url)) {
-                            sendVideoViewHolder.set_msg_img.setImageBitmap(BitmapCacheFunction.getInstance().getBitmapFromLruCache(url));
+                    String imgPath = videoMessageBody.getLocalThumb();
+                    if (!TextUtils.isEmpty(imgPath) && FileOperationUtil.isHaveFile(imgPath)) {
+                        if (BitmapCacheFunction.getInstance().isBitmapByLruCache(imgPath)) {
+                            sendVideoViewHolder.set_msg_img.setImageBitmap(BitmapCacheFunction.getInstance().getBitmapFromLruCache(imgPath));
                         } else {
-                            videoMessageBody.getLocalThumb();
-//                            Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromFile(url, reqWidth, reqHeight);
-//                            sendVideoViewHolder.set_msg_img.setImageBitmap(bitmap);
-//                            BitmapCacheFunction.getInstance().addBitmapToLruCache(url, bitmap);
+                            Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromFile(imgPath, reqWidth, reqHeight);
+                            sendVideoViewHolder.set_msg_img.setImageBitmap(bitmap);
+                            BitmapCacheFunction.getInstance().addBitmapToLruCache(imgPath, bitmap);
                         }
                     } else {
                         sendVideoViewHolder.set_msg_img.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_loadings));
                     }
-                    sendVideoViewHolder.set_msg_img_fy.setOnClickListener(new OnPlayVideoClick());
+                    sendVideoViewHolder.set_msg_img_fy.setOnClickListener(new OnPlayVideoClick(videoMessageBody.getLocalUrl()));
                     if (messageBean.getBackStatus() == 0) {
                         FrameLayout.LayoutParams linearParams = (FrameLayout.LayoutParams) sendVideoViewHolder.set_msg_dialog.getLayoutParams(); //取控件textView当前的布局参数
                         linearParams.height = linearParams.height - messageBean.getGetMsgErrorInt() / 100 * linearParams.height;// 控件的高强制设
@@ -406,16 +426,27 @@ public class MessageAdapter extends BaseAdapter {
                         //sendVideoViewHolder.set_msg_dialog.setVisibility(View.GONE);
                         sendVideoViewHolder.msg_load_text.setVisibility(View.GONE);
                         sendVideoViewHolder.msg_status_img.setVisibility(View.VISIBLE);
-                    }
+                        Toast.makeText(context, messageBean.getGetMsgErrorStr(), Toast.LENGTH_SHORT).show();
 
+                    }
+//                    if (isOutTime) {
+//                        sendVideoViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
+//                        sendVideoViewHolder.msg_time_text.setText(outTimeStr);
+//                    } else {
+//                        sendVideoViewHolder.msg_time_ly.setVisibility(View.GONE);
+//                    }
                 } else {
-                    ReceiveImageViewHolder receiveImageViewHolder = (ReceiveImageViewHolder) holder;
-                    receiveImageViewHolder.get_msg_img_fy.setOnLongClickListener(new OnEaseLongClick(receiveImageViewHolder.get_msg_img_fy, messageBean));
-                    receiveImageViewHolder.get_msg_dialog.setVisibility(View.VISIBLE);
-                    imageLoader.displayImage(videoMessageBody.getThumbnailUrl(), receiveImageViewHolder.get_msg_img, EasemobAppliaction.defaultOptions);
-                    receiveImageViewHolder.get_msg_dialog.setVisibility(View.GONE);
-                    receiveImageViewHolder.msg_load_text.setVisibility(View.GONE);
-                    receiveImageViewHolder.get_msg_img_fy.setOnClickListener(new OnPlayVideoClick());
+                    ReceiveVideoViewHolder receiveVideoViewHolder = (ReceiveVideoViewHolder) holder;
+                    receiveVideoViewHolder.get_msg_img_fy.setOnLongClickListener(new OnEaseLongClick(receiveVideoViewHolder.get_msg_img_fy, messageBean));
+                    imageLoader.displayImage(videoMessageBody.getThumbnailUrl(), receiveVideoViewHolder.get_msg_img, EasemobAppliaction.defaultOptions);
+                    receiveVideoViewHolder.msg_load_text.setVisibility(View.GONE);
+                    receiveVideoViewHolder.get_msg_img_fy.setOnClickListener(new OnPlayThisVideoClick(videoMessageBody.getRemoteUrl()));
+//                    if (isOutTime) {
+//                        receiveImageViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
+//                        receiveImageViewHolder.msg_time_text.setText(outTimeStr);
+//                    } else {
+//                        receiveImageViewHolder.msg_time_ly.setVisibility(View.GONE);
+//                    }
                 }
                 break;
             case FILE://文件
@@ -738,17 +769,39 @@ public class MessageAdapter extends BaseAdapter {
      * 播放视频的点击事件
      */
     private class OnPlayVideoClick implements View.OnClickListener {
+        private String url;
 
-        private OnPlayVideoClick() {
-
+        private OnPlayVideoClick(String url) {
+            this.url = url;
         }
 
         @Override
         public void onClick(View v) {
             //点击播放视频
+            context.startActivity(DakaiFangshi.getVideoFileIntent(url));
         }
     }
 
+    /**
+     * 播放视频的点击事件
+     */
+    private class OnPlayThisVideoClick implements View.OnClickListener {
+        private String url;
+
+        private OnPlayThisVideoClick(String url) {
+            this.url = url;
+        }
+
+        @Override
+        public void onClick(View v) {
+            //点击播放视频
+            Intent intent = new Intent(context, PlayVideoActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(PlayVideoActivity.VIDEO_URL, url);
+            intent.putExtras(bundle);
+            context.startActivity(intent);
+        }
+    }
     /****************************************viewholder******************************************************/
 
     /**

@@ -50,8 +50,8 @@
 
             <ImageView
                 android:id="@+id/set_msg_img"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
                 android:src="@drawable/ic_loadings" />
 
             <ImageView

@@ -354,7 +354,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
     }
 
     @Override
-    public MessageBean sendConversationByVideo(String username, String filePath,long fileSize, int fileLength, boolean isReSend, String msgId) {
+    public MessageBean sendConversationByVideo(String username, String filePath,long fileSize, int fileLength, String imgPath,boolean isReSend, String msgId) {
         EMConversation conversation = EMChatManager.getInstance().getConversation(username);
         // 创建一个文件消息
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.VIDEO);
@@ -368,13 +368,14 @@ public class SendMessageHelper implements SendMessageInterfaces {
         File file = new File(filePath);
         //参数说明：1，文件；2，文件绝对路径；3，视频长度，4，文件大小
         VideoMessageBody body = new VideoMessageBody(file, filePath, fileLength, fileSize);
+        body.setLocalThumb(imgPath);
         message.addBody(body);
         conversation.addMessage(message);
         //初始化发送信息
         initSendMsg();
         messageBean.setGetMsgCode(MessageContant.sendMsgByVideo);
         messageBean.setUserName(username);
-        messageBean.setContent(filePath);
+        messageBean.setContent(imgPath);
         messageBean.setEmMessage(message);
         EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
             @Override

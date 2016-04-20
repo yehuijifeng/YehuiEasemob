@@ -104,7 +104,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * activity的title
      */
-    protected MyTitleView mTitleView;
+    public MyTitleView mTitleView;
 
     /**
      * 父布局填充

@@ -148,7 +148,14 @@
         <activity
             android:name=".activity.VideoActivity"
             android:launchMode="singleTop" />
-
+        <!--视频录像-->
+        <activity
+            android:name=".activity.RecorderVideoActivity"
+            android:launchMode="singleTop" />
+        <!--视频播放-->
+        <activity
+            android:name=".activity.PlayVideoActivity"
+            android:launchMode="singleTop" />
         <!--后台提醒-->
         <service android:name=".service.MessageService" />
 

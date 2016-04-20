@@ -49,6 +49,11 @@ public class FileContact {
     public final static String YEHUI_CACHE_IMG_PATH = YEHUI_CHACHE + "CacheImage/";
 
     /**
+     * app图片缓存路径
+     */
+    public final static String YEHUI_CACHE_VIDEO_PATH = YEHUI_CHACHE + "CacheImage/";
+
+    /**
      * app录音缓存路径
      */
     public final static String YEHUI_CACHE_VOICE_PATH = YEHUI_CHACHE + "CacheVoice/";
@@ -101,7 +106,7 @@ public class FileContact {
     /**
      * 创建sd卡下存放缓存语音的文件夹
      */
-    public static void createCacheVOice() {
+    public static void createCacheVoice() {
         if (Environment.MEDIA_MOUNTED.equals(Environment
                 .getExternalStorageState())) {
             File path = new File(FileContact.YEHUI_CACHE_VOICE_PATH);
@@ -109,6 +114,19 @@ public class FileContact {
                 path.mkdirs();
         }
     }
+
+    /**
+     * 创建sd卡下存放缓存视频的文件夹
+     */
+    public static void createCacheVideo() {
+        if (Environment.MEDIA_MOUNTED.equals(Environment
+                .getExternalStorageState())) {
+            File path = new File(FileContact.YEHUI_CACHE_VIDEO_PATH);
+            if (!path.exists())
+                path.mkdirs();
+        }
+    }
+
 
     /**
      * 创建sd卡下存放日志的文件夹

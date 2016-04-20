@@ -46,7 +46,7 @@ public class BitmapCacheFunction {
      * @param bitmap
      */
     public void addBitmapToLruCache(String key, Bitmap bitmap) {
-        if (getBitmapFromLruCache(key) == null) {
+        if (bitmap!=null&&getBitmapFromLruCache(key) == null) {
                 mMemoryCache.put(key, bitmap);
         }
     }

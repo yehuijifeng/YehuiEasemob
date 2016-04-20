@@ -38,7 +38,10 @@ public final class DateUtil {
 	 * 精确到毫秒的完整中文时间
 	 */
 	public static String FORMAT_FULL_CN = "yyyy年MM月dd日  HH时mm分ss秒SSS毫秒";
-
+	/**
+	 * 精确到毫秒的完整中文时间
+	 */
+	public static String FORMAT_FULL_NO = "yyyyMMddHHmmss";
 	/**
 	 * 获得默认的 date pattern
 	 */
