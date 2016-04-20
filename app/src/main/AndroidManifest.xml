@@ -140,11 +140,14 @@
             android:name="com.a.map.activity.LocationSourceActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-        <!--地图显示-->
+        <!--设置-->
         <activity
-            android:name="com.yehui.easemob.activity.SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:launchMode="singleTop" />
-
+        <!--视频资源显示-->
+        <activity
+            android:name=".activity.VideoActivity"
+            android:launchMode="singleTop" />
 
         <!--后台提醒-->
         <service android:name=".service.MessageService" />

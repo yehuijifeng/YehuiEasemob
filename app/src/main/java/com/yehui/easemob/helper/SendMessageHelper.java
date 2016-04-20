@@ -15,6 +15,7 @@ import com.easemob.chat.LocationMessageBody;
 import com.easemob.chat.MessageBody;
 import com.easemob.chat.NormalFileMessageBody;
 import com.easemob.chat.TextMessageBody;
+import com.easemob.chat.VideoMessageBody;
 import com.easemob.chat.VoiceMessageBody;
 import com.yehui.easemob.bean.MessageBean;
 import com.yehui.easemob.contants.MessageContant;
@@ -353,7 +354,51 @@ public class SendMessageHelper implements SendMessageInterfaces {
     }
 
     @Override
-    public MessageBean sendConversationByVideo(String username, String filePath, boolean isReSend, String msgId) {
+    public MessageBean sendConversationByVideo(String username, String filePath,long fileSize, int fileLength, boolean isReSend, String msgId) {
+        EMConversation conversation = EMChatManager.getInstance().getConversation(username);
+        // 创建一个文件消息
+        EMMessage message = EMMessage.createSendMessage(EMMessage.Type.VIDEO);
+        // 如果是群聊，设置chattype,默认是单聊
+//        if (chatType == TTYPE_GROUP)
+//          message.setChatType(EMMessage.ChatType.GroupChat);
+
+        //设置接收人的username
+        message.setReceipt(username);
+        // add message body
+        File file = new File(filePath);
+        //参数说明：1，文件；2，文件绝对路径；3，视频长度，4，文件大小
+        VideoMessageBody body = new VideoMessageBody(file, filePath, fileLength, fileSize);
+        message.addBody(body);
+        conversation.addMessage(message);
+        //初始化发送信息
+        initSendMsg();
+        messageBean.setGetMsgCode(MessageContant.sendMsgByVideo);
+        messageBean.setUserName(username);
+        messageBean.setContent(filePath);
+        messageBean.setEmMessage(message);
+        EMChatManager.getInstance().sendMessage(message, new EMCallBack() {
+            @Override
+            public void onSuccess() {
+                messageBean.setBackStatus(1);
+                eventBus.post(messageBean);
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                messageBean.setGetMsgErrorInt(i);
+                messageBean.setGetMsgErrorStr(s);
+                messageBean.setBackStatus(-1);
+                eventBus.post(messageBean);
+            }
+
+            @Override
+            public void onProgress(int i, String s) {
+                messageBean.setGetMsgErrorInt(i);
+                messageBean.setGetMsgErrorStr(s);
+                messageBean.setBackStatus(0);
+                eventBus.post(messageBean);
+            }
+        });
         return messageBean;
     }
 

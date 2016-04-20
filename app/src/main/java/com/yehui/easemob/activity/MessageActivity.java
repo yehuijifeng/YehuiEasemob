@@ -27,6 +27,7 @@ import com.yehui.easemob.activity.base.EasemobListActivity;
 import com.yehui.easemob.adapter.MessageAdapter;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
 import com.yehui.easemob.bean.MessageBean;
+import com.yehui.easemob.bean.VideoEntityBean;
 import com.yehui.easemob.contants.MapContant;
 import com.yehui.easemob.contants.MessageContant;
 import com.yehui.easemob.function.BitmapCacheFunction;
@@ -358,8 +359,8 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
             case R.id.function_laction_img://发送地理位置
                 startActivityForResult(LocationSourceActivity.class, AMapContant.LOCATION_GO_CODE);
                 break;
-            case R.id.function_shipin_img://发送视频
-                PickLocalImageUtils.toVideo(MessageActivity.this, VideoActivity.class);
+            case R.id.function_shipin_img://请求视频通话
+
                 break;
             case R.id.function_tel_img://请求普通电话
 
@@ -371,8 +372,10 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                 imageFileName = DateUtil.format(System.currentTimeMillis(), "'" + friendName + "'" + "_yyyyMMddHHmmss") + ".jpg";
                 PickLocalImageUtils.toCamera(MessageActivity.this, imageFileName);
                 break;
-            case R.id.function_video_img://请求视频通话
-
+            case R.id.function_video_img://发送视频
+                //PickLocalImageUtils.toVideo(MessageActivity.this, VideoActivity.class);
+                Intent intent = new Intent(this, VideoActivity.class);
+                startActivityForResult(intent, PickLocalImageUtils.CODE_FOR_VIDEO);
                 break;
         }
     }
@@ -403,8 +406,8 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                     break;
                 case PickLocalImageUtils.CODE_FOR_VIDEO://选择视频的回调
                     if (data == null) return;
-                    videoPath = data.getStringExtra(VideoActivity.KEY_SAVE_VIDEO_PATH);
-                    SendMessageHelper.getInstance().sendConversationByVideo(friendName, videoPath, false, null);
+                    VideoEntityBean videoEntityBean = data.getParcelableExtra(VideoActivity.KEY_SAVE_VIDEO_BEAN);
+                    SendMessageHelper.getInstance().sendConversationByVideo(friendName, videoEntityBean.getFilePath(), videoEntityBean.getSize(), videoEntityBean.getDuration(), false, null);
                     break;
             }
         } else if (resultCode == AMapContant.LOCATION_BACK_CODE) {

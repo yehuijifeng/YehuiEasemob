@@ -6,6 +6,6 @@
 
     <include layout="@layout/layout_my_title" />
 
-    <include layout="@layout/activity_default_recycler_view" />
+    <include layout="@layout/activity_my_recycler_view" />
 
 </LinearLayout>

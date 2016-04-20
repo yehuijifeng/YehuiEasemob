@@ -25,6 +25,7 @@ import com.easemob.chat.EMMessage;
 import com.easemob.chat.ImageMessageBody;
 import com.easemob.chat.LocationMessageBody;
 import com.easemob.chat.TextMessageBody;
+import com.easemob.chat.VideoMessageBody;
 import com.easemob.chat.VoiceMessageBody;
 import com.easemob.exceptions.EaseMobException;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -183,7 +184,9 @@ public class MessageAdapter extends BaseAdapter {
                     receiveCmdViewHolder.revoke_msg_ly.setVisibility(View.VISIBLE);
                     receiveCmdViewHolder.revoke_msg_text.setText(MessageContant.revokeStrSend);
                     receiveCmdViewHolder.get_msg_ly.setVisibility(View.GONE);
-                    if(messageBean.getContent()==null){messageBean.setContent(MessageContant.revokeStr);}
+                    if (messageBean.getContent() == null) {
+                        messageBean.setContent(MessageContant.revokeStr);
+                    }
                     SendMessageHelper.getInstance().receiveRevokeMessage(messageBean);
                     return;
                 } else {
@@ -226,7 +229,7 @@ public class MessageAdapter extends BaseAdapter {
                         sendTextViewHolder.msg_status_img.setOnClickListener(new OnReSendByTextClick(textMessageBody.getMessage(), messageBean.getEmMessage()));
                     }
                 } else {
-                    if(textMessageBody.getMessage()==null){
+                    if (textMessageBody.getMessage() == null) {
                         data.remove(position);
                         return;
                     }
@@ -369,6 +372,52 @@ public class MessageAdapter extends BaseAdapter {
                     receiveLocationViewHolder.get_msg_text.setText(address);
                 }
                 break;
+            case VIDEO://视频
+                VideoMessageBody videoMessageBody = (VideoMessageBody) emMessage.getBody();
+                if (emMessage.direct == EMMessage.Direct.SEND) {
+                    SendVideoViewHolder sendVideoViewHolder = (SendVideoViewHolder) holder;
+                    sendVideoViewHolder.set_msg_img_fy.setOnLongClickListener(new OnEaseLongClick(sendVideoViewHolder.set_msg_img_fy, messageBean));
+                    String url = videoMessageBody.getLocalUrl();
+                    if (FileOperationUtil.isHaveFile(url)) {
+                        if (BitmapCacheFunction.getInstance().isBitmapByLruCache(url)) {
+                            sendVideoViewHolder.set_msg_img.setImageBitmap(BitmapCacheFunction.getInstance().getBitmapFromLruCache(url));
+                        } else {
+                            videoMessageBody.getLocalThumb();
+//                            Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromFile(url, reqWidth, reqHeight);
+//                            sendVideoViewHolder.set_msg_img.setImageBitmap(bitmap);
+//                            BitmapCacheFunction.getInstance().addBitmapToLruCache(url, bitmap);
+                        }
+                    } else {
+                        sendVideoViewHolder.set_msg_img.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_loadings));
+                    }
+                    sendVideoViewHolder.set_msg_img_fy.setOnClickListener(new OnPlayVideoClick());
+                    if (messageBean.getBackStatus() == 0) {
+                        FrameLayout.LayoutParams linearParams = (FrameLayout.LayoutParams) sendVideoViewHolder.set_msg_dialog.getLayoutParams(); //取控件textView当前的布局参数
+                        linearParams.height = linearParams.height - messageBean.getGetMsgErrorInt() / 100 * linearParams.height;// 控件的高强制设
+                        //sendVideoViewHolder.set_msg_dialog.setVisibility(View.VISIBLE);
+                        sendVideoViewHolder.msg_load_text.setVisibility(View.VISIBLE);
+                        //sendVideoViewHolder.set_msg_dialog.setLayoutParams(linearParams); //使设置好的布局参数应用到控件</pre>
+                        sendVideoViewHolder.msg_load_text.setText((messageBean.getGetMsgErrorInt() + "%"));
+                    } else if (messageBean.getBackStatus() == 1) {
+                        //sendVideoViewHolder.set_msg_dialog.setVisibility(View.GONE);
+                        sendVideoViewHolder.msg_load_text.setVisibility(View.GONE);
+
+                    } else if (messageBean.getBackStatus() == -1) {
+                        //sendVideoViewHolder.set_msg_dialog.setVisibility(View.GONE);
+                        sendVideoViewHolder.msg_load_text.setVisibility(View.GONE);
+                        sendVideoViewHolder.msg_status_img.setVisibility(View.VISIBLE);
+                    }
+
+                } else {
+                    ReceiveImageViewHolder receiveImageViewHolder = (ReceiveImageViewHolder) holder;
+                    receiveImageViewHolder.get_msg_img_fy.setOnLongClickListener(new OnEaseLongClick(receiveImageViewHolder.get_msg_img_fy, messageBean));
+                    receiveImageViewHolder.get_msg_dialog.setVisibility(View.VISIBLE);
+                    imageLoader.displayImage(videoMessageBody.getThumbnailUrl(), receiveImageViewHolder.get_msg_img, EasemobAppliaction.defaultOptions);
+                    receiveImageViewHolder.get_msg_dialog.setVisibility(View.GONE);
+                    receiveImageViewHolder.msg_load_text.setVisibility(View.GONE);
+                    receiveImageViewHolder.get_msg_img_fy.setOnClickListener(new OnPlayVideoClick());
+                }
+                break;
             case FILE://文件
                 break;
 
@@ -407,6 +456,10 @@ public class MessageAdapter extends BaseAdapter {
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_send_msg_location, parent, false);
                 viewHolder = new SendLocationViewHolder(convertView);
                 break;
+            case MessageContant.sendMsgByVideo:
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_send_msg_video, parent, false);
+                viewHolder = new SendVideoViewHolder(convertView);
+                break;
             case MessageContant.sendMsgByFile:
                 break;
             case MessageContant.receiveMsgByText:
@@ -424,6 +477,10 @@ public class MessageAdapter extends BaseAdapter {
             case MessageContant.receiveMsgByLocation:
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receive_msg_location, parent, false);
                 viewHolder = new ReceiveLocationViewHolder(convertView);
+                break;
+            case MessageContant.receiveMsgByVideo:
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receive_msg_video, parent, false);
+                viewHolder = new ReceiveVideoViewHolder(convertView);
                 break;
             case MessageContant.receiveMsgByFile:
                 break;
@@ -470,6 +527,11 @@ public class MessageAdapter extends BaseAdapter {
                     return MessageContant.sendMsgByFile;
                 else
                     return MessageContant.receiveMsgByFile;
+            case VIDEO:
+                if (emMessage.direct == EMMessage.Direct.SEND)
+                    return MessageContant.sendMsgByVideo;
+                else
+                    return MessageContant.receiveMsgByVideo;
             case CMD:
                 return MessageContant.receiveMsgByText;
         }
@@ -668,6 +730,22 @@ public class MessageAdapter extends BaseAdapter {
             }
             recyclerView.scrollToPosition(list.size() + 1);
             notifyDataSetChanged();
+        }
+    }
+
+
+    /**
+     * 播放视频的点击事件
+     */
+    private class OnPlayVideoClick implements View.OnClickListener {
+
+        private OnPlayVideoClick() {
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            //点击播放视频
         }
     }
 
@@ -906,7 +984,6 @@ public class MessageAdapter extends BaseAdapter {
             msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
             get_msg_text = (TextView) itemView.findViewById(R.id.get_msg_text);
             msg_progress_bar = (ProgressBar) itemView.findViewById(R.id.msg_progress_bar);
-
             msg_status_img.setVisibility(View.GONE);
             msg_progress_bar.setVisibility(View.GONE);
         }
@@ -939,6 +1016,67 @@ public class MessageAdapter extends BaseAdapter {
 
             msg_status_img.setVisibility(View.INVISIBLE);
             msg_progress_bar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
+    /**
+     * 发送视频消息
+     */
+    private class SendVideoViewHolder extends BaseViewHolder {
+
+        private CircularImageView set_msg_image;
+        private ImageView msg_status_img, set_msg_img, set_msg_dialog;
+        private FrameLayout set_msg_img_fy;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text, msg_load_text;
+
+        public SendVideoViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void initItemView(View itemView) {
+            set_msg_image = (CircularImageView) itemView.findViewById(R.id.set_msg_image);
+            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
+            set_msg_dialog = (ImageView) itemView.findViewById(R.id.set_msg_dialog);
+            set_msg_img = (ImageView) itemView.findViewById(R.id.set_msg_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
+            set_msg_img_fy = (FrameLayout) itemView.findViewById(R.id.set_msg_img_fy);
+            msg_load_text = (TextView) itemView.findViewById(R.id.msg_load_text);
+            msg_status_img.setVisibility(View.GONE);
+            msg_load_text.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 接收视频消息
+     */
+    private class ReceiveVideoViewHolder extends BaseViewHolder {
+
+        private CircularImageView get_msg_image;
+        private ImageView msg_status_img, get_msg_img, get_msg_dialog;
+        private FrameLayout get_msg_img_fy;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text, msg_load_text;
+
+        public ReceiveVideoViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void initItemView(View itemView) {
+            get_msg_image = (CircularImageView) itemView.findViewById(R.id.get_msg_image);
+            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
+            get_msg_dialog = (ImageView) itemView.findViewById(R.id.get_msg_dialog);
+            get_msg_img = (ImageView) itemView.findViewById(R.id.get_msg_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
+            get_msg_img_fy = (FrameLayout) itemView.findViewById(R.id.get_msg_img_fy);
+            msg_load_text = (TextView) itemView.findViewById(R.id.msg_load_text);
+            msg_status_img.setVisibility(View.GONE);
+            msg_load_text.setVisibility(View.GONE);
         }
     }
 }

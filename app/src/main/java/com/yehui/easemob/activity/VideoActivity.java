@@ -4,6 +4,9 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -18,8 +21,11 @@ import com.yehui.utils.activity.base.BaseGridActivity;
 import com.yehui.utils.adapter.base.BaseViewHolder;
 import com.yehui.utils.utils.DateUtil;
 import com.yehui.utils.utils.files.FileContact;
+import com.yehui.utils.utils.files.FileSizeUtil;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -31,9 +37,71 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
     private View handerView;
     private FrameLayout video_fl_handler;
     private List<VideoEntityBean> videoList;
-    protected final static String KEY_SAVE_VIDEO_PATH = "video_file_path";
-    protected final static String KEY_SAVE_VIDEO_IMAGE = "video_image_path";
-    private String imagePath, filePath;
+    protected final static String KEY_SAVE_VIDEO_BEAN = "video_file_bean";
+    private AsyncImageLoader asyncImageLoader;
+
+    /**
+     * ListView异步加载图片是非常实用的方法，
+     * 凡是是要通过网络获取图片资源一般使用这种方法比较好，
+     * 用户体验好，下面就说实现方法，先贴上主方法的代码：
+     */
+    //异步加载image
+    public static class AsyncImageLoader {
+
+        private HashMap<String, SoftReference<Bitmap>> imageCacheMap;
+
+        public AsyncImageLoader() {
+            //软引用
+            imageCacheMap = new HashMap<>();
+        }
+
+        //第二个参数callback为图片回收
+        public Bitmap loadBitmap(final String imageUrl, final ImageCallback imageCallback) {
+
+            //如果HashMap中有缓存的image路径，则从map中取出来，运用软引用
+            if (imageCacheMap.containsKey(imageUrl)) {
+                SoftReference<Bitmap> softReference = imageCacheMap.get(imageUrl);
+                Bitmap bitmap = softReference.get();
+                if (bitmap != null) {
+                    return bitmap;
+                }
+            }
+
+            final Handler handler = new Handler() {
+                //定义的回收图片接口，实现其中的方法
+                public void handleMessage(Message message) {
+                    imageCallback.imageLoaded((Bitmap) message.obj, imageUrl);
+                }
+
+            };
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    //将加载过的图片先存在hashmap中
+                    Bitmap bitmap = loadImageFromUrl(imageUrl);
+                    String imagePath = FileContact.YEHUI_CACHE_IMG_PATH + DateUtil.getDatePattern() + "_video_cache" + ".png";
+                    imageCacheMap.put(imageUrl, new SoftReference<>(bitmap));
+                    Message message = new Message();
+                    message.what = 1;
+                    message.obj = bitmap;
+                    handler.sendMessage(message);
+                    BitmapUtil.saveBitmapByFile(bitmap, imagePath);
+                }
+            }).start();
+            return null;
+        }
+
+        //将图片用流读入到drawable中
+        public Bitmap loadImageFromUrl(String url) {
+            return ThumbnailUtils.createVideoThumbnail(url, 3);
+        }
+
+        //图片回收接口
+        public interface ImageCallback {
+            void imageLoaded(Bitmap imageBitmap, String imageUrl);
+        }
+    }
 
     @Override
     protected int gridViewByNumber() {
@@ -57,19 +125,58 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
         mAdapter.setHeaderView(handerView);
         video_fl_handler = (FrameLayout) handerView.findViewById(R.id.video_fl_handler);
         video_fl_handler.setOnClickListener(this);
+        setIsLoadMore(false);//不加载更多
+        setIsRefresh(true);//下拉刷新
+    }
+
+    @Override
+    protected void refresh() {
+        clearAll();
+        getVideoFile();
+        refreshSuccess();
+        notifyDataChange();
     }
 
     @Override
     protected void initItemData(BaseViewHolder holder, int position) {
-        VideoViewHolder videoViewHolder = (VideoViewHolder) holder;
+        final VideoViewHolder videoViewHolder = (VideoViewHolder) holder;
         VideoEntityBean videoEntityBean = (VideoEntityBean) data.get(position);
-        videoViewHolder.video_size_text.setText(videoEntityBean.getSize());
-        videoViewHolder.video_time_text.setText(videoEntityBean.getDuration());
-        Bitmap bitmap = BitmapUtil.getVideoThumb(videoEntityBean.getFilePath());
-        imagePath = FileContact.YEHUI_CACHE_IMG_PATH + DateUtil.getTimeString() + "_" + videoEntityBean.getTitle() + ".png";
-        filePath = videoEntityBean.getFilePath();
-        videoViewHolder.video_img.setImageBitmap(bitmap);
-        BitmapUtil.saveBitmapByFile(bitmap, imagePath);
+
+        videoViewHolder.video_size_text.setText(FileSizeUtil.getFileSize(videoEntityBean.getSize()));
+        videoViewHolder.video_time_text.setText(getDateSize(videoEntityBean.getDuration()));
+
+        //异步加载主要方法
+        Bitmap cachedImage = asyncImageLoader.loadBitmap(videoEntityBean.getFilePath(), new AsyncImageLoader.ImageCallback() {
+            public void imageLoaded(Bitmap imageBitmap, String imageUrl) {
+                /**
+                 * 如果imageview中加入了url后不为null则将这个url缓存的图片取出来，直接放在最外层的listview的image视图中
+                 * 判断，listview中是否有
+                 */
+                videoViewHolder.video_img.setImageBitmap(imageBitmap);
+            }
+        });
+
+        //如果drawable里面为null的话则在imageview中添加默认图片
+        //如果有则说明该图片在hashmap中已经存在过了
+        if (cachedImage != null)
+            videoViewHolder.video_img.setImageBitmap(cachedImage);
+    }
+
+    private String getDateSize(long size) {
+        size = size / 1000;
+        String time = size + " s";
+        if (size > 60) {
+            long endSize = size / 60;
+            long sSize = size - (endSize * 60);
+            time = endSize + " : " + (sSize > 10 ? sSize : "0" + sSize);
+        }
+        if (size > 60 * 60) {
+            long hSize = size / 60 / 60;
+            long minSize = (size - (hSize * 60 * 60)) / 60;
+            long sSize = size - (hSize * 60 * 60 + minSize * 60);
+            time = hSize + " : " + (minSize > 0 ? (minSize > 10 ? minSize : "0" + minSize) : "00") + " : " + (sSize > 10 ? sSize : "0" + sSize);
+        }
+        return time;
     }
 
     @Override
@@ -79,10 +186,10 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
 
     @Override
     protected void onItemClick(RecyclerView parent, View itemView, int position) {
+        VideoEntityBean videoEntityBean = (VideoEntityBean) data.get(position);
         //点击之后的回调
         Intent intent = new Intent();
-        intent.putExtra(KEY_SAVE_VIDEO_PATH, filePath);
-        intent.putExtra(KEY_SAVE_VIDEO_IMAGE, imagePath);
+        intent.putExtra(KEY_SAVE_VIDEO_BEAN, videoEntityBean);
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -99,8 +206,8 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
 
     @Override
     protected void initData() {
-        videoList = new ArrayList<>();
         getVideoFile();
+        asyncImageLoader = new AsyncImageLoader();
     }
 
     @Override
@@ -109,7 +216,6 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
             case R.id.video_fl_handler://点击后调用系统相机录像
                 showLongToast("调用系统相机录像");
                 break;
-
         }
     }
 
@@ -132,6 +238,7 @@ public class VideoActivity extends BaseGridActivity implements View.OnClickListe
     }
 
     private void getVideoFile() {
+        videoList=new ArrayList<>();
         ContentResolver mContentResolver = this.getContentResolver();
         Cursor cursor = mContentResolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, null, null, null, MediaStore.Video.DEFAULT_SORT_ORDER);
         if (cursor != null && cursor.moveToFirst()) {

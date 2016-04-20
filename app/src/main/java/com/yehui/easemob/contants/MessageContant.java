@@ -11,11 +11,13 @@ public class MessageContant {
     public static final int sendMsgByImage = sendMsgByVoice + 1;//发送图片消息
     public static final int sendMsgByLocation = sendMsgByImage + 1;//发送地理位置
     public static final int sendMsgByFile = sendMsgByLocation + 1;//发送文件
-    public static final int receiveMsgByText = sendMsgByFile + 1;//接收文本消息以及表情
+    public static final int sendMsgByVideo = sendMsgByFile + 1;//发送视频
+    public static final int receiveMsgByText = sendMsgByVideo + 1;//接收文本消息以及表情
     public static final int receiveMsgByVoice = receiveMsgByText + 1;//接收语音消息
     public static final int receiveMsgByImage = receiveMsgByVoice + 1;//接收图片消息
     public static final int receiveMsgByLocation = receiveMsgByImage + 1;//接收地理位置
     public static final int receiveMsgByFile = receiveMsgByLocation + 1;//接收文件
+    public static final int receiveMsgByVideo = receiveMsgByFile + 1;//接收视频
     public static final int receiveMsgByAll = receiveMsgByFile + 1;//接收所有消息
     public static final int receiveMsgByNew = receiveMsgByAll + 1;//接收新消息
     public static final int receiveMsgByDeliveryAck = receiveMsgByNew + 1;//已发送
