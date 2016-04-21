@@ -366,6 +366,7 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
 
                 break;
             case R.id.function_file_img://发送文件
+                imageFileName = DateUtil.format(System.currentTimeMillis(), "'" + friendName + "'" + "_yyyyMMddHHmmss") + ".jpg";
                 PickLocalImageUtils.toFile(MessageActivity.this);
                 break;
             case R.id.function_camera_img://打开相机
@@ -408,6 +409,12 @@ public class MessageActivity extends EasemobListActivity implements View.OnClick
                     if (data == null) return;
                     VideoEntityBean videoEntityBean = data.getParcelableExtra(VideoActivity.KEY_SAVE_VIDEO_BEAN);
                     SendMessageHelper.getInstance().sendConversationByVideo(friendName, videoEntityBean.getFilePath(), videoEntityBean.getSize(), videoEntityBean.getDuration(),videoEntityBean.getImgPath(), false, null);
+                    break;
+                case PickLocalImageUtils.CODE_FOR_FILE://选择视频的回调
+                    if (data == null) return;
+                    Uri uris = data.getData();
+                    imagePath = PickLocalImageUtils.getPath(uris, getContentResolver());
+                    SendMessageHelper.getInstance().sendConversationByFile(friendName, imagePath, false, null);
                     break;
             }
         } else if (resultCode == AMapContant.LOCATION_BACK_CODE) {

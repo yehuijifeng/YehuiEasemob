@@ -317,7 +317,7 @@ public class SendMessageHelper implements SendMessageInterfaces {
         // add message body
         NormalFileMessageBody body = new NormalFileMessageBody(new File(filePath));
         message.addBody(body);
-        conversation.addMessage(message);
+        conversation.addMessage( message);
         //初始化发送信息
         initSendMsg();
         messageBean.setGetMsgCode(MessageContant.sendMsgByFile);
@@ -346,7 +346,6 @@ public class SendMessageHelper implements SendMessageInterfaces {
                 messageBean.setGetMsgErrorInt(i);
                 messageBean.setGetMsgErrorStr(s);
                 messageBean.setBackStatus(0);
-
                 eventBus.post(messageBean);
             }
         });

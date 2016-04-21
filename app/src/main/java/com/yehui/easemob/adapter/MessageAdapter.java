@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.a.map.activity.LocationSourceActivity;
 import com.easemob.chat.CmdMessageBody;
 import com.easemob.chat.EMMessage;
+import com.easemob.chat.FileMessageBody;
 import com.easemob.chat.ImageMessageBody;
 import com.easemob.chat.LocationMessageBody;
 import com.easemob.chat.TextMessageBody;
@@ -49,6 +50,7 @@ import com.yehui.utils.contacts.SettingContact;
 import com.yehui.utils.utils.DisplayUtil;
 import com.yehui.utils.utils.files.DakaiFangshi;
 import com.yehui.utils.utils.files.FileOperationUtil;
+import com.yehui.utils.utils.files.FileSizeUtil;
 import com.yehui.utils.view.CircularImageView;
 
 import java.util.ArrayList;
@@ -412,8 +414,6 @@ public class MessageAdapter extends BaseAdapter {
                     }
                     sendVideoViewHolder.set_msg_img_fy.setOnClickListener(new OnPlayVideoClick(videoMessageBody.getLocalUrl()));
                     if (messageBean.getBackStatus() == 0) {
-                        FrameLayout.LayoutParams linearParams = (FrameLayout.LayoutParams) sendVideoViewHolder.set_msg_dialog.getLayoutParams(); //取控件textView当前的布局参数
-                        linearParams.height = linearParams.height - messageBean.getGetMsgErrorInt() / 100 * linearParams.height;// 控件的高强制设
                         //sendVideoViewHolder.set_msg_dialog.setVisibility(View.VISIBLE);
                         sendVideoViewHolder.msg_load_text.setVisibility(View.VISIBLE);
                         //sendVideoViewHolder.set_msg_dialog.setLayoutParams(linearParams); //使设置好的布局参数应用到控件</pre>
@@ -450,6 +450,49 @@ public class MessageAdapter extends BaseAdapter {
                 }
                 break;
             case FILE://文件
+                FileMessageBody fileMessageBody = (FileMessageBody) emMessage.getBody();
+                if (emMessage.direct == EMMessage.Direct.SEND) {
+                    SendFileViewHolder sendFileViewHolder = (SendFileViewHolder) holder;
+                    sendFileViewHolder.set_msg_img_fy.setOnLongClickListener(new OnEaseLongClick(sendFileViewHolder.set_msg_img_fy, messageBean));
+                    String filePath = fileMessageBody.getLocalUrl();
+                    sendFileViewHolder.set_msg_img_fy.setOnClickListener(new OnOpenFileClick(filePath));
+                    sendFileViewHolder.set_msg_dialog.setText(fileMessageBody.getFileName() + "\n" + FileSizeUtil.getFileSize(0));
+                    if (messageBean.getBackStatus() == 0) {
+                        //sendVideoViewHolder.set_msg_dialog.setVisibility(View.VISIBLE);
+                        sendFileViewHolder.msg_load_text.setVisibility(View.VISIBLE);
+                        //sendVideoViewHolder.set_msg_dialog.setLayoutParams(linearParams); //使设置好的布局参数应用到控件</pre>
+                        sendFileViewHolder.msg_load_text.setText((messageBean.getGetMsgErrorInt() + "%"));
+                    } else if (messageBean.getBackStatus() == 1) {
+                        //sendVideoViewHolder.set_msg_dialog.setVisibility(View.GONE);
+                        sendFileViewHolder.msg_load_text.setVisibility(View.GONE);
+
+                    } else if (messageBean.getBackStatus() == -1) {
+                        //sendVideoViewHolder.set_msg_dialog.setVisibility(View.GONE);
+                        sendFileViewHolder.msg_load_text.setVisibility(View.GONE);
+                        sendFileViewHolder.msg_status_img.setVisibility(View.VISIBLE);
+                        Toast.makeText(context, messageBean.getGetMsgErrorStr(), Toast.LENGTH_SHORT).show();
+
+                    }
+//                    if (isOutTime) {
+//                        sendVideoViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
+//                        sendVideoViewHolder.msg_time_text.setText(outTimeStr);
+//                    } else {
+//                        sendVideoViewHolder.msg_time_ly.setVisibility(View.GONE);
+//                    }
+                } else {
+                    ReceiveFileViewHolder receiveFileViewHolder = (ReceiveFileViewHolder) holder;
+                    receiveFileViewHolder.get_msg_img_fy.setOnLongClickListener(new OnEaseLongClick(receiveFileViewHolder.get_msg_img_fy, messageBean));
+                    receiveFileViewHolder.msg_load_text.setVisibility(View.GONE);
+                    receiveFileViewHolder.get_msg_img_fy.setOnClickListener(new OnOpenFileClick(fileMessageBody.getRemoteUrl()));
+                    receiveFileViewHolder.get_msg_dialog.setText(fileMessageBody.getFileName() + "\n" + FileSizeUtil.getFileSize(0));
+
+//                    if (isOutTime) {
+//                        receiveImageViewHolder.msg_time_ly.setVisibility(View.VISIBLE);
+//                        receiveImageViewHolder.msg_time_text.setText(outTimeStr);
+//                    } else {
+//                        receiveImageViewHolder.msg_time_ly.setVisibility(View.GONE);
+//                    }
+                }
                 break;
 
         }
@@ -492,6 +535,8 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder = new SendVideoViewHolder(convertView);
                 break;
             case MessageContant.sendMsgByFile:
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_send_msg_file, parent, false);
+                viewHolder = new SendFileViewHolder(convertView);
                 break;
             case MessageContant.receiveMsgByText:
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receive_msg_text, parent, false);
@@ -514,6 +559,8 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder = new ReceiveVideoViewHolder(convertView);
                 break;
             case MessageContant.receiveMsgByFile:
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_receive_msg_file, parent, false);
+                viewHolder = new ReceiveFileViewHolder(convertView);
                 break;
             case MessageContant.loadMoreData:
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_load_msg, parent, false);
@@ -802,6 +849,24 @@ public class MessageAdapter extends BaseAdapter {
             context.startActivity(intent);
         }
     }
+
+    /**
+     * 打开文件
+     */
+    private class OnOpenFileClick implements View.OnClickListener {
+        private String url;
+
+        private OnOpenFileClick(String url) {
+            this.url = url;
+        }
+
+        @Override
+        public void onClick(View v) {
+            //点击播放视频
+            context.startActivity(DakaiFangshi.getAllFileIntent(url));
+        }
+    }
+
     /****************************************viewholder******************************************************/
 
     /**
@@ -1132,4 +1197,65 @@ public class MessageAdapter extends BaseAdapter {
             msg_load_text.setVisibility(View.GONE);
         }
     }
+
+    /**
+     * 发送文件消息
+     */
+    private class SendFileViewHolder extends BaseViewHolder {
+
+        private CircularImageView set_msg_image;
+        private ImageView msg_status_img, set_msg_img;
+        private LinearLayout set_msg_img_fy;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text, msg_load_text, set_msg_dialog;
+
+        public SendFileViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void initItemView(View itemView) {
+            set_msg_image = (CircularImageView) itemView.findViewById(R.id.set_msg_image);
+            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
+            set_msg_dialog = (TextView) itemView.findViewById(R.id.set_msg_dialog);
+            set_msg_img = (ImageView) itemView.findViewById(R.id.set_msg_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
+            set_msg_img_fy = (LinearLayout) itemView.findViewById(R.id.set_msg_img_fy);
+            msg_load_text = (TextView) itemView.findViewById(R.id.msg_load_text);
+            msg_status_img.setVisibility(View.INVISIBLE);
+            msg_load_text.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * 接收文件消息
+     */
+    private class ReceiveFileViewHolder extends BaseViewHolder {
+
+        private CircularImageView get_msg_image;
+        private ImageView msg_status_img, get_msg_img;
+        private LinearLayout get_msg_img_fy;
+        private LinearLayout msg_time_ly;
+        private TextView msg_time_text, msg_load_text, get_msg_dialog;
+
+        public ReceiveFileViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void initItemView(View itemView) {
+            get_msg_image = (CircularImageView) itemView.findViewById(R.id.get_msg_image);
+            msg_status_img = (ImageView) itemView.findViewById(R.id.msg_status_img);
+            get_msg_dialog = (TextView) itemView.findViewById(R.id.get_msg_dialog);
+            get_msg_img = (ImageView) itemView.findViewById(R.id.get_msg_img);
+            msg_time_ly = (LinearLayout) itemView.findViewById(R.id.msg_time_ly);
+            msg_time_text = (TextView) itemView.findViewById(R.id.msg_time_text);
+            get_msg_img_fy = (LinearLayout) itemView.findViewById(R.id.get_msg_img_fy);
+            msg_load_text = (TextView) itemView.findViewById(R.id.msg_load_text);
+            msg_status_img.setVisibility(View.INVISIBLE);
+            msg_load_text.setVisibility(View.INVISIBLE);
+        }
+    }
+
 }
