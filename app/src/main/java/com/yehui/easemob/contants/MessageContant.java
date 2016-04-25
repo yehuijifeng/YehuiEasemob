@@ -6,7 +6,7 @@ package com.yehui.easemob.contants;
  */
 public class MessageContant {
 
-    public static final int sendMsgByText = 1;//发送文本消息以及表情
+    public static final int sendMsgByText = 100;//发送文本消息以及表情
     public static final int sendMsgByVoice = sendMsgByText + 1;//发送语音消息
     public static final int sendMsgByImage = sendMsgByVoice + 1;//发送图片消息
     public static final int sendMsgByLocation = sendMsgByImage + 1;//发送地理位置
