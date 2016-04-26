@@ -25,7 +25,7 @@ public class GroupHelper {
         eventBus = EventBus.getDefault();
     }
 
-    public GroupHelper getInstance() {
+    public static GroupHelper getInstance() {
         if (groupHelper == null) {
             synchronized (GroupHelper.class) {
                 if (groupHelper == null) {
@@ -244,7 +244,7 @@ public class GroupHelper {
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                List<EMGroup> grouplist = null;//需异步处理
+                List<EMGroup> grouplist;//需异步处理
                 try {
                     grouplist = EMGroupManager.getInstance().getGroupsFromServer();
                     eventBus.post(grouplist);

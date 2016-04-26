@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/query_group_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_default_view"
+        android:padding="@dimen/default_padding_and_margin">
+
+        <ImageView
+            android:id="@+id/group_manage_img"
+            android:layout_width="@dimen/default_xximage_height"
+            android:layout_height="@dimen/default_xximage_height"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:src="@drawable/ic_qun_friend" />
+
+        <TextView
+            android:id="@+id/group_name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:layout_toEndOf="@+id/group_manage_img"
+            android:layout_toRightOf="@+id/group_manage_img"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="群名称"
+            android:textColor="@color/black"
+            android:textSize="@dimen/default_x_text_size" />
+
+        <TextView
+            android:id="@+id/group_number_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:text="500/0人" />
+
+    </RelativeLayout>
+</LinearLayout>

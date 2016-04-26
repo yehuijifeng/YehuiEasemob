@@ -3,6 +3,9 @@
     <dimen name="default_icon">48dp</dimen>
     <dimen name="default_user_login">73dp</dimen>
     <dimen name="default_image_height">30dp</dimen>
+    <dimen name="default_ximage_height">35dp</dimen>
+    <dimen name="default_xximage_height">40dp</dimen>
+    <dimen name="default_xxximage_height">45dp</dimen>
     <dimen name="default_msg_height_and_width">48dp</dimen>
     <dimen name="default_home_image_height_and_width">25dp</dimen>
     <dimen name="voice_padding_and_margin">2dp</dimen>

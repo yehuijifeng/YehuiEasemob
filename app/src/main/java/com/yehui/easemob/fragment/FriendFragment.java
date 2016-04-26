@@ -3,10 +3,12 @@ package com.yehui.easemob.fragment;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.easemob.chat.EMChatManager;
 import com.yehui.easemob.R;
+import com.yehui.easemob.activity.GroupManageActivity;
 import com.yehui.easemob.activity.HomeActivity;
 import com.yehui.easemob.activity.MessageActivity;
 import com.yehui.easemob.appliaction.EasemobAppliaction;
@@ -26,12 +28,13 @@ import com.yehui.utils.view.titleview.MyTitleView;
  * on 2016/2/20.
  * 好友列表
  */
-public class FriendFragment extends EasemobListFragment {
+public class FriendFragment extends EasemobListFragment implements View.OnClickListener {
 
     private MyTitleView titleView;
     private ListDialog listDialog;
     private PromptDialog promptDialog;
     private String[] friendOperation = new String[]{"修改备注", "删除好友", "加入黑名单"};
+    private RelativeLayout user_notice_rl, group_manage_rl;
 
     @Override
     protected void refresh() {
@@ -55,6 +58,10 @@ public class FriendFragment extends EasemobListFragment {
         titleView = (MyTitleView) parentView.findViewById(R.id.my_title_view);
         titleView.setTitleText("好友");
         titleView.setTitleMode(MyTitleView.TitleMode.NO_BACK_IMAGE);
+        user_notice_rl = (RelativeLayout) parentView.findViewById(R.id.user_notice_rl);
+        group_manage_rl = (RelativeLayout) parentView.findViewById(R.id.group_manage_rl);
+        user_notice_rl.setOnClickListener(this);
+        group_manage_rl.setOnClickListener(this);
     }
 
     @Override
@@ -127,9 +134,9 @@ public class FriendFragment extends EasemobListFragment {
         //跳转聊天页面
         Bundle bundle = new Bundle();
         bundle.putString(MapContant.MESSAGE_USER_NAME, data.get(position).toString());
-        startActivity(MessageActivity.class,bundle);
+        startActivity(MessageActivity.class, bundle);
         //注销消息监听
-        EMChatManager.getInstance().unregisterEventListener((HomeActivity)parentActivity);
+        EMChatManager.getInstance().unregisterEventListener((HomeActivity) parentActivity);
     }
 
     @Override
@@ -179,6 +186,18 @@ public class FriendFragment extends EasemobListFragment {
     @Override
     protected int setFragmentLayoutId() {
         return R.layout.fragment_friend;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.user_notice_rl://好友通知
+
+                break;
+            case R.id.group_manage_rl://群组管理
+                startActivity(GroupManageActivity.class);
+                break;
+        }
     }
 
     private class FriendViewHolder extends BaseViewHolder {

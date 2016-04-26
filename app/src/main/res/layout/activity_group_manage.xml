@@ -13,43 +13,7 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/user_notice_rl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_default_view"
-            android:padding="@dimen/default_padding_and_margin">
-
-            <ImageView
-                android:id="@+id/user_notice_img"
-                android:layout_width="@dimen/default_xximage_height"
-                android:layout_height="@dimen/default_xximage_height"
-                android:layout_margin="@dimen/default_padding_and_margin"
-                android:src="@drawable/ease_default_avatar" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_margin="@dimen/default_padding_and_margin"
-                android:layout_toEndOf="@+id/user_notice_img"
-                android:layout_toRightOf="@+id/user_notice_img"
-                android:text="好友通知"
-                android:textColor="@color/black"
-                android:textSize="@dimen/default_x_text_size" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_margin="@dimen/default_padding_and_margin"
-                android:src="@drawable/ic_go" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/group_manage_rl"
+            android:id="@+id/query_group_rl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_padding_and_margin"
@@ -70,7 +34,9 @@
                 android:layout_margin="@dimen/default_padding_and_margin"
                 android:layout_toEndOf="@+id/group_manage_img"
                 android:layout_toRightOf="@+id/group_manage_img"
-                android:text="群组管理"
+                android:text="查找群"
+                android:singleLine="true"
+                android:ellipsize="end"
                 android:textColor="@color/black"
                 android:textSize="@dimen/default_x_text_size" />
 

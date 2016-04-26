@@ -156,6 +156,10 @@
         <activity
             android:name=".activity.PlayVideoActivity"
             android:launchMode="singleTop" />
+        <!--视频播放-->
+        <activity
+            android:name=".activity.GroupManageActivity"
+            android:launchMode="singleTop" />
         <!--后台提醒-->
         <service android:name=".service.MessageService" />
 
