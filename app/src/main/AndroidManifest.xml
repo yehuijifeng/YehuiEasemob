@@ -156,9 +156,13 @@
         <activity
             android:name=".activity.PlayVideoActivity"
             android:launchMode="singleTop" />
-        <!--视频播放-->
+        <!--查看自己的群-->
         <activity
             android:name=".activity.GroupManageActivity"
+            android:launchMode="singleTop" />
+        <!--查看服务器上的所有群-->
+        <activity
+            android:name=".activity.GroupQueryListActivity"
             android:launchMode="singleTop" />
         <!--后台提醒-->
         <service android:name=".service.MessageService" />

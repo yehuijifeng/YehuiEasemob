@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_my_title" />
+
+    <EditText
+        android:id="@+id/group_name_edit"
+        style="@style/default_editview_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding_and_margin"
+        android:hint="群名称"
+        android:maxLength="16" />
+
+    <EditText
+        android:id="@+id/group_desc_edit"
+        style="@style/default_editview_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding_and_margin"
+        android:hint="群简介"
+        android:maxLength="16" />
+
+    <CheckBox
+        android:id="@+id/is_allow_invite_check"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding_and_margin"
+        android:background="@drawable/bg_default_edit"
+        android:checked="true"
+        android:text="允许群成员加人" />
+
+    <RadioGroup
+        android:id="@+id/max_users_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding_and_margin"
+        android:background="@drawable/bg_default_edit"
+        android:orientation="horizontal">
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/small_padding_and_margin"
+            android:text="人群数量"
+            android:textColor="@color/black" />
+
+        <RadioButton
+            android:id="@+id/tow_users_radio_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="200人" />
+
+        <RadioButton
+            android:id="@+id/five_users_radio_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="500人" />
+
+        <RadioButton
+            android:id="@+id/ten_users_radio_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="1000人" />
+
+        <RadioButton
+            android:id="@+id/tow_ten_users_radio_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="2000人" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding_and_margin"
+        android:background="@drawable/bg_default_edit"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:id="@+id/is_public_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding_and_margin"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/public_radio_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="公开群" />
+
+            <RadioButton
+                android:id="@+id/private_radio_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="私有群" />
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/small_padding_and_margin"
+            android:text="公开群：公开群可以被用户搜索到，并且可以直接加入或者申请加入；私有群：私有群，不能被搜索到，只能通过群主加人进群，或者设置了allowInvite为true，即允许群成员邀 请，那么群成员也可以邀请群外面的人进入群聊，此种群群成员可以邀请，不能踢人，类似微信群。"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+
+
+    <CheckBox
+        android:id="@+id/id_need_approval_required_check"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_padding_and_margin"
+        android:background="@drawable/bg_default_edit"
+        android:checked="true"
+        android:text="加入群需要验证信息" />
+
+    <Button
+        android:id="@+id/group_ok_btn"
+        style="@style/default_button_style"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/default_xxx_padding_and_margin"
+        android:text="确定创建" />
+</LinearLayout>

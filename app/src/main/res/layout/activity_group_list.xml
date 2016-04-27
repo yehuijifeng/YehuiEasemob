@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_my_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/default_padding_and_margin"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/query_group_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_padding_and_margin"
+            android:background="@drawable/bg_default_view"
+            android:padding="@dimen/default_padding_and_margin">
+
+            <EditText
+                android:id="@+id/query_group_edit"
+                style="@style/default_editview_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/query_group_btn"
+                android:hint="输入群名称"
+                android:textColor="@color/black"
+                android:textSize="@dimen/default_x_text_size" />
+
+            <Button
+                android:id="@+id/query_group_btn"
+                style="@style/default_button_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="搜索" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <include layout="@layout/activity_my_recycler_view" />
+
+</LinearLayout>
