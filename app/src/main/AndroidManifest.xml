@@ -164,6 +164,10 @@
         <activity
             android:name=".activity.GroupQueryListActivity"
             android:launchMode="singleTop" />
+        <!--创建群-->
+        <activity
+            android:name=".activity.GroupCreateActivity"
+            android:launchMode="singleTop" />
         <!--后台提醒-->
         <service android:name=".service.MessageService" />
 

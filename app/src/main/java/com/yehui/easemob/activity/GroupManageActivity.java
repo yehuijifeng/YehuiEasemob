@@ -42,6 +42,12 @@ public class GroupManageActivity extends EasemobListActivity implements View.OnC
         GroupHelper.getInstance().getGroupsFromServer();//从服务器获取群列表
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GroupHelper.getInstance().getGroupsFromServer();//从服务器获取群列表
+    }
+
     public void onEventMainThread(List<EMGroup> grouplist) {
         if (grouplist == null || grouplist.size() == 0) {
             loadingEmpty("你还没有加入任何群，赶快去加群吧!");
@@ -76,6 +82,7 @@ public class GroupManageActivity extends EasemobListActivity implements View.OnC
         setContentView(R.layout.activity_group_manage);
     }
 
+
     @Override
     protected String setTitleText() {
         return "群组管理";
@@ -88,6 +95,7 @@ public class GroupManageActivity extends EasemobListActivity implements View.OnC
                 startActivity(GroupQueryListActivity.class);
                 break;
             case R.id.create_group_rl://创建群
+                startActivity(GroupCreateActivity.class);
                 break;
         }
     }
